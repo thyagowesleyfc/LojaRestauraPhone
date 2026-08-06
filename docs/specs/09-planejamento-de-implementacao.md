@@ -1,101 +1,101 @@
-# 09 — Planejamento de implementação
+﻿# 09 â€” Planejamento de implementaÃ§Ã£o
 
-Cada fase deve ser executada e validada separadamente. O Codex não deve avançar automaticamente.
+Cada fase deve ser executada e validada separadamente. O Codex nÃ£o deve avanÃ§ar automaticamente.
 
-## Fase 0 — Fundação
+## Fase 0 â€” FundaÃ§Ã£o
 
-- [ ] criar projeto Next.js com TypeScript e App Router;
-- [ ] configurar Tailwind;
-- [ ] instalar e configurar shadcn/ui;
-- [ ] configurar ESLint padrão;
-- [ ] criar estrutura inicial de pastas;
-- [ ] configurar Prisma para PostgreSQL;
-- [ ] configurar validação de ambiente com Zod;
-- [ ] criar página inicial mínima;
-- [ ] criar rota de health check;
-- [ ] criar `.env.example`;
-- [ ] documentar execução local;
-- [ ] validar lint e build.
+- [x] criar projeto Next.js com TypeScript e App Router;
+- [x] configurar Tailwind;
+- [x] instalar e configurar shadcn/ui;
+- [x] configurar ESLint padrÃ£o;
+- [x] criar estrutura inicial de pastas;
+- [x] configurar Prisma para PostgreSQL;
+- [x] configurar validaÃ§Ã£o de ambiente com Zod;
+- [x] criar pÃ¡gina inicial mÃ­nima;
+- [x] criar rota de health check;
+- [x] criar `.env.example`;
+- [x] documentar execuÃ§Ã£o local;
+- [x] validar lint e build.
 
-## Fase 1 — Banco e autenticação
+## Fase 1 â€” Banco e autenticaÃ§Ã£o
 
 - [ ] implementar schema Prisma completo;
 - [ ] criar migration inicial;
 - [ ] criar seed idempotente;
-- [ ] implementar login, sessão, logout e proteção de rotas;
-- [ ] criar tela mínima de login;
+- [ ] implementar login, sessÃ£o, logout e proteÃ§Ã£o de rotas;
+- [ ] criar tela mÃ­nima de login;
 - [ ] criar layout administrativo protegido;
-- [ ] testar autenticação;
+- [ ] testar autenticaÃ§Ã£o;
 - [ ] validar migration e seed em PostgreSQL real.
 
-## Fase 2 — Categorias e produtos
+## Fase 2 â€” Categorias e produtos
 
 - [ ] CRUD de categorias;
-- [ ] ordenação e ativação de categorias;
+- [ ] ordenaÃ§Ã£o e ativaÃ§Ã£o de categorias;
 - [ ] CRUD de produtos;
-- [ ] upload e ordenação de imagens via Cloudinary;
-- [ ] validação de 1 a 6 imagens;
+- [ ] upload e ordenaÃ§Ã£o de imagens via Cloudinary;
+- [ ] validaÃ§Ã£o de 1 a 6 imagens;
 - [ ] listagem administrativa;
-- [ ] páginas públicas de categorias e produtos.
+- [ ] pÃ¡ginas pÃºblicas de categorias e produtos.
 
-## Fase 3 — Promoções
+## Fase 3 â€” PromoÃ§Ãµes
 
-- [ ] CRUD de promoções;
-- [ ] promoção percentual por categoria;
-- [ ] promoção de combo;
-- [ ] galeria da promoção;
-- [ ] cálculo de preço promocional;
-- [ ] regras de não cumulatividade;
-- [ ] páginas públicas de promoções.
+- [ ] CRUD de promoÃ§Ãµes;
+- [ ] promoÃ§Ã£o percentual por categoria;
+- [ ] promoÃ§Ã£o de combo;
+- [ ] galeria da promoÃ§Ã£o;
+- [ ] cÃ¡lculo de preÃ§o promocional;
+- [ ] regras de nÃ£o cumulatividade;
+- [ ] pÃ¡ginas pÃºblicas de promoÃ§Ãµes.
 
-## Fase 4 — Banners e configurações
+## Fase 4 â€” Banners e configuraÃ§Ãµes
 
 - [ ] CRUD de banners;
-- [ ] ordenação de banners;
-- [ ] configurações institucionais;
+- [ ] ordenaÃ§Ã£o de banners;
+- [ ] configuraÃ§Ãµes institucionais;
 - [ ] Quem somos;
-- [ ] rodapé;
+- [ ] rodapÃ©;
 - [ ] WhatsApp;
 - [ ] logo;
 - [ ] cores de tema;
 - [ ] mapa.
 
-## Fase 5 — Home e navegação pública
+## Fase 5 â€” Home e navegaÃ§Ã£o pÃºblica
 
 - [ ] menu responsivo;
 - [ ] hero em carrossel;
-- [ ] seção de categorias;
-- [ ] seção de promoções;
-- [ ] rodapé;
-- [ ] botões flutuantes;
+- [ ] seÃ§Ã£o de categorias;
+- [ ] seÃ§Ã£o de promoÃ§Ãµes;
+- [ ] rodapÃ©;
+- [ ] botÃµes flutuantes;
 - [ ] tema claro e escuro;
-- [ ] SEO básico e metadados.
+- [ ] SEO bÃ¡sico e metadados.
 
-## Fase 6 — Carrinho e WhatsApp
+## Fase 6 â€” Carrinho e WhatsApp
 
 - [ ] carrinho em localStorage;
 - [ ] produtos e combos;
-- [ ] quantidades e remoção;
-- [ ] revalidação de preços;
-- [ ] geração da mensagem;
-- [ ] confirmação de envio;
+- [ ] quantidades e remoÃ§Ã£o;
+- [ ] revalidaÃ§Ã£o de preÃ§os;
+- [ ] geraÃ§Ã£o da mensagem;
+- [ ] confirmaÃ§Ã£o de envio;
 - [ ] limpeza do carrinho;
-- [ ] testes das regras críticas.
+- [ ] testes das regras crÃ­ticas.
 
-## Fase 7 — Produção
+## Fase 7 â€” ProduÃ§Ã£o
 
 - [ ] preparar Heroku;
-- [ ] configurar PostgreSQL de produção;
+- [ ] configurar PostgreSQL de produÃ§Ã£o;
 - [ ] configurar Cloudinary;
-- [ ] configurar variáveis de ambiente;
+- [ ] configurar variÃ¡veis de ambiente;
 - [ ] configurar GitHub Actions;
-- [ ] configurar deploy automático;
+- [ ] configurar deploy automÃ¡tico;
 - [ ] executar migrations no release;
-- [ ] revisar segurança;
+- [ ] revisar seguranÃ§a;
 - [ ] validar responsividade;
-- [ ] executar smoke test de produção.
+- [ ] executar smoke test de produÃ§Ã£o.
 
-## Critérios globais
+## CritÃ©rios globais
 
 Ao concluir cada fase:
 
@@ -105,5 +105,6 @@ Ao concluir cada fase:
 - corrigir erros;
 - atualizar checklist;
 - listar arquivos alterados;
-- registrar decisões e pendências;
-- não avançar para a fase seguinte.
+- registrar decisÃµes e pendÃªncias;
+- nÃ£o avanÃ§ar para a fase seguinte.
+

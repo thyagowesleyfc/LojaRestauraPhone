@@ -1,1 +1,45 @@
-# LojaRestauraPhone
+﻿# LojaRestauraPhone
+
+Aplicacao unica em Next.js App Router para o MVP da RestauraPhone.
+
+## Requisitos
+
+- Node.js 24 ou compativel com Next.js;
+- PostgreSQL acessivel por `DATABASE_URL`;
+- npm.
+
+## Execucao local
+
+1. Instale as dependencias:
+
+   ```bash
+   npm install
+   ```
+
+2. Copie `.env.example` para `.env` e ajuste `DATABASE_URL`.
+
+3. Gere o Prisma Client:
+
+   ```bash
+   npm run prisma:generate
+   ```
+
+4. Inicie o ambiente de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Acesse `http://localhost:3000`.
+
+## Scripts
+
+- `npm run dev`: inicia o Next.js em desenvolvimento;
+- `npm run lint`: executa ESLint;
+- `npm run build`: gera build de producao;
+- `npm test`: executa testes existentes, quando configurados;
+- `npm run prisma:generate`: gera Prisma Client;
+- `npm run prisma:migrate`: executa migrations em desenvolvimento;
+- `npm run prisma:deploy`: aplica migrations em producao;
+- `npm run prisma:seed`: executa seed;
+- `npm run prisma:studio`: abre Prisma Studio.
