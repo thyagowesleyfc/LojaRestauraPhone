@@ -27,7 +27,7 @@ export default async function AdminLayout({
             </Button>
           </form>
         </div>
-        <nav className="mx-auto flex w-full max-w-6xl gap-2 px-6 pb-4 text-sm">
+        <nav className="mx-auto flex w-full max-w-6xl flex-wrap gap-2 px-6 pb-4 text-sm">
           <Button asChild variant="ghost" size="sm">
             <Link href="/admin">Painel</Link>
           </Button>
@@ -39,6 +39,12 @@ export default async function AdminLayout({
           </Button>
           <Button asChild variant="ghost" size="sm">
             <Link href="/admin/promocoes">Promocoes</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/banners">Banners</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/configuracoes">Configuracoes</Link>
           </Button>
         </nav>
       </header>

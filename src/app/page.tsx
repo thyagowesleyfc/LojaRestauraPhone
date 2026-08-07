@@ -26,6 +26,9 @@ export default function Home() {
             <Link href="/promocoes">Ver promocoes</Link>
           </Button>
           <Button asChild variant="outline">
+            <Link href="/quem-somos">Quem somos</Link>
+          </Button>
+          <Button asChild variant="outline">
             <Link href="/admin">Painel admin</Link>
           </Button>
         </div>
