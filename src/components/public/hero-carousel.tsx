@@ -33,7 +33,7 @@ export function HeroCarousel({ banners, fallbackTitle }: HeroCarouselProps) {
   if (!hasBanners) {
     return (
       <div className="relative min-h-[320px] overflow-hidden rounded-xl border border-border bg-secondary">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,var(--primary),transparent_34%),linear-gradient(135deg,var(--secondary),var(--background))] opacity-40" />
+        <div className="absolute inset-x-0 top-0 h-1 bg-primary" />
         <div className="relative flex min-h-[320px] items-end p-6 sm:p-10">
           <div className="max-w-xl space-y-4">
             <h1 className="text-4xl font-semibold tracking-[-0.02em] sm:text-6xl">
@@ -57,10 +57,11 @@ export function HeroCarousel({ banners, fallbackTitle }: HeroCarouselProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt={banner.altText ?? fallbackTitle}
-          className="h-[360px] w-full object-cover sm:h-[460px]"
+          className="h-[340px] w-full object-cover sm:h-[460px]"
           src={banner.imageUrl}
         />
       </a>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
       {banners.length > 1 ? (
         <div className="absolute bottom-4 right-4 flex gap-2">
           <Button

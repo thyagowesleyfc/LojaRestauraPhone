@@ -26,22 +26,24 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary"
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
       href={`/produtos/${product.slug}`}
     >
       {mainImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           alt={mainImage.altText ?? product.description}
-          className="aspect-square w-full object-cover transition-transform group-hover:scale-[1.02]"
+          className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           src={mainImage.url}
         />
       ) : (
         <div className="aspect-square bg-muted" />
       )}
-      <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 font-semibold">{product.description}</h3>
-        <div>
+      <div className="flex flex-1 flex-col justify-between gap-4 p-4">
+        <h3 className="line-clamp-2 font-semibold leading-snug">
+          {product.description}
+        </h3>
+        <div className="space-y-1">
           {hasDiscount ? (
             <p className="text-xs text-muted-foreground line-through">
               {formatMoneyFromCents(product.priceInCents)}
@@ -51,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {formatMoneyFromCents(currentPriceInCents)}
           </p>
           {hasDiscount && product.appliedPromotion?.percentage ? (
-            <p className="text-xs text-muted-foreground">
+            <p className="w-fit rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
               {product.appliedPromotion.percentage}% OFF
             </p>
           ) : null}
