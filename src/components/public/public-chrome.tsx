@@ -96,11 +96,14 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 alt={settings.tradeName}
-                className="h-9 max-w-28 shrink-0 object-contain"
+                className="h-16 w-40 shrink-0 object-contain sm:h-[72px] sm:w-64"
                 src={settings.logoUrl}
               />
-            ) : null}
-            <span className="truncate font-semibold">{settings.tradeName}</span>
+            ) : (
+              <span className="truncate font-semibold">
+                {settings.tradeName}
+              </span>
+            )}
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {links.map((link) => (
@@ -157,11 +160,12 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   alt={settings.tradeName}
-                  className="h-10 max-w-32 object-contain"
+                  className="h-16 w-40 shrink-0 object-contain sm:h-[72px] sm:w-64"
                   src={settings.logoUrl}
                 />
-              ) : null}
-              <span className="font-semibold">{settings.tradeName}</span>
+              ) : (
+                <span className="font-semibold">{settings.tradeName}</span>
+              )}
             </Link>
             <p className="text-sm leading-6 text-muted-foreground">
               {settings.cnpj ? `CNPJ: ${settings.cnpj}` : "CNPJ nao informado"}

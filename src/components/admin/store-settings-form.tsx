@@ -136,11 +136,19 @@ export function StoreSettingsForm({
           />
         ) : null}
         <input
+          id="logo"
           name="logo"
           type="file"
           accept="image/jpeg,image/png,image/webp,image/avif"
+          aria-describedby="logo-upload-hint"
           className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
+        <p
+          className="text-xs leading-5 text-muted-foreground"
+          id="logo-upload-hint"
+        >
+          Tamanho ideal: 512 x 160 px, horizontal e com fundo transparente.
+        </p>
       </section>
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Cores</h2>
