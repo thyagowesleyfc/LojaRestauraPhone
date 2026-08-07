@@ -31,26 +31,19 @@ const links = [
 export function PublicChrome({ children, settings }: PublicChromeProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") {
-      return "light";
-    }
-
-    return window.localStorage.getItem("rp_theme") === "dark"
-      ? "dark"
-      : "light";
-  });
   const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
-    window.localStorage.setItem("rp_theme", theme);
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    const storedTheme = window.localStorage.getItem("rp_theme");
+
+    document.documentElement.classList.toggle("dark", storedTheme === "dark");
+  }, []);
 
   function toggleTheme() {
-    const nextTheme = theme === "dark" ? "light" : "dark";
+    const nextIsDark = !document.documentElement.classList.contains("dark");
 
-    setTheme(nextTheme);
+    document.documentElement.classList.toggle("dark", nextIsDark);
+    window.localStorage.setItem("rp_theme", nextIsDark ? "dark" : "light");
   }
 
   if (isAdmin) {
@@ -90,12 +83,12 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
               </Button>
             ))}
             <Button onClick={toggleTheme} size="sm" type="button" variant="outline">
-              {theme === "dark" ? "Claro" : "Escuro"}
+              Tema
             </Button>
           </nav>
           <div className="flex items-center gap-2 md:hidden">
             <Button onClick={toggleTheme} size="sm" type="button" variant="outline">
-              {theme === "dark" ? "Claro" : "Escuro"}
+              Tema
             </Button>
             <Button
               aria-expanded={menuOpen}
