@@ -31,7 +31,7 @@ export function PromotionCard({ promotion }: PromotionCardProps) {
   const mainImage = promotion.images[0];
 
   return (
-    <article className="overflow-hidden rounded-lg border border-border bg-card">
+    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary">
       {mainImage ? (
         <img
           alt={mainImage.altText ?? promotion.description}
@@ -41,14 +41,16 @@ export function PromotionCard({ promotion }: PromotionCardProps) {
       ) : (
         <div className="aspect-video bg-muted" />
       )}
-      <div className="space-y-4 p-4">
+      <div className="flex flex-1 flex-col justify-between gap-5 p-4">
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-wide text-primary">
             {promotion.type === PromotionType.CATEGORY_PERCENTAGE
               ? "Percentual"
               : "Combo"}
           </p>
-          <h2 className="text-xl font-semibold">{promotion.description}</h2>
+          <h2 className="line-clamp-2 text-xl font-semibold leading-snug">
+            {promotion.description}
+          </h2>
           <p className="text-sm text-muted-foreground">
             {promotion.type === PromotionType.CATEGORY_PERCENTAGE
               ? `${promotion.percentage}% em ${promotion.category?.name ?? "categoria"}`
