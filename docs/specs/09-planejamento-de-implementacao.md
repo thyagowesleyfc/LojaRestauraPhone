@@ -62,25 +62,25 @@ Cada fase deve ser executada e validada separadamente. O Codex nÃƒÆ’Ã‚Â
 
 ## Fase 5 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Home e navegaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pÃƒÆ’Ã‚Âºblica
 
-- [ ] menu responsivo;
-- [ ] hero em carrossel;
-- [ ] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de categorias;
-- [ ] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes;
-- [ ] rodapÃƒÆ’Ã‚Â©;
-- [ ] botÃƒÆ’Ã‚Âµes flutuantes;
-- [ ] tema claro e escuro;
-- [ ] SEO bÃƒÆ’Ã‚Â¡sico e metadados.
+- [x] menu responsivo;
+- [x] hero em carrossel;
+- [x] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de categorias;
+- [x] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes;
+- [x] rodapÃƒÆ’Ã‚Â©;
+- [x] botÃƒÆ’Ã‚Âµes flutuantes;
+- [x] tema claro e escuro;
+- [x] SEO bÃƒÆ’Ã‚Â¡sico e metadados.
 
 ## Fase 6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Carrinho e WhatsApp
 
-- [ ] carrinho em localStorage;
-- [ ] produtos e combos;
-- [ ] quantidades e remoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
-- [ ] revalidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de preÃƒÆ’Ã‚Â§os;
-- [ ] geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da mensagem;
-- [ ] confirmaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de envio;
-- [ ] limpeza do carrinho;
-- [ ] testes das regras crÃƒÆ’Ã‚Â­ticas.
+- [x] carrinho em localStorage;
+- [x] produtos e combos;
+- [x] quantidades e remoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
+- [x] revalidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de preÃƒÆ’Ã‚Â§os;
+- [x] geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da mensagem;
+- [x] confirmaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de envio;
+- [x] limpeza do carrinho;
+- [x] testes das regras crÃƒÆ’Ã‚Â­ticas.
 
 ## Fase 7 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
 

@@ -2,8 +2,8 @@
 import { PromotionType } from "@prisma/client";
 import { notFound } from "next/navigation";
 
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { ProductCard } from "@/components/catalog/product-card";
-import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import {
   getPromotionalPriceInCents,
@@ -92,7 +92,15 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
               Categoria: {promotion.category?.name}
             </p>
           ) : (
-            <Button disabled>Adicionar combo ao carrinho</Button>
+            <AddToCartButton
+              item={{
+                type: "combo",
+                id: promotion.id,
+                description: promotion.description
+              }}
+            >
+              Adicionar combo ao carrinho
+            </AddToCartButton>
           )}
         </section>
       </header>

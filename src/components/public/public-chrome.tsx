@@ -4,6 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import {
+  CART_UPDATED_EVENT,
+  readCartItems
+} from "@/components/cart/cart-storage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,12 +29,14 @@ type PublicChromeProps = {
 const links = [
   { href: "/promocoes", label: "Promocoes" },
   { href: "/categorias", label: "Categorias" },
-  { href: "/quem-somos", label: "Quem somos" }
+  { href: "/quem-somos", label: "Quem somos" },
+  { href: "/carrinho", label: "Carrinho" }
 ];
 
 export function PublicChrome({ children, settings }: PublicChromeProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(0);
   const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
@@ -38,6 +44,31 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
 
     document.documentElement.classList.toggle("dark", storedTheme === "dark");
   }, []);
+
+  useEffect(() => {
+    function syncCartQuantity() {
+      setCartQuantity(
+        readCartItems().reduce((total, item) => total + item.quantity, 0)
+      );
+    }
+
+    syncCartQuantity();
+    window.addEventListener(CART_UPDATED_EVENT, syncCartQuantity);
+    window.addEventListener("storage", syncCartQuantity);
+
+    return () => {
+      window.removeEventListener(CART_UPDATED_EVENT, syncCartQuantity);
+      window.removeEventListener("storage", syncCartQuantity);
+    };
+  }, []);
+
+  function getLinkLabel(link: { href: string; label: string }) {
+    if (link.href === "/carrinho" && cartQuantity > 0) {
+      return `${link.label} (${cartQuantity})`;
+    }
+
+    return link.label;
+  }
 
   function toggleTheme() {
     const nextIsDark = !document.documentElement.classList.contains("dark");
@@ -78,7 +109,7 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
                   className={cn(pathname === link.href && "bg-accent")}
                   href={link.href}
                 >
-                  {link.label}
+                  {getLinkLabel(link)}
                 </Link>
               </Button>
             ))}
@@ -111,7 +142,7 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
                 key={link.href}
                 onClick={() => setMenuOpen(false)}
               >
-                {link.label}
+                {getLinkLabel(link)}
               </Link>
             ))}
           </nav>

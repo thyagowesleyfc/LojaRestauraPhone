@@ -3,7 +3,7 @@ import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
@@ -95,7 +95,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {product.specification}
           </p>
         </div>
-        <Button disabled>Adicionar ao carrinho</Button>
+        <AddToCartButton
+          item={{
+            type: "product",
+            id: product.id,
+            description: product.description
+          }}
+        />
       </section>
     </main>
   );
