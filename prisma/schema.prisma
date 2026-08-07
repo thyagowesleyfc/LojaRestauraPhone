@@ -6,3 +6,162 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum PromotionType {
+  CATEGORY_PERCENTAGE
+  PRODUCT_COMBO
+}
+
+model AdminUser {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     AdminSession[]
+
+  @@index([active])
+}
+
+model AdminSession {
+  id          String    @id @default(cuid())
+  tokenHash   String    @unique
+  adminUserId String
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@index([expiresAt])
+}
+
+model Category {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  slug         String      @unique
+  displayOrder Int         @default(0)
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  products     Product[]
+  promotions   Promotion[]
+
+  @@index([active, displayOrder])
+}
+
+model Product {
+  id            String             @id @default(cuid())
+  categoryId    String
+  description   String
+  slug          String             @unique
+  specification String
+  priceInCents  Int
+  active        Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  category      Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images        ProductImage[]
+  promotions    PromotionProduct[]
+
+  @@index([categoryId])
+  @@index([active])
+  @@index([categoryId, active])
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String
+  url          String
+  publicId     String
+  altText      String?
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, displayOrder])
+}
+
+model Promotion {
+  id                String             @id @default(cuid())
+  type              PromotionType
+  description       String
+  slug              String             @unique
+  categoryId        String?
+  percentage        Int?
+  comboPriceInCents Int?
+  active            Boolean            @default(true)
+  startsAt          DateTime?
+  endsAt            DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  category          Category?          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  products          PromotionProduct[]
+  images            PromotionImage[]
+
+  @@index([type])
+  @@index([active])
+  @@index([categoryId])
+  @@index([startsAt, endsAt])
+}
+
+model PromotionProduct {
+  promotionId  String
+  productId    String
+  displayOrder Int       @default(0)
+  promotion    Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  product      Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@id([promotionId, productId])
+  @@index([productId])
+  @@index([promotionId, displayOrder])
+}
+
+model PromotionImage {
+  id           String    @id @default(cuid())
+  promotionId  String
+  url          String
+  publicId     String
+  altText      String?
+  displayOrder Int       @default(0)
+  createdAt    DateTime  @default(now())
+  promotion    Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  @@index([promotionId, displayOrder])
+}
+
+model Banner {
+  id            String   @id @default(cuid())
+  imageUrl      String
+  imagePublicId String
+  redirectUrl   String
+  altText       String?
+  displayOrder  Int      @default(0)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([active, displayOrder])
+}
+
+model StoreSettings {
+  id                     Int      @id @default(1)
+  tradeName              String
+  cnpj                   String
+  phone                  String
+  email                  String
+  address                String
+  mapEmbedUrl            String
+  aboutText              String
+  whatsappNumber         String
+  whatsappInitialMessage String
+  logoUrl                String?
+  logoPublicId           String?
+  lightPrimaryColor      String
+  lightBackgroundColor   String
+  lightTextColor         String
+  darkPrimaryColor       String
+  darkBackgroundColor    String
+  darkTextColor          String
+  updatedAt              DateTime @updatedAt
+}

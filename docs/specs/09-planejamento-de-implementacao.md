@@ -1,4 +1,4 @@
-﻿# 09 â€” Planejamento de implementaÃ§Ã£o
+# 09 â€” Planejamento de implementaÃ§Ã£o
 
 Cada fase deve ser executada e validada separadamente. O Codex nÃ£o deve avanÃ§ar automaticamente.
 
@@ -19,14 +19,14 @@ Cada fase deve ser executada e validada separadamente. O Codex nÃ£o deve avan�
 
 ## Fase 1 â€” Banco e autenticaÃ§Ã£o
 
-- [ ] implementar schema Prisma completo;
-- [ ] criar migration inicial;
-- [ ] criar seed idempotente;
-- [ ] implementar login, sessÃ£o, logout e proteÃ§Ã£o de rotas;
-- [ ] criar tela mÃ­nima de login;
-- [ ] criar layout administrativo protegido;
-- [ ] testar autenticaÃ§Ã£o;
-- [ ] validar migration e seed em PostgreSQL real.
+- [x] implementar schema Prisma completo;
+- [x] criar migration inicial;
+- [x] criar seed idempotente;
+- [x] implementar login, sessÃ£o, logout e proteÃ§Ã£o de rotas;
+- [x] criar tela mÃ­nima de login;
+- [x] criar layout administrativo protegido;
+- [x] testar autenticaÃ§Ã£o;
+- [x] validar migration e seed em PostgreSQL real.
 
 ## Fase 2 â€” Categorias e produtos
 
@@ -107,4 +107,5 @@ Ao concluir cada fase:
 - listar arquivos alterados;
 - registrar decisÃµes e pendÃªncias;
 - nÃ£o avanÃ§ar para a fase seguinte.
+
 

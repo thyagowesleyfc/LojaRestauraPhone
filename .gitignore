@@ -12,9 +12,6 @@ build
 .env
 .env*.local
 
-# prisma
-prisma/migrations
-
 # local temp files
 .tmp-*
 
