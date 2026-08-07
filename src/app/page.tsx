@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -9,16 +11,20 @@ export default function Home() {
             RestauraPhone
           </p>
           <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
-            Fundacao tecnica do catalogo
+            Catalogo RestauraPhone
           </h1>
           <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-            Aplicacao Next.js preparada para catalogo publico, carrinho via
-            WhatsApp e painel administrativo nas proximas fases.
+            Consulte categorias e produtos cadastrados pela administracao da
+            loja.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button>Base criada</Button>
-          <Button variant="outline">Fase 0</Button>
+          <Button asChild>
+            <Link href="/categorias">Ver categorias</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/admin">Painel admin</Link>
+          </Button>
         </div>
       </section>
     </main>
