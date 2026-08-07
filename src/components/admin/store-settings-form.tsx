@@ -15,6 +15,7 @@ type StoreSettingsFormProps = {
     whatsappInitialMessage: string;
     bannerTransitionSeconds: number;
     logoUrl: string | null;
+    darkLogoUrl: string | null;
     lightPrimaryColor: string;
     lightBackgroundColor: string;
     lightTextColor: string;
@@ -127,28 +128,23 @@ export function StoreSettingsForm({
         </div>
       </section>
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Logo</h2>
-        {settings.logoUrl ? (
-          <img
-            alt={settings.tradeName}
-            className="max-h-24 rounded-md border border-border object-contain p-3"
-            src={settings.logoUrl}
+        <h2 className="text-xl font-semibold">Logos</h2>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <LogoUploadField
+            hintId="light-logo-upload-hint"
+            imageUrl={settings.logoUrl}
+            label="Logo tema claro"
+            name="logo"
+            tradeName={settings.tradeName}
           />
-        ) : null}
-        <input
-          id="logo"
-          name="logo"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/avif"
-          aria-describedby="logo-upload-hint"
-          className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        />
-        <p
-          className="text-xs leading-5 text-muted-foreground"
-          id="logo-upload-hint"
-        >
-          Tamanho ideal: 512 x 160 px, horizontal e com fundo transparente.
-        </p>
+          <LogoUploadField
+            hintId="dark-logo-upload-hint"
+            imageUrl={settings.darkLogoUrl}
+            label="Logo tema escuro"
+            name="darkLogo"
+            tradeName={settings.tradeName}
+          />
+        </div>
       </section>
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Cores</h2>
@@ -190,6 +186,45 @@ export function StoreSettingsForm({
   );
 }
 
+function LogoUploadField({
+  hintId,
+  imageUrl,
+  label,
+  name,
+  tradeName
+}: {
+  hintId: string;
+  imageUrl: string | null;
+  label: string;
+  name: string;
+  tradeName: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium" htmlFor={name}>
+        {label}
+      </label>
+      {imageUrl ? (
+        <img
+          alt={`${label} - ${tradeName}`}
+          className="h-24 w-full border-0 bg-transparent object-contain p-0 shadow-none ring-0"
+          src={imageUrl}
+        />
+      ) : null}
+      <input
+        id={name}
+        name={name}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/avif"
+        aria-describedby={hintId}
+        className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      />
+      <p className="text-xs leading-5 text-muted-foreground" id={hintId}>
+        Tamanho ideal: 512 x 160 px, horizontal e com fundo transparente.
+      </p>
+    </div>
+  );
+}
 function TextField({
   name,
   label,

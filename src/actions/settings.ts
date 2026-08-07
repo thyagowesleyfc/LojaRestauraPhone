@@ -270,9 +270,23 @@ export async function updateStoreSettingsAction(formData: FormData) {
     where: { id: 1 }
   });
   const logo = getImageFile(formData, "logo");
-  const uploadedLogo = logo
-    ? await uploadImageOrRedirect(logo, "/admin/configuracoes")
-    : null;
+  const darkLogo = getImageFile(formData, "darkLogo");
+  let uploadedLogo: UploadedImage | null = null;
+  let uploadedDarkLogo: UploadedImage | null = null;
+
+  try {
+    uploadedLogo = logo ? await uploadCatalogImage(logo) : null;
+    uploadedDarkLogo = darkLogo ? await uploadCatalogImage(darkLogo) : null;
+  } catch (error) {
+    await Promise.all([
+      deleteImageQuietly(uploadedLogo),
+      deleteImageQuietly(uploadedDarkLogo)
+    ]);
+    redirectWithError(
+      "/admin/configuracoes",
+      error instanceof Error ? error.message : "Falha ao enviar imagens."
+    );
+  }
 
   try {
     await prisma.storeSettings.upsert({
@@ -280,17 +294,25 @@ export async function updateStoreSettingsAction(formData: FormData) {
       update: {
         ...parsed.data,
         logoUrl: uploadedLogo?.url ?? currentSettings?.logoUrl,
-        logoPublicId: uploadedLogo?.publicId ?? currentSettings?.logoPublicId
+        logoPublicId: uploadedLogo?.publicId ?? currentSettings?.logoPublicId,
+        darkLogoUrl: uploadedDarkLogo?.url ?? currentSettings?.darkLogoUrl,
+        darkLogoPublicId:
+          uploadedDarkLogo?.publicId ?? currentSettings?.darkLogoPublicId
       },
       create: {
         id: 1,
         ...parsed.data,
         logoUrl: uploadedLogo?.url,
-        logoPublicId: uploadedLogo?.publicId
+        logoPublicId: uploadedLogo?.publicId,
+        darkLogoUrl: uploadedDarkLogo?.url,
+        darkLogoPublicId: uploadedDarkLogo?.publicId
       }
     });
   } catch (error) {
-    await deleteImageQuietly(uploadedLogo);
+    await Promise.all([
+      deleteImageQuietly(uploadedLogo),
+      deleteImageQuietly(uploadedDarkLogo)
+    ]);
 
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -302,12 +324,20 @@ export async function updateStoreSettingsAction(formData: FormData) {
     throw error;
   }
 
-  if (uploadedLogo && currentSettings?.logoPublicId) {
-    await deleteImageQuietly({
-      url: currentSettings.logoUrl ?? "",
-      publicId: currentSettings.logoPublicId
-    });
-  }
+  await Promise.all([
+    uploadedLogo && currentSettings?.logoPublicId
+      ? deleteImageQuietly({
+          url: currentSettings.logoUrl ?? "",
+          publicId: currentSettings.logoPublicId
+        })
+      : Promise.resolve(),
+    uploadedDarkLogo && currentSettings?.darkLogoPublicId
+      ? deleteImageQuietly({
+          url: currentSettings.darkLogoUrl ?? "",
+          publicId: currentSettings.darkLogoPublicId
+        })
+      : Promise.resolve()
+  ]);
 
   revalidatePath("/");
   revalidatePath("/quem-somos");

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -23,6 +24,7 @@ type PublicChromeProps = {
     whatsappNumber: string;
     whatsappInitialMessage: string;
     logoUrl: string | null;
+    darkLogoUrl: string | null;
   };
 };
 
@@ -32,6 +34,56 @@ const links = [
   { href: "/quem-somos", label: "Quem somos" },
   { href: "/carrinho", label: "Carrinho" }
 ];
+
+function BrandLogo({
+  darkLogoUrl,
+  imageClassName,
+  logoUrl,
+  textClassName,
+  tradeName
+}: {
+  darkLogoUrl: string | null;
+  imageClassName: string;
+  logoUrl: string | null;
+  textClassName: string;
+  tradeName: string;
+}) {
+  if (logoUrl && darkLogoUrl) {
+    return (
+      <>
+        <img
+          alt={tradeName}
+          className={cn(imageClassName, "dark:hidden")}
+          src={logoUrl}
+        />
+        <img
+          alt={tradeName}
+          className={cn(imageClassName, "hidden dark:block")}
+          src={darkLogoUrl}
+        />
+      </>
+    );
+  }
+
+  if (logoUrl) {
+    return <img alt={tradeName} className={imageClassName} src={logoUrl} />;
+  }
+
+  if (darkLogoUrl) {
+    return (
+      <>
+        <span className={cn(textClassName, "dark:hidden")}>{tradeName}</span>
+        <img
+          alt={tradeName}
+          className={cn(imageClassName, "hidden dark:block")}
+          src={darkLogoUrl}
+        />
+      </>
+    );
+  }
+
+  return <span className={textClassName}>{tradeName}</span>;
+}
 
 export function PublicChrome({ children, settings }: PublicChromeProps) {
   const pathname = usePathname();
@@ -92,18 +144,13 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <Link className="flex min-w-0 items-center gap-3" href="/">
-            {settings.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                alt={settings.tradeName}
-                className="h-16 w-40 shrink-0 object-contain sm:h-[72px] sm:w-64"
-                src={settings.logoUrl}
-              />
-            ) : (
-              <span className="truncate font-semibold">
-                {settings.tradeName}
-              </span>
-            )}
+            <BrandLogo
+              darkLogoUrl={settings.darkLogoUrl}
+              imageClassName="h-16 w-40 shrink-0 border-0 bg-transparent object-contain p-0 shadow-none ring-0 sm:h-[72px] sm:w-64"
+              logoUrl={settings.logoUrl}
+              textClassName="truncate font-semibold"
+              tradeName={settings.tradeName}
+            />
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {links.map((link) => (
@@ -156,16 +203,13 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
         <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
           <div className="space-y-3">
             <Link className="flex items-center gap-3" href="/">
-              {settings.logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={settings.tradeName}
-                  className="h-16 w-40 shrink-0 object-contain sm:h-[72px] sm:w-64"
-                  src={settings.logoUrl}
-                />
-              ) : (
-                <span className="font-semibold">{settings.tradeName}</span>
-              )}
+              <BrandLogo
+                darkLogoUrl={settings.darkLogoUrl}
+                imageClassName="h-16 w-40 shrink-0 border-0 bg-transparent object-contain p-0 shadow-none ring-0 sm:h-[72px] sm:w-64"
+                logoUrl={settings.logoUrl}
+                textClassName="font-semibold"
+                tradeName={settings.tradeName}
+              />
             </Link>
             <p className="text-sm leading-6 text-muted-foreground">
               {settings.cnpj ? `CNPJ: ${settings.cnpj}` : "CNPJ nao informado"}

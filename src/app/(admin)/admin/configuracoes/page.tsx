@@ -21,6 +21,7 @@ const fallbackSettings = {
   whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
   bannerTransitionSeconds: 5,
   logoUrl: null,
+  darkLogoUrl: null,
   lightPrimaryColor: "#16a34a",
   lightBackgroundColor: "#ffffff",
   lightTextColor: "#171717",

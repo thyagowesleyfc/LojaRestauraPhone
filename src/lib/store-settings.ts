@@ -16,6 +16,8 @@ export const fallbackStoreSettings = {
   bannerTransitionSeconds: 5,
   logoUrl: null,
   logoPublicId: null,
+  darkLogoUrl: null,
+  darkLogoPublicId: null,
   lightPrimaryColor: "#16a34a",
   lightBackgroundColor: "#ffffff",
   lightTextColor: "#171717",

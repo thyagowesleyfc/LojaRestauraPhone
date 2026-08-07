@@ -160,6 +160,8 @@ model StoreSettings {
   bannerTransitionSeconds Int      @default(5)
   logoUrl                 String?
   logoPublicId            String?
+  darkLogoUrl             String?
+  darkLogoPublicId        String?
   lightPrimaryColor       String
   lightBackgroundColor    String
   lightTextColor          String
