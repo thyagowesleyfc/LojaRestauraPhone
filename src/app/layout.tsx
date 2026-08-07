@@ -18,10 +18,9 @@ export default async function RootLayout({
   const settings = await getStoreSettings();
 
   return (
-    <html lang="pt-BR">
-      <body style={getStoreThemeStyle(settings)}>
-        {children}
-        <PublicChrome settings={settings} />
+    <html lang="pt-BR" style={getStoreThemeStyle(settings)}>
+      <body>
+        <PublicChrome settings={settings}>{children}</PublicChrome>
       </body>
     </html>
   );

@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type PublicChromeProps = {
+  children: ReactNode;
   settings: {
     tradeName: string;
     cnpj: string;
@@ -17,11 +22,39 @@ type PublicChromeProps = {
   };
 };
 
-export function PublicChrome({ settings }: PublicChromeProps) {
-  const pathname = usePathname();
+const links = [
+  { href: "/promocoes", label: "Promocoes" },
+  { href: "/categorias", label: "Categorias" },
+  { href: "/quem-somos", label: "Quem somos" }
+];
 
-  if (pathname.startsWith("/admin")) {
-    return null;
+export function PublicChrome({ children, settings }: PublicChromeProps) {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
+
+    return window.localStorage.getItem("rp_theme") === "dark"
+      ? "dark"
+      : "light";
+  });
+  const isAdmin = pathname.startsWith("/admin");
+
+  useEffect(() => {
+    window.localStorage.setItem("rp_theme", theme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  function toggleTheme() {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+
+    setTheme(nextTheme);
+  }
+
+  if (isAdmin) {
+    return <>{children}</>;
   }
 
   const whatsappHref = settings.whatsappNumber
@@ -32,6 +65,66 @@ export function PublicChrome({ settings }: PublicChromeProps) {
 
   return (
     <>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          <Link className="flex min-w-0 items-center gap-3" href="/">
+            {settings.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                alt={settings.tradeName}
+                className="h-9 max-w-28 shrink-0 object-contain"
+                src={settings.logoUrl}
+              />
+            ) : null}
+            <span className="truncate font-semibold">{settings.tradeName}</span>
+          </Link>
+          <nav className="hidden items-center gap-1 md:flex">
+            {links.map((link) => (
+              <Button asChild key={link.href} size="sm" variant="ghost">
+                <Link
+                  className={cn(pathname === link.href && "bg-accent")}
+                  href={link.href}
+                >
+                  {link.label}
+                </Link>
+              </Button>
+            ))}
+            <Button onClick={toggleTheme} size="sm" type="button" variant="outline">
+              {theme === "dark" ? "Claro" : "Escuro"}
+            </Button>
+          </nav>
+          <div className="flex items-center gap-2 md:hidden">
+            <Button onClick={toggleTheme} size="sm" type="button" variant="outline">
+              {theme === "dark" ? "Claro" : "Escuro"}
+            </Button>
+            <Button
+              aria-expanded={menuOpen}
+              aria-label="Abrir menu"
+              onClick={() => setMenuOpen((open) => !open)}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              Menu
+            </Button>
+          </div>
+        </div>
+        {menuOpen ? (
+          <nav className="mx-auto grid w-full max-w-6xl gap-2 px-6 pb-4 md:hidden">
+            {links.map((link) => (
+              <Link
+                className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                href={link.href}
+                key={link.href}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        ) : null}
+      </header>
+      {children}
       <footer className="border-t border-border bg-muted/40">
         <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
           <div className="space-y-3">
