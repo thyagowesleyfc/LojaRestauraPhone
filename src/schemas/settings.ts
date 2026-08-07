@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 const requiredText = z.string().trim().min(1, "Campo obrigatorio.");
-const optionalText = z.string().trim().optional().transform((value) => value ?? "");
+const optionalText = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => value ?? "");
 const hexColor = z
   .string()
   .trim()
@@ -30,6 +34,11 @@ export const storeSettingsInputSchema = z.object({
     300,
     "Use no maximo 300 caracteres."
   ),
+  bannerTransitionSeconds: z.coerce
+    .number()
+    .int("Use um numero inteiro de segundos.")
+    .min(3, "Use no minimo 3 segundos.")
+    .max(30, "Use no maximo 30 segundos."),
   lightPrimaryColor: hexColor,
   lightBackgroundColor: hexColor,
   lightTextColor: hexColor,

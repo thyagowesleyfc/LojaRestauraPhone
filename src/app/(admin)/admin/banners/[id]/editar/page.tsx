@@ -33,7 +33,7 @@ export default async function EditBannerPage({
         <div>
           <h1 className="text-3xl font-semibold">Editar banner</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Atualize imagem, link, ordem e status.
+            Atualize imagens desktop/mobile, headline, link, ordem e status.
           </p>
         </div>
         <Button asChild variant="outline">

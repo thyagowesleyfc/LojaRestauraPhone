@@ -1,4 +1,4 @@
-﻿import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -76,6 +76,7 @@ async function main() {
         aboutText: "",
         whatsappNumber: "",
         whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
+        bannerTransitionSeconds: 5,
         lightPrimaryColor: "#16a34a",
         lightBackgroundColor: "#ffffff",
         lightTextColor: "#171717",

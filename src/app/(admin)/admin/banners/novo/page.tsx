@@ -22,7 +22,7 @@ export default async function NewBannerPage({
         <div>
           <h1 className="text-3xl font-semibold">Novo banner</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Envie a imagem e defina o link de destino.
+            Envie as imagens desktop/mobile e defina headline, link e ordem.
           </p>
         </div>
         <Button asChild variant="outline">

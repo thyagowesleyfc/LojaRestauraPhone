@@ -50,6 +50,8 @@ function parseStoreSettingsFormData(formData: FormData) {
     aboutText: getStringValue(formData, "aboutText"),
     whatsappNumber: getStringValue(formData, "whatsappNumber"),
     whatsappInitialMessage: getStringValue(formData, "whatsappInitialMessage"),
+    bannerTransitionSeconds:
+      getStringValue(formData, "bannerTransitionSeconds") || "5",
     lightPrimaryColor: getStringValue(formData, "lightPrimaryColor"),
     lightBackgroundColor: getStringValue(formData, "lightBackgroundColor"),
     lightTextColor: getStringValue(formData, "lightTextColor"),
@@ -71,11 +73,42 @@ async function uploadImageOrRedirect(file: File, errorPath: string) {
 }
 
 async function deleteImageQuietly(image: UploadedImage | null) {
-  if (!image) {
+  if (!image?.publicId) {
     return;
   }
 
   await Promise.allSettled([deleteCatalogImage(image.publicId)]);
+}
+
+async function uploadRequiredBannerImages(formData: FormData, errorPath: string) {
+  const desktopImage = getImageFile(formData, "desktopImage");
+  const mobileImage = getImageFile(formData, "mobileImage");
+
+  if (!desktopImage) {
+    redirectWithError(errorPath, "Envie a imagem desktop do banner.");
+  }
+
+  if (!mobileImage) {
+    redirectWithError(errorPath, "Envie a imagem mobile do banner.");
+  }
+
+  let uploadedDesktop: UploadedImage | null = null;
+
+  try {
+    uploadedDesktop = await uploadCatalogImage(desktopImage);
+    const uploadedMobile = await uploadCatalogImage(mobileImage);
+
+    return {
+      desktop: uploadedDesktop,
+      mobile: uploadedMobile
+    };
+  } catch (error) {
+    await deleteImageQuietly(uploadedDesktop);
+    redirectWithError(
+      errorPath,
+      error instanceof Error ? error.message : "Falha ao enviar imagens."
+    );
+  }
 }
 
 export async function createBannerAction(formData: FormData) {
@@ -88,19 +121,18 @@ export async function createBannerAction(formData: FormData) {
     );
   }
 
-  const image = getImageFile(formData, "image");
-
-  if (!image) {
-    redirectWithError("/admin/banners/novo", "Envie a imagem do banner.");
-  }
-
-  const uploadedImage = await uploadImageOrRedirect(image, "/admin/banners/novo");
+  const uploadedImages = await uploadRequiredBannerImages(
+    formData,
+    "/admin/banners/novo"
+  );
 
   try {
     await prisma.banner.create({
       data: {
-        imageUrl: uploadedImage.url,
-        imagePublicId: uploadedImage.publicId,
+        imageUrl: uploadedImages.desktop.url,
+        imagePublicId: uploadedImages.desktop.publicId,
+        mobileImageUrl: uploadedImages.mobile.url,
+        mobileImagePublicId: uploadedImages.mobile.publicId,
         redirectUrl: parsed.data.redirectUrl,
         altText: parsed.data.altText,
         displayOrder: parsed.data.displayOrder,
@@ -108,7 +140,10 @@ export async function createBannerAction(formData: FormData) {
       }
     });
   } catch (error) {
-    await deleteImageQuietly(uploadedImage);
+    await Promise.all([
+      deleteImageQuietly(uploadedImages.desktop),
+      deleteImageQuietly(uploadedImages.mobile)
+    ]);
     throw error;
   }
 
@@ -136,17 +171,24 @@ export async function updateBannerAction(formData: FormData) {
     redirectWithError("/admin/banners", "Banner nao encontrado.");
   }
 
-  const image = getImageFile(formData, "image");
-  const uploadedImage = image
-    ? await uploadImageOrRedirect(image, `/admin/banners/${id}/editar`)
+  const desktopImage = getImageFile(formData, "desktopImage");
+  const mobileImage = getImageFile(formData, "mobileImage");
+  const uploadedDesktop = desktopImage
+    ? await uploadImageOrRedirect(desktopImage, `/admin/banners/${id}/editar`)
+    : null;
+  const uploadedMobile = mobileImage
+    ? await uploadImageOrRedirect(mobileImage, `/admin/banners/${id}/editar`)
     : null;
 
   try {
     await prisma.banner.update({
       where: { id },
       data: {
-        imageUrl: uploadedImage?.url ?? banner.imageUrl,
-        imagePublicId: uploadedImage?.publicId ?? banner.imagePublicId,
+        imageUrl: uploadedDesktop?.url ?? banner.imageUrl,
+        imagePublicId: uploadedDesktop?.publicId ?? banner.imagePublicId,
+        mobileImageUrl: uploadedMobile?.url ?? banner.mobileImageUrl,
+        mobileImagePublicId:
+          uploadedMobile?.publicId ?? banner.mobileImagePublicId,
         redirectUrl: parsed.data.redirectUrl,
         altText: parsed.data.altText,
         displayOrder: parsed.data.displayOrder,
@@ -154,14 +196,24 @@ export async function updateBannerAction(formData: FormData) {
       }
     });
   } catch (error) {
-    await deleteImageQuietly(uploadedImage);
+    await Promise.all([
+      deleteImageQuietly(uploadedDesktop),
+      deleteImageQuietly(uploadedMobile)
+    ]);
     throw error;
   }
 
-  if (uploadedImage) {
+  if (uploadedDesktop) {
     await deleteImageQuietly({
       url: banner.imageUrl,
       publicId: banner.imagePublicId
+    });
+  }
+
+  if (uploadedMobile && banner.mobileImagePublicId) {
+    await deleteImageQuietly({
+      url: banner.mobileImageUrl ?? "",
+      publicId: banner.mobileImagePublicId
     });
   }
 
@@ -184,10 +236,20 @@ export async function deleteBannerAction(formData: FormData) {
   }
 
   await prisma.banner.delete({ where: { id } });
-  await deleteImageQuietly({
-    url: banner.imageUrl,
-    publicId: banner.imagePublicId
-  });
+  await Promise.all([
+    deleteImageQuietly({
+      url: banner.imageUrl,
+      publicId: banner.imagePublicId
+    }),
+    deleteImageQuietly(
+      banner.mobileImagePublicId
+        ? {
+            url: banner.mobileImageUrl ?? "",
+            publicId: banner.mobileImagePublicId
+          }
+        : null
+    )
+  ]);
 
   revalidatePath("/");
   revalidatePath("/admin/banners");

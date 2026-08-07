@@ -23,7 +23,8 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
         <div>
           <h1 className="text-3xl font-semibold">Banners</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre imagens, links, ordem e disponibilidade publica.
+            Cadastre imagens desktop/mobile, headline, links, ordem e
+            disponibilidade publica.
           </p>
         </div>
         <Button asChild>
@@ -39,21 +40,33 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
         {banners.map((banner) => (
           <article
             key={banner.id}
-            className="grid gap-4 rounded-lg border border-border p-4 md:grid-cols-[180px_1fr_auto]"
+            className="grid gap-4 rounded-lg border border-border p-4 lg:grid-cols-[260px_1fr_auto]"
           >
-            <img
-              alt={banner.altText ?? "Banner"}
-              className="aspect-video w-full rounded-md object-cover md:w-[180px]"
-              src={banner.imageUrl}
-            />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <img
+                alt={banner.altText ?? "Banner desktop"}
+                className="aspect-[16/6] w-full rounded-md object-cover"
+                src={banner.imageUrl}
+              />
+              {banner.mobileImageUrl ? (
+                <img
+                  alt={banner.altText ?? "Banner mobile"}
+                  className="aspect-[4/5] w-full rounded-md object-cover sm:max-h-40 lg:max-h-none"
+                  src={banner.mobileImageUrl}
+                />
+              ) : null}
+            </div>
             <div className="space-y-1">
               <h2 className="font-semibold">{banner.altText || "Banner"}</h2>
               <p className="break-all text-sm text-muted-foreground">
                 {banner.redirectUrl}
               </p>
               <p className="text-sm">
-                Ordem {banner.displayOrder} ·{" "}
-                {banner.active ? "Ativo" : "Inativo"}
+                Ordem {banner.displayOrder} - {banner.active ? "Ativo" : "Inativo"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Desktop: 1920x720px recomendado. Mobile: 900x1200px
+                recomendado.
               </p>
             </div>
             <div className="flex flex-wrap items-start gap-2">

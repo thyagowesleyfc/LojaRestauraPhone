@@ -79,39 +79,11 @@ export default async function Home() {
 
   return (
     <main className="pb-14">
-      <section className="border-b border-border bg-muted/30">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:py-12">
-          <div className="space-y-7">
-            <h1 className="max-w-xl text-4xl font-semibold leading-none tracking-[-0.03em] text-foreground sm:text-6xl">
-              {settings.tradeName}
-            </h1>
-            <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              Acessorios, capas, carregadores e promocoes selecionados para quem
-              quer resolver a compra rapido e chamar a loja pelo WhatsApp.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild>
-                <Link href="/categorias">Montar carrinho</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/promocoes">Ver promocoes</Link>
-              </Button>
-            </div>
-            <div className="grid max-w-xl gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-              <p className="rounded-lg border border-border bg-background p-3">
-                Sem cadastro de cliente.
-              </p>
-              <p className="rounded-lg border border-border bg-background p-3">
-                Produtos e combos no mesmo pedido.
-              </p>
-              <p className="rounded-lg border border-border bg-background p-3">
-                Fechamento direto pelo WhatsApp.
-              </p>
-            </div>
-          </div>
-          <HeroCarousel banners={banners} fallbackTitle={settings.tradeName} />
-        </div>
-      </section>
+      <HeroCarousel
+        autoplaySeconds={settings.bannerTransitionSeconds}
+        banners={banners}
+        fallbackTitle={settings.tradeName}
+      />
 
       <section className="mx-auto w-full max-w-6xl space-y-6 px-6 py-14">
         <div className="flex flex-wrap items-end justify-between gap-4">

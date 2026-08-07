@@ -13,6 +13,7 @@ export const fallbackStoreSettings = {
   aboutText: "",
   whatsappNumber: "",
   whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
+  bannerTransitionSeconds: 5,
   logoUrl: null,
   logoPublicId: null,
   lightPrimaryColor: "#16a34a",
