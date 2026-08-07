@@ -7,6 +7,10 @@ type ProductCardProps = {
     description: string;
     slug: string;
     priceInCents: number;
+    currentPriceInCents?: number;
+    appliedPromotion?: {
+      percentage: number | null;
+    } | null;
     images: Array<{
       url: string;
       altText: string | null;
@@ -16,6 +20,9 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   const mainImage = product.images[0];
+  const currentPriceInCents =
+    product.currentPriceInCents ?? product.priceInCents;
+  const hasDiscount = currentPriceInCents < product.priceInCents;
 
   return (
     <Link
@@ -34,9 +41,21 @@ export function ProductCard({ product }: ProductCardProps) {
       )}
       <div className="space-y-2 p-4">
         <h3 className="line-clamp-2 font-semibold">{product.description}</h3>
-        <p className="text-sm font-medium text-primary">
-          {formatMoneyFromCents(product.priceInCents)}
-        </p>
+        <div>
+          {hasDiscount ? (
+            <p className="text-xs text-muted-foreground line-through">
+              {formatMoneyFromCents(product.priceInCents)}
+            </p>
+          ) : null}
+          <p className="text-sm font-medium text-primary">
+            {formatMoneyFromCents(currentPriceInCents)}
+          </p>
+          {hasDiscount && product.appliedPromotion?.percentage ? (
+            <p className="text-xs text-muted-foreground">
+              {product.appliedPromotion.percentage}% OFF
+            </p>
+          ) : null}
+        </div>
       </div>
     </Link>
   );

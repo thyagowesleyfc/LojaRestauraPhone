@@ -1,8 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
+import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
+import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
 
 type ProductPageProps = {
@@ -22,7 +25,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
       }
     },
     include: {
-      category: true,
+      category: {
+        include: {
+          promotions: {
+            where: {
+              type: PromotionType.CATEGORY_PERCENTAGE,
+              active: true
+            }
+          }
+        }
+      },
       images: {
         orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }]
       }
@@ -33,11 +45,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
+  const pricing = getPromotionalPriceInCents(
+    product.priceInCents,
+    product.category.promotions
+  );
+  const hasDiscount = pricing.currentPriceInCents < pricing.originalPriceInCents;
+
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr]">
       <section className="grid gap-4 sm:grid-cols-2">
         {product.images.map((image) => (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             key={image.id}
             alt={image.altText ?? product.description}
@@ -55,9 +72,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {product.category.name}
           </Link>
           <h1 className="text-4xl font-semibold">{product.description}</h1>
-          <p className="text-2xl font-semibold text-primary">
-            {formatMoneyFromCents(product.priceInCents)}
-          </p>
+          <div>
+            {hasDiscount ? (
+              <p className="text-sm text-muted-foreground line-through">
+                {formatMoneyFromCents(pricing.originalPriceInCents)}
+              </p>
+            ) : null}
+            <p className="text-2xl font-semibold text-primary">
+              {formatMoneyFromCents(pricing.currentPriceInCents)}
+            </p>
+            {pricing.appliedPromotion?.percentage ? (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {pricing.appliedPromotion.description} ·{" "}
+                {pricing.appliedPromotion.percentage}% OFF
+              </p>
+            ) : null}
+          </div>
         </div>
         <div className="space-y-2">
           <h2 className="font-semibold">Especificacao</h2>

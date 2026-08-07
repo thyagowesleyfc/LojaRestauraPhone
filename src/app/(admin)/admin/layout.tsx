@@ -37,6 +37,9 @@ export default async function AdminLayout({
           <Button asChild variant="ghost" size="sm">
             <Link href="/admin/produtos">Produtos</Link>
           </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/promocoes">Promocoes</Link>
+          </Button>
         </nav>
       </header>
       <main className="mx-auto w-full max-w-6xl px-6 py-8">{children}</main>

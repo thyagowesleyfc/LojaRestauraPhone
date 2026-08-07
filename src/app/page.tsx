@@ -14,13 +14,16 @@ export default function Home() {
             Catalogo RestauraPhone
           </h1>
           <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-            Consulte categorias e produtos cadastrados pela administracao da
-            loja.
+            Consulte categorias, produtos e promocoes cadastrados pela
+            administracao da loja.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button asChild>
             <Link href="/categorias">Ver categorias</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/promocoes">Ver promocoes</Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/admin">Painel admin</Link>

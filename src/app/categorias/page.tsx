@@ -1,7 +1,9 @@
+import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/catalog/product-card";
 import { Button } from "@/components/ui/button";
+import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
 
 export default async function CategoriesPage() {
@@ -11,6 +13,12 @@ export default async function CategoriesPage() {
     },
     orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
     include: {
+      promotions: {
+        where: {
+          type: PromotionType.CATEGORY_PERCENTAGE,
+          active: true
+        }
+      },
       products: {
         where: {
           active: true
@@ -50,7 +58,16 @@ export default async function CategoriesPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {category.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    ...product,
+                    ...getPromotionalPriceInCents(
+                      product.priceInCents,
+                      category.promotions
+                    )
+                  }}
+                />
               ))}
             </div>
             {category.products.length === 0 ? (
