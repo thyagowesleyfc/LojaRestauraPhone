@@ -30,7 +30,14 @@ export default async function Home() {
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }]
     }),
     prisma.category.findMany({
-      where: { active: true },
+      where: {
+        active: true,
+        products: {
+          some: {
+            active: true
+          }
+        }
+      },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       take: 6,
       include: {
@@ -112,19 +119,25 @@ export default async function Home() {
                   Ver categoria
                 </Link>
               </div>
-              <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {category.products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={{
-                      ...product,
-                      ...getPromotionalPriceInCents(
-                        product.priceInCents,
-                        category.promotions
-                      )
-                    }}
-                  />
-                ))}
+              <div className="-mx-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
+                <div className="flex min-w-0 snap-x gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
+                  {category.products.map((product) => (
+                    <div
+                      className="w-[min(78vw,18rem)] shrink-0 snap-start sm:w-72 md:w-80 lg:w-auto lg:shrink"
+                      key={product.id}
+                    >
+                      <ProductCard
+                        product={{
+                          ...product,
+                          ...getPromotionalPriceInCents(
+                            product.priceInCents,
+                            category.promotions
+                          )
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
           ))}
