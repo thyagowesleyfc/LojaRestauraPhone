@@ -23,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
+  const now = new Date();
   const [settings, banners, categories, promotions] = await Promise.all([
     getStoreSettings(),
     prisma.banner.findMany({
@@ -61,7 +62,11 @@ export default async function Home() {
       }
     }),
     prisma.promotion.findMany({
-      where: { active: true },
+      where: {
+        active: true,
+        OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+        AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }]
+      },
       orderBy: [{ createdAt: "desc" }],
       take: 6,
       include: {
@@ -78,7 +83,7 @@ export default async function Home() {
     })
   ]);
   const activePromotions = promotions.filter((promotion) =>
-    isPromotionCurrentlyActive(promotion)
+    isPromotionCurrentlyActive(promotion, now)
   );
   const categoriesWithProducts = categories.filter(
     (category) => category.products.length > 0
@@ -149,33 +154,30 @@ export default async function Home() {
         ) : null}
       </section>
 
-      <section className="border-y border-border bg-muted/30 py-14">
-        <div className="mx-auto w-full max-w-6xl space-y-6 px-6">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-semibold tracking-[-0.02em]">
-                Promocoes
-              </h2>
-              <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-                Descontos por categoria e combos ativos recalculados no servidor.
-              </p>
+      {activePromotions.length > 0 ? (
+        <section className="border-y border-border bg-muted/30 py-14">
+          <div className="mx-auto w-full max-w-6xl space-y-6 px-6">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-semibold tracking-[-0.02em]">
+                  Promocoes
+                </h2>
+                <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+                  Descontos por categoria e combos ativos recalculados no servidor.
+                </p>
+              </div>
+              <Button asChild variant="outline">
+                <Link href="/promocoes">Todas as promocoes</Link>
+              </Button>
             </div>
-            <Button asChild variant="outline">
-              <Link href="/promocoes">Todas as promocoes</Link>
-            </Button>
+            <div className="grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {activePromotions.map((promotion) => (
+                <PromotionCard key={promotion.id} promotion={promotion} />
+              ))}
+            </div>
           </div>
-          <div className="grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {activePromotions.map((promotion) => (
-              <PromotionCard key={promotion.id} promotion={promotion} />
-            ))}
-          </div>
-          {activePromotions.length === 0 ? (
-            <p className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-              Nenhuma promocao ativa no momento.
-            </p>
-          ) : null}
-        </div>
-      </section>
+        </section>
+      ) : null}
     </main>
   );
 }
