@@ -118,7 +118,7 @@ export function HeroCarousel({
           <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
             {heroCopy}
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 pb-8 sm:pb-0">
             <Button asChild>
               <a href={currentBanner.redirectUrl}>Ver destaque</a>
             </Button>
