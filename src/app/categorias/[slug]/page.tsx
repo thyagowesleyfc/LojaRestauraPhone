@@ -1,6 +1,10 @@
-import { PromotionType } from "@prisma/client";
+import { PromotionType, type Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
 
+import {
+  CategoryProductSortSelect,
+  type CategoryProductSort
+} from "@/components/catalog/category-product-sort-select";
 import { ProductCard } from "@/components/catalog/product-card";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
@@ -9,10 +13,42 @@ type CategoryPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams?: Promise<{
+    ordenar?: string | string[];
+  }>;
 };
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+function getCategoryProductSort(value: string | string[] | undefined) {
+  const sortValue = Array.isArray(value) ? value[0] : value;
+
+  if (sortValue === "maior-preco" || sortValue === "menor-preco") {
+    return sortValue;
+  }
+
+  return "alfabetica";
+}
+
+function getProductOrderBy(
+  sort: CategoryProductSort
+): Prisma.ProductOrderByWithRelationInput[] {
+  if (sort === "maior-preco") {
+    return [{ priceInCents: "desc" }, { description: "asc" }];
+  }
+
+  if (sort === "menor-preco") {
+    return [{ priceInCents: "asc" }, { description: "asc" }];
+  }
+
+  return [{ description: "asc" }, { createdAt: "desc" }];
+}
+
+export default async function CategoryPage({
+  params,
+  searchParams
+}: CategoryPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const productSort = getCategoryProductSort(resolvedSearchParams.ordenar);
   const category = await prisma.category.findFirst({
     where: {
       slug,
@@ -29,7 +65,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         where: {
           active: true
         },
-        orderBy: [{ createdAt: "desc" }],
+        orderBy: getProductOrderBy(productSort),
         include: {
           images: {
             orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
@@ -50,7 +86,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           Categoria
         </p>
-        <h1 className="text-4xl font-semibold">{category.name}</h1>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <h1 className="text-4xl font-semibold">{category.name}</h1>
+          <CategoryProductSortSelect value={productSort} />
+        </div>
       </header>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {category.products.map((product) => (
