@@ -2,8 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   CART_UPDATED_EVENT,
@@ -73,6 +73,27 @@ function SunIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="shrink-0"
+      fill="none"
+      height={16}
+      style={{ height: 16, width: 16 }}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path
+        d="M14.9 14.9 21 21M17.5 10.2a7.3 7.3 0 1 1-14.6 0 7.3 7.3 0 0 1 14.6 0Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
 function ThemeToggleIcon() {
   return (
     <>
@@ -150,7 +171,10 @@ function BrandLogo({
 
 export function PublicChrome({ children, settings }: PublicChromeProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [cartQuantity, setCartQuantity] = useState(0);
   const isAdmin = pathname.startsWith("/admin");
 
@@ -177,12 +201,28 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
     };
   }, []);
 
+
+
   function getLinkLabel(link: { href: string; label: string }) {
     if (link.href === "/carrinho" && cartQuantity > 0) {
       return `${link.label} (${cartQuantity})`;
     }
 
     return link.label;
+  }
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const normalizedSearchTerm = searchTerm.trim();
+
+    if (!normalizedSearchTerm) {
+      return;
+    }
+
+    setSearchOpen(false);
+    setMenuOpen(false);
+    router.push(`/pesquisar/${encodeURIComponent(normalizedSearchTerm)}`);
   }
 
   function toggleTheme() {
@@ -227,6 +267,19 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
               </Button>
             ))}
             <Button
+              aria-controls="public-search-panel"
+              aria-expanded={searchOpen}
+              aria-label="Pesquisar"
+              className={cn(pathname.startsWith("/pesquisar") && "bg-accent")}
+              onClick={() => setSearchOpen((open) => !open)}
+              size="icon"
+              title="Pesquisar"
+              type="button"
+              variant="ghost"
+            >
+              <SearchIcon />
+            </Button>
+            <Button
               aria-label="Alternar tema"
               onClick={toggleTheme}
               size="icon"
@@ -238,6 +291,18 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
             </Button>
           </nav>
           <div className="flex items-center gap-2 md:hidden">
+            <Button
+              aria-controls="public-search-panel"
+              aria-expanded={searchOpen}
+              aria-label="Pesquisar"
+              onClick={() => setSearchOpen((open) => !open)}
+              size="icon"
+              title="Pesquisar"
+              type="button"
+              variant="outline"
+            >
+              <SearchIcon />
+            </Button>
             <Button
               aria-label="Alternar tema"
               onClick={toggleTheme}
@@ -260,6 +325,29 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
             </Button>
           </div>
         </div>
+        {searchOpen ? (
+          <form
+            className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 pb-4 sm:flex-row"
+            id="public-search-panel"
+            onSubmit={submitSearch}
+          >
+            <label className="sr-only" htmlFor="public-search-input">
+              Pesquisar produtos
+            </label>
+            <input
+              autoComplete="off"
+              className="h-10 min-h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:flex-1"
+              id="public-search-input"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por descricao ou especificacao"
+              type="search"
+              value={searchTerm}
+            />
+            <Button className="sm:w-auto" type="submit">
+              Pesquisar
+            </Button>
+          </form>
+        ) : null}
         {menuOpen ? (
           <nav className="mx-auto grid w-full max-w-6xl gap-2 px-6 pb-4 md:hidden">
             {links.map((link) => (
