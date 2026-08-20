@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { updateCategoryAction } from "@/actions/catalog";
+import { CategoryCharacteristicsForm } from "@/components/admin/category-characteristics-form";
 import { CategoryForm } from "@/components/admin/category-form";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
@@ -21,9 +22,25 @@ export default async function EditCategoryPage({
   searchParams
 }: EditCategoryPageProps) {
   const [{ id }, { erro }] = await Promise.all([params, searchParams]);
-  const category = await prisma.category.findUnique({
-    where: { id }
-  });
+  const [category, characteristics] = await Promise.all([
+    prisma.category.findUnique({
+      where: { id },
+      include: {
+        characteristics: {
+          orderBy: [{ displayOrder: "asc" }]
+        }
+      }
+    }),
+    prisma.characteristic.findMany({
+      orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+      include: {
+        options: {
+          where: { active: true },
+          select: { id: true }
+        }
+      }
+    })
+  ]);
 
   if (!category) {
     notFound();
@@ -35,7 +52,7 @@ export default async function EditCategoryPage({
         <div>
           <h1 className="text-3xl font-semibold">Editar categoria</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Atualize nome, ordem e disponibilidade publica.
+            Atualize nome, ordem, disponibilidade e caracteristicas para SKUs.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -47,6 +64,11 @@ export default async function EditCategoryPage({
         action={updateCategoryAction}
         category={category}
         submitLabel="Atualizar"
+      />
+      <CategoryCharacteristicsForm
+        category={category}
+        characteristics={characteristics}
+        selectedCharacteristics={category.characteristics}
       />
     </section>
   );

@@ -1,0 +1,2 @@
+-- RenameForeignKey
+ALTER TABLE "ProductVariantValue" RENAME CONSTRAINT "ProductVariantValue_characteristicOptionId_characteristicId_fke" TO "ProductVariantValue_characteristicOptionId_characteristicI_fkey";

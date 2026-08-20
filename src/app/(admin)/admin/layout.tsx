@@ -38,6 +38,9 @@ export default async function AdminLayout({
             <Link href="/admin/produtos">Produtos</Link>
           </Button>
           <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/caracteristicas">Caracteristicas</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
             <Link href="/admin/promocoes">Promocoes</Link>
           </Button>
           <Button asChild variant="ghost" size="sm">

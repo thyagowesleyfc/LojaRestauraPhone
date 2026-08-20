@@ -22,6 +22,8 @@ type CartPreviewItem = StoredCartItem & {
   imageUrl: string | null;
   detail: string | null;
   originalPriceInCents: number | null;
+  sku?: string | null;
+  variantDescription?: string | null;
 };
 
 type UnavailableCartItem = StoredCartItem & {
@@ -226,14 +228,14 @@ export function CartPageClient() {
                   <div className="min-w-0 space-y-4">
                     <div className="space-y-1">
                       <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                        {item.type === "combo" ? "Combo" : "Produto"}
+                        {item.type === "combo" ? "Combo" : item.type === "variant" ? "SKU" : "Produto"}
                       </p>
                       <h2 className="font-semibold">
                         {previewItem?.description ?? "Item indisponivel"}
                       </h2>
                       {previewItem?.detail ? (
                         <p className="line-clamp-2 text-sm text-muted-foreground">
-                          {previewItem.detail}
+                          {previewItem.sku ? `SKU ${previewItem.sku} Â· ${previewItem.detail ?? ""}` : previewItem.detail}
                         </p>
                       ) : null}
                       {unavailableItem ? (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { ProductVariantSelector } from "@/components/catalog/product-variant-selector";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
@@ -37,6 +38,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
       },
       images: {
         orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }]
+      },
+      variants: {
+        where: { active: true },
+        orderBy: [{ sku: "asc" }],
+        include: {
+          values: {
+            include: {
+              characteristic: true,
+              characteristicOption: true
+            },
+            orderBy: [{ characteristic: { displayOrder: "asc" } }]
+          }
+        }
       }
     }
   });
@@ -89,19 +103,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
             ) : null}
           </div>
         </div>
+
         <div className="space-y-2">
           <h2 className="font-semibold">Especificacao</h2>
           <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
             {product.specification}
           </p>
         </div>
-        <AddToCartButton
-          item={{
-            type: "product",
-            id: product.id,
-            description: product.description
-          }}
-        />
+
+        {product.variants.length > 0 ? (
+          <ProductVariantSelector
+            productDescription={product.description}
+            variants={product.variants}
+          />
+        ) : (
+          <AddToCartButton
+            item={{
+              type: "product",
+              id: product.id,
+              description: product.description
+            }}
+          />
+        )}
       </section>
     </main>
   );

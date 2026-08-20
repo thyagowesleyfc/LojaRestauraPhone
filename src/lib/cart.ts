@@ -1,7 +1,7 @@
 export const CART_STORAGE_KEY = "rp_cart";
 export const MAX_CART_QUANTITY = 99;
 
-export type CartItemType = "product" | "combo";
+export type CartItemType = "product" | "variant" | "combo";
 
 export type StoredCartItem = {
   type: CartItemType;
@@ -13,6 +13,8 @@ export type PricedCartItem = StoredCartItem & {
   description: string;
   unitPriceInCents: number;
   subtotalInCents: number;
+  sku?: string | null;
+  variantDescription?: string | null;
 };
 
 export function createCartItemKey(item: Pick<StoredCartItem, "type" | "id">) {
@@ -31,7 +33,10 @@ export function normalizeCartItems(items: StoredCartItem[]) {
   const merged = new Map<string, StoredCartItem>();
 
   for (const item of items) {
-    if (!item.id || (item.type !== "product" && item.type !== "combo")) {
+    if (
+      !item.id ||
+      (item.type !== "product" && item.type !== "variant" && item.type !== "combo")
+    ) {
       continue;
     }
 
@@ -90,24 +95,25 @@ export function calculateCartTotal(items: PricedCartItem[]) {
 }
 
 export function buildWhatsAppOrderMessage({
-  initialMessage,
   items,
   totalInCents
 }: {
-  initialMessage: string;
   items: PricedCartItem[];
   totalInCents: number;
 }) {
   const lines = [
-    initialMessage.trim() || "Ola! Quero fazer um pedido.",
+    "Ola, gostaria de fazer este pedido pelo site:",
     "",
-    "Pedido pelo site:",
-    ...items.map(
-      (item, index) =>
-        `${index + 1}. ${item.quantity}x ${item.description} - ${formatCentsForMessage(
-          item.subtotalInCents
-        )}`
-    ),
+    ...items.map((item, index) => {
+      const variantDetail = item.variantDescription ?? "";
+      const description = variantDetail
+        ? `${item.description} - ${variantDetail}`
+        : item.description;
+
+      return `${index + 1}. ${item.quantity}x ${description} - ${formatCentsForMessage(
+        item.subtotalInCents
+      )}`;
+    }),
     "",
     `Total: ${formatCentsForMessage(totalInCents)}`
   ];

@@ -16,11 +16,22 @@ import { getStoreSettings } from "@/lib/store-settings";
 import { cartPreviewSchema } from "@/schemas/cart";
 
 type UnavailableCartItem = {
-  type: "product" | "combo";
+  type: "product" | "variant" | "combo";
   id: string;
   quantity: number;
   reason: string;
 };
+
+function formatVariantDescription(
+  values: Array<{
+    characteristic: { name: string };
+    characteristicOption: { name: string };
+  }>
+) {
+  return values
+    .map((value) => `${value.characteristic.name}: ${value.characteristicOption.name}`)
+    .join(" / ");
+}
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -37,11 +48,14 @@ export async function POST(request: Request) {
   const productIds = requestedItems
     .filter((item) => item.type === "product")
     .map((item) => item.id);
+  const variantIds = requestedItems
+    .filter((item) => item.type === "variant")
+    .map((item) => item.id);
   const comboIds = requestedItems
     .filter((item) => item.type === "combo")
     .map((item) => item.id);
 
-  const [products, combos, settings] = await Promise.all([
+  const [products, variants, combos, settings] = await Promise.all([
     prisma.product.findMany({
       where: {
         id: { in: productIds },
@@ -62,6 +76,47 @@ export async function POST(request: Request) {
         images: {
           orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
           take: 1
+        }
+      }
+    }),
+    prisma.productVariant.findMany({
+      where: {
+        id: { in: variantIds },
+        active: true,
+        product: {
+          active: true,
+          category: { active: true }
+        }
+      },
+      include: {
+        images: {
+          orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
+          take: 1
+        },
+        values: {
+          include: {
+            characteristic: true,
+            characteristicOption: true
+          },
+          orderBy: [{ characteristic: { displayOrder: "asc" } }]
+        },
+        product: {
+          include: {
+            category: {
+              include: {
+                promotions: {
+                  where: {
+                    type: PromotionType.CATEGORY_PERCENTAGE,
+                    active: true
+                  }
+                }
+              }
+            },
+            images: {
+              orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
+              take: 1
+            }
+          }
         }
       }
     }),
@@ -93,6 +148,7 @@ export async function POST(request: Request) {
   ]);
 
   const productsById = new Map(products.map((product) => [product.id, product]));
+  const variantsById = new Map(variants.map((variant) => [variant.id, variant]));
   const combosById = new Map(
     combos
       .filter(
@@ -151,6 +207,43 @@ export async function POST(request: Request) {
       continue;
     }
 
+    if (requestedItem.type === "variant") {
+      const variant = variantsById.get(requestedItem.id);
+
+      if (!variant) {
+        unavailableItems.push({
+          ...requestedItem,
+          reason: "SKU indisponivel."
+        });
+        continue;
+      }
+
+      const pricing = getPromotionalPriceInCents(
+        variant.product.priceInCents,
+        variant.product.category.promotions
+      );
+      const subtotalInCents =
+        pricing.currentPriceInCents * requestedItem.quantity;
+      const variantDescription = formatVariantDescription(variant.values);
+
+      items.push({
+        ...requestedItem,
+        description: variant.product.description,
+        unitPriceInCents: pricing.currentPriceInCents,
+        subtotalInCents,
+        imageUrl:
+          variant.images[0]?.url ?? variant.product.images[0]?.url ?? null,
+        detail: variantDescription || variant.product.category.name,
+        originalPriceInCents:
+          pricing.originalPriceInCents !== pricing.currentPriceInCents
+            ? pricing.originalPriceInCents
+            : null,
+        sku: variant.sku,
+        variantDescription
+      });
+      continue;
+    }
+
     const combo = combosById.get(requestedItem.id);
 
     if (!combo || combo.comboPriceInCents === null) {
@@ -178,7 +271,6 @@ export async function POST(request: Request) {
 
   const totalInCents = calculateCartTotal(items);
   const whatsappMessage = buildWhatsAppOrderMessage({
-    initialMessage: settings.whatsappInitialMessage,
     items,
     totalInCents
   });

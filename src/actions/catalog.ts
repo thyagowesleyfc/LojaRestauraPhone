@@ -483,7 +483,8 @@ export async function deleteProductAction(formData: FormData) {
       images: true,
       _count: {
         select: {
-          promotions: true
+          promotions: true,
+          variants: true
         }
       }
     }
@@ -493,7 +494,7 @@ export async function deleteProductAction(formData: FormData) {
     redirectWithError("/admin/produtos", "Produto nao encontrado.");
   }
 
-  if (product._count.promotions > 0) {
+  if (product._count.promotions > 0 || product._count.variants > 0) {
     await prisma.product.update({
       where: { id },
       data: { active: false }
