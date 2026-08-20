@@ -12,6 +12,11 @@ const cards = [
     description: "Cadastre itens, precos, imagens e disponibilidade publica."
   },
   {
+    href: "/admin/caracteristicas",
+    title: "Caracteristicas",
+    description: "Defina atributos e opcoes usados nas variacoes dos produtos."
+  },
+  {
     href: "/admin/promocoes",
     title: "Promocoes",
     description: "Configure descontos por categoria e combos."
