@@ -2,6 +2,7 @@ import { PromotionType, type Prisma } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SearchAnalyticsTracker } from "@/components/analytics/search-analytics-tracker";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Button } from "@/components/ui/button";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
@@ -103,6 +104,7 @@ export default async function SearchPage({ params }: SearchPageProps) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-10 px-6 py-10">
+      <SearchAnalyticsTracker resultCount={resultCount} searchTerm={searchTerm} />
       <header className="space-y-3">
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           Pesquisa

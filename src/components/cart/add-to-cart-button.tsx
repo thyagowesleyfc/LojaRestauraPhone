@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { addCartItem, type CartItemType } from "@/lib/cart";
 
 import { readCartItems, writeCartItems } from "./cart-storage";
@@ -34,6 +35,12 @@ export function AddToCartButton({
     });
 
     writeCartItems(nextItems);
+    trackAnalyticsEvent({
+      type: "ADD_TO_CART",
+      productId: item.type === "product" ? item.id : undefined,
+      productVariantId: item.type === "variant" ? item.id : undefined,
+      promotionId: item.type === "combo" ? item.id : undefined
+    });
     window.alert("Item adicionado ao carrinho.");
   }
 

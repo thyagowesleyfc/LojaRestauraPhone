@@ -3,12 +3,14 @@
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { addCartItem } from "@/lib/cart";
 
 import { readCartItems, writeCartItems } from "../cart/cart-storage";
 
 type ProductVariantSelectorProps = {
   productDescription: string;
+  productId: string;
   variants: Array<{
     id: string;
     sku: string;
@@ -36,6 +38,7 @@ function getVariantLabel(variant: ProductVariantSelectorProps["variants"][number
 
 export function ProductVariantSelector({
   productDescription,
+  productId,
   variants
 }: ProductVariantSelectorProps) {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -65,6 +68,11 @@ export function ProductVariantSelector({
     });
 
     writeCartItems(nextItems);
+    trackAnalyticsEvent({
+      type: "ADD_TO_CART",
+      productId,
+      productVariantId: selectedVariant.id
+    });
     window.alert("Produto adicionado ao carrinho.");
   }
 

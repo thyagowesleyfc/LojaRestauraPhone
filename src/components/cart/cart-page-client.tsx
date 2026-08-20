@@ -11,6 +11,7 @@ import {
   type CartItemType,
   type StoredCartItem
 } from "@/lib/cart";
+import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { formatMoneyFromCents } from "@/lib/formatters";
 
 import { readCartItems, writeCartItems } from "./cart-storage";
@@ -119,10 +120,23 @@ export function CartPageClient() {
     commitItems(updateCartItemQuantity(items, target, quantity));
   }
 
+  function trackCartItemEvent(
+    type: "ADD_TO_CART" | "REMOVE_FROM_CART",
+    target: { type: CartItemType; id: string }
+  ) {
+    trackAnalyticsEvent({
+      type,
+      productId: target.type === "product" ? target.id : undefined,
+      productVariantId: target.type === "variant" ? target.id : undefined,
+      promotionId: target.type === "combo" ? target.id : undefined
+    });
+  }
+
   function handleRemove(target: { type: CartItemType; id: string }) {
     const confirmed = window.confirm("Remover este item do carrinho?");
 
     if (confirmed) {
+      trackCartItemEvent("REMOVE_FROM_CART", target);
       commitItems(removeCartItem(items, target));
     }
   }
@@ -131,6 +145,10 @@ export function CartPageClient() {
     const confirmed = window.confirm("Limpar todo o carrinho?");
 
     if (confirmed) {
+      for (const item of items) {
+        trackCartItemEvent("REMOVE_FROM_CART", item);
+      }
+
       commitItems([]);
     }
   }
@@ -161,6 +179,8 @@ export function CartPageClient() {
       return;
     }
 
+    trackAnalyticsEvent({ type: "WHATSAPP_CLICK" });
+    trackAnalyticsEvent({ type: "ORDER_SENT_TO_WHATSAPP" });
     window.open(latestPreview.whatsappHref, "_blank", "noopener,noreferrer");
     commitItems([]);
   }
@@ -235,7 +255,7 @@ export function CartPageClient() {
                       </h2>
                       {previewItem?.detail ? (
                         <p className="line-clamp-2 text-sm text-muted-foreground">
-                          {previewItem.sku ? `SKU ${previewItem.sku} Â· ${previewItem.detail ?? ""}` : previewItem.detail}
+                          {previewItem.sku ? `SKU ${previewItem.sku} - ${previewItem.detail}` : previewItem.detail}
                         </p>
                       ) : null}
                       {unavailableItem ? (

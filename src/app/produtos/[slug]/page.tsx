@@ -3,6 +3,7 @@ import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AnalyticsEventTracker } from "@/components/analytics/analytics-event-tracker";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { ProductVariantSelector } from "@/components/catalog/product-variant-selector";
 import { formatMoneyFromCents } from "@/lib/formatters";
@@ -67,6 +68,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <AnalyticsEventTracker productId={product.id} type="PRODUCT_VIEW" />
       <section className="grid gap-4 sm:grid-cols-2">
         {product.images.map((image) => (
           <img
@@ -97,7 +99,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
             {pricing.appliedPromotion?.percentage ? (
               <p className="mt-1 text-sm text-muted-foreground">
-                {pricing.appliedPromotion.description} ·{" "}
+                {pricing.appliedPromotion.description} - {" "}
                 {pricing.appliedPromotion.percentage}% OFF
               </p>
             ) : null}
@@ -114,6 +116,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {product.variants.length > 0 ? (
           <ProductVariantSelector
             productDescription={product.description}
+            productId={product.id}
             variants={product.variants}
           />
         ) : (

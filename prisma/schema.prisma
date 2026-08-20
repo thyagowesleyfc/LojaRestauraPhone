@@ -12,6 +12,19 @@ enum PromotionType {
   PRODUCT_COMBO
 }
 
+enum AnalyticsEventType {
+  PAGE_VIEW
+  PRODUCT_VIEW
+  SEARCH
+  SEARCH_NO_RESULTS
+  ADD_TO_CART
+  REMOVE_FROM_CART
+  WHATSAPP_CLICK
+  ORDER_SENT_TO_WHATSAPP
+  PROMOTION_VIEW
+  CATEGORY_VIEW
+}
+
 model AdminUser {
   id           String         @id @default(cuid())
   email        String         @unique
@@ -239,6 +252,36 @@ model Banner {
   updatedAt           DateTime @updatedAt
 
   @@index([active, displayOrder])
+}
+
+model AnalyticsEvent {
+  id                   String             @id @default(cuid())
+  type                 AnalyticsEventType
+  sessionId            String
+  productId            String?
+  productVariantId     String?
+  promotionId          String?
+  categoryId           String?
+  searchTerm           String?
+  searchTermNormalized String?
+  resultsCount         Int?
+  pagePath             String
+  utmSource            String?
+  utmMedium            String?
+  utmCampaign          String?
+  utmTerm              String?
+  utmContent           String?
+  createdAt            DateTime           @default(now())
+
+  @@index([type, createdAt])
+  @@index([sessionId, createdAt])
+  @@index([productId, createdAt])
+  @@index([productVariantId, createdAt])
+  @@index([promotionId, createdAt])
+  @@index([categoryId, createdAt])
+  @@index([searchTermNormalized, createdAt])
+  @@index([utmSource, utmMedium, utmCampaign])
+  @@index([createdAt])
 }
 
 model StoreSettings {

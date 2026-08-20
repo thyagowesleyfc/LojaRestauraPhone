@@ -10,6 +10,7 @@ import {
   readCartItems
 } from "@/components/cart/cart-storage";
 import { Button } from "@/components/ui/button";
+import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { cn } from "@/lib/utils";
 
 type PublicChromeProps = {
@@ -183,6 +184,12 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
 
     document.documentElement.classList.toggle("dark", storedTheme === "dark");
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      trackAnalyticsEvent({ type: "PAGE_VIEW" });
+    }
+  }, [isAdmin, pathname]);
 
   useEffect(() => {
     function syncCartQuantity() {
@@ -402,6 +409,7 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
           aria-label="Abrir conversa no WhatsApp"
           className="fixed bottom-5 right-5 z-50 inline-flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           href={whatsappHref}
+          onClick={() => trackAnalyticsEvent({ type: "WHATSAPP_CLICK" })}
           rel="noreferrer"
           target="_blank"
           title="WhatsApp"
