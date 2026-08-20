@@ -37,15 +37,16 @@ model AdminSession {
 }
 
 model Category {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  slug         String      @unique
-  displayOrder Int         @default(0)
-  active       Boolean     @default(true)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  products     Product[]
-  promotions   Promotion[]
+  id              String                   @id @default(cuid())
+  name            String                   @unique
+  slug            String                   @unique
+  displayOrder    Int                      @default(0)
+  active          Boolean                  @default(true)
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  products        Product[]
+  promotions      Promotion[]
+  characteristics CategoryCharacteristic[]
 
   @@index([active, displayOrder])
 }
@@ -63,6 +64,7 @@ model Product {
   category      Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   images        ProductImage[]
   promotions    PromotionProduct[]
+  variants      ProductVariant[]
 
   @@index([categoryId])
   @@index([active])
@@ -80,6 +82,99 @@ model ProductImage {
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId, displayOrder])
+}
+
+model Characteristic {
+  id           String                   @id @default(cuid())
+  name         String                   @unique
+  slug         String                   @unique
+  displayOrder Int                      @default(0)
+  active       Boolean                  @default(true)
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+  options      CharacteristicOption[]
+  categories   CategoryCharacteristic[]
+  values       ProductVariantValue[]
+
+  @@index([active, displayOrder])
+}
+
+model CharacteristicOption {
+  id               String                @id @default(cuid())
+  characteristicId String
+  name             String
+  slug             String
+  displayOrder     Int                   @default(0)
+  active           Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  characteristic   Characteristic        @relation(fields: [characteristicId], references: [id], onDelete: Cascade)
+  values           ProductVariantValue[]
+
+  @@unique([characteristicId, name])
+  @@unique([characteristicId, slug])
+  @@unique([id, characteristicId])
+  @@index([characteristicId, active, displayOrder])
+}
+
+model CategoryCharacteristic {
+  categoryId       String
+  characteristicId String
+  displayOrder     Int            @default(0)
+  required         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  category         Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  characteristic   Characteristic @relation(fields: [characteristicId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, characteristicId])
+  @@index([categoryId, displayOrder])
+  @@index([characteristicId])
+}
+
+model ProductVariant {
+  id              String                @id @default(cuid())
+  productId       String
+  sku             String                @unique
+  optionSignature String
+  active          Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  product         Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  values          ProductVariantValue[]
+  images          ProductVariantImage[]
+
+  @@unique([productId, optionSignature])
+  @@index([productId])
+  @@index([productId, active])
+  @@index([active])
+}
+
+model ProductVariantValue {
+  productVariantId       String
+  characteristicId       String
+  characteristicOptionId String
+  createdAt              DateTime             @default(now())
+  productVariant         ProductVariant       @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  characteristic         Characteristic       @relation(fields: [characteristicId], references: [id], onDelete: Restrict)
+  characteristicOption   CharacteristicOption @relation(fields: [characteristicOptionId, characteristicId], references: [id, characteristicId], onDelete: Restrict)
+
+  @@id([productVariantId, characteristicId])
+  @@unique([productVariantId, characteristicOptionId])
+  @@index([characteristicId])
+  @@index([characteristicOptionId])
+}
+
+model ProductVariantImage {
+  id               String         @id @default(cuid())
+  productVariantId String
+  url              String
+  publicId         String
+  altText          String?
+  displayOrder     Int            @default(0)
+  createdAt        DateTime       @default(now())
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  @@index([productVariantId, displayOrder])
 }
 
 model Promotion {
