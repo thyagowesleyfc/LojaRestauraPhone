@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { deleteCharacteristicAction } from "@/actions/characteristics";
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
@@ -36,9 +37,12 @@ export default async function CharacteristicsPage({
             Gerencie atributos reutilizaveis para formar SKUs por produto.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/caracteristicas/nova">Nova caracteristica</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminDashboardLink />
+          <Button asChild>
+            <Link href="/admin/caracteristicas/nova">Nova caracteristica</Link>
+          </Button>
+        </div>
       </div>
       {erro ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">

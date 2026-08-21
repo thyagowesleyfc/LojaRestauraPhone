@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { deleteCategoryAction } from "@/actions/catalog";
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
@@ -34,9 +35,12 @@ export default async function CategoriesPage({
             Ordene e controle a exibicao publica das categorias.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/categorias/nova">Nova categoria</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminDashboardLink />
+          <Button asChild>
+            <Link href="/admin/categorias/nova">Nova categoria</Link>
+          </Button>
+        </div>
       </div>
       {erro ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">

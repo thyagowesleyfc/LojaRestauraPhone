@@ -1,6 +1,7 @@
 import { AnalyticsEventType, type Prisma } from "@prisma/client";
 import Link from "next/link";
 
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { MarketingIntegrationsForm } from "@/components/admin/marketing-integrations-form";
 import { Button } from "@/components/ui/button";
 import { getMarketingIntegrations } from "@/lib/marketing-integrations";
@@ -306,6 +307,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
             Acompanhe sessoes, buscas, produtos visualizados, carrinho,
             WhatsApp e origem por UTM.
           </p>
+          <AdminDashboardLink />
         </div>
         <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[460px]">
           <label className="space-y-2 text-sm">

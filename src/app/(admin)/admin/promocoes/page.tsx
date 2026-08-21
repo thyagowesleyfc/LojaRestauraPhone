@@ -3,6 +3,7 @@ import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 
 import { deletePromotionAction } from "@/actions/promotions";
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { prisma } from "@/lib/prisma";
@@ -49,9 +50,12 @@ export default async function PromotionsPage({
             Gerencie descontos por categoria e combos de produtos.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/promocoes/nova">Nova promocao</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminDashboardLink />
+          <Button asChild>
+            <Link href="/admin/promocoes/nova">Nova promocao</Link>
+          </Button>
+        </div>
       </div>
       {erro ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -78,8 +82,8 @@ export default async function PromotionsPage({
               <p className="text-sm text-muted-foreground">
                 {promotionTypeLabel(promotion.type)}
                 {promotion.type === PromotionType.CATEGORY_PERCENTAGE
-                  ? ` · ${promotion.percentage}% em ${promotion.category?.name ?? "categoria"}`
-                  : ` · ${formatMoneyFromCents(promotion.comboPriceInCents ?? 0)}`}
+                  ? ` Â· ${promotion.percentage}% em ${promotion.category?.name ?? "categoria"}`
+                  : ` Â· ${formatMoneyFromCents(promotion.comboPriceInCents ?? 0)}`}
               </p>
               <p className="text-sm">
                 {promotion.active ? "Ativa" : "Inativa"}

@@ -1,4 +1,5 @@
 import { updateStoreSettingsAction } from "@/actions/settings";
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { FormError } from "@/components/admin/form-error";
 import { StoreSettingsForm } from "@/components/admin/store-settings-form";
 import { prisma } from "@/lib/prisma";
@@ -43,6 +44,9 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         <p className="mt-2 text-sm text-muted-foreground">
           Atualize dados institucionais, WhatsApp, logo, tema e mapa.
         </p>
+        <div className="mt-4">
+          <AdminDashboardLink />
+        </div>
       </div>
       <FormError message={erro} />
       <StoreSettingsForm

@@ -2,6 +2,7 @@
 import Link from "next/link";
 
 import { deleteProductAction } from "@/actions/catalog";
+import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { prisma } from "@/lib/prisma";
@@ -34,9 +35,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             Gerencie itens, precos, imagens e status publico.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/produtos/novo">Novo produto</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminDashboardLink />
+          <Button asChild>
+            <Link href="/admin/produtos/novo">Novo produto</Link>
+          </Button>
+        </div>
       </div>
       {erro ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -61,7 +65,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="space-y-1">
               <h2 className="font-semibold">{product.description}</h2>
               <p className="text-sm text-muted-foreground">
-                {product.category.name} ·{" "}
+                {product.category.name} Â·{" "}
                 {formatMoneyFromCents(product.priceInCents)}
               </p>
               <p className="text-sm">
