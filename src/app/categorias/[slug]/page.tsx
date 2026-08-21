@@ -91,7 +91,22 @@ export default async function CategoryPage({
           <CategoryProductSortSelect value={productSort} />
         </div>
       </header>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:hidden">
+        {category.products.map((product) => (
+          <ProductCard
+            key={product.id}
+            variant="list"
+            product={{
+              ...product,
+              ...getPromotionalPriceInCents(
+                product.priceInCents,
+                category.promotions
+              )
+            }}
+          />
+        ))}
+      </div>
+      <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-4">
         {category.products.map((product) => (
           <ProductCard
             key={product.id}

@@ -25,7 +25,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             <p className="text-sm font-medium">Imagem desktop atual</p>
             <img
               alt={banner.altText ?? "Banner desktop"}
-              className="aspect-[16/6] w-full rounded-lg border border-border object-cover"
+              className="aspect-[48/13] w-full rounded-lg border border-border object-cover"
               src={banner.imageUrl}
             />
           </div>
@@ -34,11 +34,11 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             {banner.mobileImageUrl ? (
               <img
                 alt={banner.altText ?? "Banner mobile"}
-                className="aspect-[4/5] w-full rounded-lg border border-border object-cover"
+                className="aspect-[45/26] w-full rounded-lg border border-border object-cover"
                 src={banner.mobileImageUrl}
               />
             ) : (
-              <div className="flex aspect-[4/5] items-center justify-center rounded-lg border border-border bg-muted p-4 text-center text-sm text-muted-foreground">
+              <div className="flex aspect-[45/26] items-center justify-center rounded-lg border border-border bg-muted p-4 text-center text-sm text-muted-foreground">
                 Sem imagem mobile. O site usa a imagem desktop como fallback.
               </div>
             )}
@@ -60,8 +60,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Recomendado: 1920x720px, horizontal, com area segura para texto a
-            esquerda.
+            Recomendado: 1920x520px, horizontal panoramico para o novo hero.
           </p>
         </div>
         <div className="space-y-2">
@@ -77,8 +76,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Recomendado: 900x1200px, vertical, mantendo assunto visivel atras
-            do texto.
+            Recomendado: 900x520px, horizontal curto para o hero mobile.
           </p>
         </div>
       </div>
@@ -100,7 +98,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="altText">
-            Headline / texto alternativo
+            Texto alternativo
           </label>
           <input
             id="altText"
@@ -112,8 +110,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Este texto aparece como headline do slide no hero e tambem descreve
-            a imagem para acessibilidade.
+            Descreve a imagem para acessibilidade e identificacao interna.
           </p>
         </div>
         <div className="space-y-2">

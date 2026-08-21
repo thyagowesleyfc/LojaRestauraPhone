@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/button";
 
 type HeroCarouselProps = {
   banners: Array<{
@@ -13,18 +10,10 @@ type HeroCarouselProps = {
     redirectUrl: string;
     altText: string | null;
   }>;
-  fallbackTitle: string;
   autoplaySeconds: number;
 };
 
-const heroCopy =
-  "Acessorios, capas, carregadores e promocoes selecionados para resolver a compra rapido pelo WhatsApp.";
-
-export function HeroCarousel({
-  banners,
-  fallbackTitle,
-  autoplaySeconds
-}: HeroCarouselProps) {
+export function HeroCarousel({ banners, autoplaySeconds }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const hasBanners = banners.length > 0;
   const safeAutoplaySeconds = Math.min(30, Math.max(3, autoplaySeconds || 5));
@@ -42,95 +31,42 @@ export function HeroCarousel({
   }, [banners.length, safeAutoplaySeconds]);
 
   if (!hasBanners) {
-    return (
-      <section className="relative min-h-[520px] overflow-hidden border-b border-border bg-muted/50">
-        <div className="absolute inset-x-0 top-0 h-1 bg-primary" />
-        <div className="mx-auto flex min-h-[520px] w-full max-w-6xl items-end px-6 py-12 sm:items-center sm:py-16">
-          <div className="max-w-2xl space-y-6">
-            <h1 className="text-4xl font-semibold leading-none tracking-[-0.03em] text-foreground sm:text-6xl">
-              {fallbackTitle}
-            </h1>
-            <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              {heroCopy}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild>
-                <Link href="/categorias">Montar carrinho</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/promocoes">Ver promocoes</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   const currentBanner = banners[currentIndex];
-  const headline = currentBanner.altText?.trim() || fallbackTitle;
+  const imageAlt = currentBanner.altText?.trim() ?? "";
 
   return (
     <section
       aria-label="Destaques da loja"
-      className="relative min-h-[560px] overflow-hidden border-b border-border bg-background"
+      className="relative h-[28vh] max-h-[28vh] overflow-hidden border-b border-border bg-muted md:h-[40vh] md:max-h-[40vh] lg:h-[48vh] lg:max-h-[48vh]"
     >
-      <div className="absolute inset-0">
-        {banners.map((banner, index) => {
-          const active = index === currentIndex;
-
-          return (
-            <div
-              aria-hidden={!active}
-              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
-              key={banner.id}
-            >
-              {banner.mobileImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt=""
-                  className="h-full w-full object-cover sm:hidden"
-                  src={banner.mobileImageUrl}
-                />
-              ) : null}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt=""
-                className={`h-full w-full object-cover ${
-                  banner.mobileImageUrl ? "hidden sm:block" : ""
-                }`}
-                src={banner.imageUrl}
-              />
-            </div>
-          );
-        })}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/82 to-background/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent sm:hidden" />
-      </div>
-
-      <div className="relative mx-auto flex min-h-[560px] w-full max-w-6xl items-end px-6 py-12 sm:items-center sm:py-16">
-        <div className="max-w-2xl space-y-6">
-          <h1 className="text-4xl font-semibold leading-none tracking-[-0.03em] text-foreground sm:text-6xl">
-            {headline}
-          </h1>
-          <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {heroCopy}
-          </p>
-          <div className="flex flex-wrap gap-3 pb-8 sm:pb-0">
-            <Button asChild>
-              <a href={currentBanner.redirectUrl}>Ver destaque</a>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/categorias">Montar carrinho</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
+      <a
+        aria-label={imageAlt || "Abrir destaque"}
+        className="absolute inset-0 block focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        href={currentBanner.redirectUrl}
+      >
+        <picture>
+          {currentBanner.mobileImageUrl ? (
+            <source
+              media="(max-width: 639px)"
+              srcSet={currentBanner.mobileImageUrl}
+            />
+          ) : null}
+          <img
+            alt={imageAlt}
+            className="h-full w-full object-cover"
+            decoding="async"
+            fetchPriority={currentIndex === 0 ? "high" : "auto"}
+            loading={currentIndex === 0 ? "eager" : "lazy"}
+            src={currentBanner.imageUrl}
+          />
+        </picture>
+      </a>
 
       {banners.length > 1 ? (
-        <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-2 backdrop-blur">
+        <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-2">
           {banners.map((banner, index) => (
             <button
               aria-label={`Ir para banner ${index + 1}`}

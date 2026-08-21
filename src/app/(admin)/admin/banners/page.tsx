@@ -49,13 +49,13 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <img
                 alt={banner.altText ?? "Banner desktop"}
-                className="aspect-[16/6] w-full rounded-md object-cover"
+                className="aspect-[48/13] w-full rounded-md object-cover"
                 src={banner.imageUrl}
               />
               {banner.mobileImageUrl ? (
                 <img
                   alt={banner.altText ?? "Banner mobile"}
-                  className="aspect-[4/5] w-full rounded-md object-cover sm:max-h-40 lg:max-h-none"
+                  className="aspect-[45/26] w-full rounded-md object-cover sm:max-h-40 lg:max-h-none"
                   src={banner.mobileImageUrl}
                 />
               ) : null}
@@ -69,8 +69,7 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
                 Ordem {banner.displayOrder} - {banner.active ? "Ativo" : "Inativo"}
               </p>
               <p className="text-xs text-muted-foreground">
-                Desktop: 1920x720px recomendado. Mobile: 900x1200px
-                recomendado.
+                Desktop: 1920x520px recomendado. Mobile: 900x520px recomendado.
               </p>
             </div>
             <div className="flex flex-wrap items-start gap-2">

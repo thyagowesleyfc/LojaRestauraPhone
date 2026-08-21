@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ProductCard } from "@/components/catalog/product-card";
 import { PromotionCard } from "@/components/catalog/promotion-card";
 import { HeroCarousel } from "@/components/public/hero-carousel";
-import { Button } from "@/components/ui/button";
 import {
   getPromotionalPriceInCents,
   isPromotionCurrentlyActive
@@ -40,7 +39,6 @@ export default async function Home() {
         }
       },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
-      take: 6,
       include: {
         promotions: {
           where: {
@@ -94,44 +92,32 @@ export default async function Home() {
       <HeroCarousel
         autoplaySeconds={settings.bannerTransitionSeconds}
         banners={banners}
-        fallbackTitle={settings.tradeName}
       />
 
-      <section className="mx-auto w-full max-w-6xl space-y-6 px-6 py-14">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-semibold tracking-[-0.02em]">
-              Categorias
-            </h2>
-            <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Navegue pelas secoes ativas do catalogo e confira os itens mais
-              recentes de cada uma.
-            </p>
-          </div>
-          <Button asChild variant="outline">
-            <Link href="/categorias">Todas as categorias</Link>
-          </Button>
-        </div>
-        <div className="space-y-10">
+      <section className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-6 sm:py-10">
+        <div className="space-y-8 sm:space-y-10">
           {categoriesWithProducts.map((category) => (
-            <section key={category.id} className="space-y-4">
+            <section key={category.id} className="space-y-3 sm:space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="text-xl font-semibold">{category.name}</h3>
+                <h2 className="text-[1.8rem] font-semibold leading-tight sm:text-[2rem]">
+                  {category.name}
+                </h2>
                 <Link
                   className="text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   href={`/categorias/${category.slug}`}
                 >
-                  Ver categoria
+                  Ver mais
                 </Link>
               </div>
-              <div className="-mx-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
-                <div className="flex min-w-0 snap-x gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
+              <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
+                <div className="flex min-w-0 snap-x gap-3 sm:gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
                   {category.products.map((product) => (
                     <div
-                      className="w-[min(78vw,18rem)] shrink-0 snap-start sm:w-72 md:w-80 lg:w-auto lg:shrink"
+                      className="w-40 shrink-0 snap-start sm:w-56 md:w-64 lg:w-auto lg:shrink"
                       key={product.id}
                     >
                       <ProductCard
+                        variant="compact"
                         product={{
                           ...product,
                           ...getPromotionalPriceInCents(
@@ -155,21 +141,8 @@ export default async function Home() {
       </section>
 
       {activePromotions.length > 0 ? (
-        <section className="border-y border-border bg-muted/30 py-14">
-          <div className="mx-auto w-full max-w-6xl space-y-6 px-6">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-semibold tracking-[-0.02em]">
-                  Promocoes
-                </h2>
-                <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-                  Descontos por categoria e combos ativos recalculados no servidor.
-                </p>
-              </div>
-              <Button asChild variant="outline">
-                <Link href="/promocoes">Todas as promocoes</Link>
-              </Button>
-            </div>
+        <section className="border-y border-border bg-muted/30 py-10">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
             <div className="grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
               {activePromotions.map((promotion) => (
                 <PromotionCard key={promotion.id} promotion={promotion} />
