@@ -102,6 +102,45 @@ function SearchIcon() {
     </svg>
   );
 }
+
+function MenuIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="shrink-0"
+      fill="none"
+      height={16}
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M4 7h16M4 12h16M4 17h16"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="shrink-0"
+      fill="none"
+      height={16}
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M3.5 5h2.1l1.7 9.1a2 2 0 0 0 2 1.7h7.9a2 2 0 0 0 1.9-1.4l1.2-4.3H7.1M9.5 20a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6Zm8 0a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
 function ThemeToggleIcon() {
   return (
     <>
@@ -254,6 +293,9 @@ export function PublicChrome({
     return <>{children}</>;
   }
 
+  const cartBadgeLabel = cartQuantity > 99 ? "99+" : String(cartQuantity);
+  const mobileLinks = links.filter((link) => link.href !== "/carrinho");
+
   const whatsappHref = settings.whatsappNumber
     ? `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
         settings.whatsappInitialMessage
@@ -323,25 +365,31 @@ export function PublicChrome({
               <SearchIcon />
             </Button>
             <Button
-              aria-label="Alternar tema"
-              onClick={toggleTheme}
-              size="icon"
-              title="Alternar tema"
-              type="button"
-              variant="outline"
-            >
-              <ThemeToggleIcon />
-            </Button>
-            <Button
               aria-expanded={menuOpen}
               aria-label="Abrir menu"
               onClick={() => setMenuOpen((open) => !open)}
-              size="sm"
+              size="icon"
+              title="Menu"
               type="button"
               variant="outline"
             >
-              Menu
+              <MenuIcon />
             </Button>
+            {cartQuantity > 0 ? (
+              <Button asChild size="icon" variant="outline">
+                <Link
+                  aria-label={`Abrir carrinho com ${cartQuantity} itens`}
+                  className="relative"
+                  href="/carrinho"
+                  title="Carrinho"
+                >
+                  <CartIcon />
+                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.68rem] font-semibold leading-5 text-primary-foreground">
+                    {cartBadgeLabel}
+                  </span>
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </div>
         {searchOpen ? (
@@ -369,7 +417,7 @@ export function PublicChrome({
         ) : null}
         {menuOpen ? (
           <nav className="mx-auto grid w-full max-w-6xl gap-2 px-6 pb-4 md:hidden">
-            {links.map((link) => (
+            {mobileLinks.map((link) => (
               <Link
                 className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                 href={link.href}
@@ -379,6 +427,13 @@ export function PublicChrome({
                 {getLinkLabel(link)}
               </Link>
             ))}
+            <button
+              className="rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-accent"
+              onClick={toggleTheme}
+              type="button"
+            >
+              Alternar tema
+            </button>
           </nav>
         ) : null}
       </header>
