@@ -232,29 +232,29 @@ export function CartPageClient() {
 
               return (
                 <article
-                  className="grid gap-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-[96px_1fr]"
+                  className="grid grid-cols-[80px_1fr] gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-[96px_1fr] sm:gap-4 sm:p-4"
                   key={key}
                 >
                   {previewItem?.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       alt={previewItem.description}
-                      className="aspect-square w-24 rounded-md object-cover"
+                      className="size-20 rounded-md object-cover sm:size-24"
                       src={previewItem.imageUrl}
                     />
                   ) : (
-                    <div className="size-24 rounded-md bg-muted" />
+                    <div className="size-20 rounded-md bg-muted sm:size-24" />
                   )}
-                  <div className="min-w-0 space-y-4">
-                    <div className="space-y-1">
+                  <div className="min-w-0 space-y-3 sm:space-y-4">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-xs font-medium uppercase tracking-wide text-primary">
                         {item.type === "combo" ? "Combo" : item.type === "variant" ? "SKU" : "Produto"}
                       </p>
-                      <h2 className="font-semibold">
+                      <h2 className="line-clamp-2 text-sm font-semibold leading-snug sm:text-base">
                         {previewItem?.description ?? "Item indisponivel"}
                       </h2>
                       {previewItem?.detail ? (
-                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground sm:text-sm">
                           {previewItem.sku ? `SKU ${previewItem.sku} - ${previewItem.detail}` : previewItem.detail}
                         </p>
                       ) : null}
@@ -264,7 +264,7 @@ export function CartPageClient() {
                         </p>
                       ) : null}
                     </div>
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-2">
                         <Button
                           aria-label="Diminuir quantidade"
@@ -292,9 +292,9 @@ export function CartPageClient() {
                           +
                         </Button>
                       </div>
-                      <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex items-center justify-between gap-3 sm:justify-start">
                         {previewItem ? (
-                          <div className="text-right">
+                          <div className="text-left sm:text-right">
                             {previewItem.originalPriceInCents ? (
                               <p className="text-xs text-muted-foreground line-through">
                                 {formatMoneyFromCents(
