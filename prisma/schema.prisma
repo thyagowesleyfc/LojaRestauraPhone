@@ -258,6 +258,7 @@ model AnalyticsEvent {
   id                   String             @id @default(cuid())
   type                 AnalyticsEventType
   sessionId            String
+  dedupeKey            String?            @unique
   productId            String?
   productVariantId     String?
   promotionId          String?

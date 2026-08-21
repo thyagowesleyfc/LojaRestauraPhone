@@ -30,6 +30,11 @@ const cards = [
     href: "/admin/configuracoes",
     title: "Configuracoes",
     description: "Atualize loja, WhatsApp, logo, cores e mapa."
+  },
+  {
+    href: "/admin/marketing",
+    title: "Marketing",
+    description: "Acompanhe visitas, buscas, funil e campanhas UTM."
   }
 ];
 
