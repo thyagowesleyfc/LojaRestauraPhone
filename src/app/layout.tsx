@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PublicChrome } from "@/components/public/public-chrome";
+import { getActiveMarketingIntegrations } from "@/lib/marketing-integrations";
 import { getStoreSettings } from "@/lib/store-settings";
 import { getStoreThemeStyle } from "@/lib/theme";
 import "./globals.css";
@@ -15,12 +16,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await getStoreSettings();
+  const [settings, marketingIntegrations] = await Promise.all([
+    getStoreSettings(),
+    getActiveMarketingIntegrations()
+  ]);
 
   return (
     <html lang="pt-BR" style={getStoreThemeStyle(settings)}>
       <body>
-        <PublicChrome settings={settings}>{children}</PublicChrome>
+        <PublicChrome
+          marketingIntegrations={marketingIntegrations}
+          settings={settings}
+        >
+          {children}
+        </PublicChrome>
       </body>
     </html>
   );

@@ -1,15 +1,19 @@
 import { AnalyticsEventType, type Prisma } from "@prisma/client";
 import Link from "next/link";
 
+import { MarketingIntegrationsForm } from "@/components/admin/marketing-integrations-form";
 import { Button } from "@/components/ui/button";
+import { getMarketingIntegrations } from "@/lib/marketing-integrations";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 type MarketingPageProps = {
   searchParams?: Promise<{
+    erro?: string | string[];
     fim?: string | string[];
     inicio?: string | string[];
+    sucesso?: string | string[];
   }>;
 };
 
@@ -138,7 +142,10 @@ export default async function MarketingPage({
   searchParams
 }: MarketingPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
+  
+  const errorMessage = getSingleParam(resolvedSearchParams.erro);
+  const successMessage = getSingleParam(resolvedSearchParams.sucesso);
+const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
   const baseWhere: Prisma.AnalyticsEventWhereInput = {
     createdAt: {
       gte: startDate,
@@ -261,6 +268,7 @@ export default async function MarketingPage({
     searchNoResultGroups as SearchTermGroup[]
   ).slice(0, 10);
   const topCampaigns = sortByCount(campaignGroups as CampaignGroup[]).slice(0, 10);
+  const marketingIntegrations = await getMarketingIntegrations();
   const funnel = [
     {
       label: "Sessoes",
@@ -324,6 +332,16 @@ export default async function MarketingPage({
         </form>
       </div>
 
+      {errorMessage ? (
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {errorMessage}
+        </p>
+      ) : null}
+      {successMessage === "integracoes" ? (
+        <p className="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary">
+          Integracoes atualizadas.
+        </p>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Visitas Home" value={homeVisits} />
         <MetricCard label="Produtos vistos" value={productViews} />
@@ -507,6 +525,16 @@ export default async function MarketingPage({
           )}
         </section>
       </div>
-    </section>
+      <section className="space-y-4">
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Integracoes</h2>
+          <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+            Configure marcadores externos de marketing. Os eventos continuam
+            sendo registrados internamente e tambem sao encaminhados aos
+            providers ativos.
+          </p>
+        </div>
+        <MarketingIntegrationsForm integrations={marketingIntegrations} />
+      </section>    </section>
   );
 }

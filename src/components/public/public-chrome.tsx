@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
+import { MarketingIntegrationScripts } from "@/components/analytics/marketing-integration-scripts";
 import {
   CART_UPDATED_EVENT,
   readCartItems
@@ -13,8 +14,14 @@ import { Button } from "@/components/ui/button";
 import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { cn } from "@/lib/utils";
 
+type ActiveMarketingIntegration = {
+  provider: "GOOGLE_TAG_MANAGER" | "META_PIXEL" | "TIKTOK_PIXEL";
+  identifier: string;
+};
+
 type PublicChromeProps = {
   children: ReactNode;
+  marketingIntegrations: ActiveMarketingIntegration[];
   settings: {
     tradeName: string;
     cnpj: string;
@@ -170,7 +177,11 @@ function BrandLogo({
   return <span className={textClassName}>{tradeName}</span>;
 }
 
-export function PublicChrome({ children, settings }: PublicChromeProps) {
+export function PublicChrome({
+  children,
+  marketingIntegrations,
+  settings
+}: PublicChromeProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -251,6 +262,7 @@ export function PublicChrome({ children, settings }: PublicChromeProps) {
 
   return (
     <>
+      <MarketingIntegrationScripts integrations={marketingIntegrations} />
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <Link className="flex min-w-0 items-center gap-3" href="/">

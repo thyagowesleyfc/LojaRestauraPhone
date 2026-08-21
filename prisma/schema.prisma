@@ -12,6 +12,12 @@ enum PromotionType {
   PRODUCT_COMBO
 }
 
+enum MarketingIntegrationProvider {
+  GOOGLE_TAG_MANAGER
+  META_PIXEL
+  TIKTOK_PIXEL
+}
+
 enum AnalyticsEventType {
   PAGE_VIEW
   PRODUCT_VIEW
@@ -283,6 +289,17 @@ model AnalyticsEvent {
   @@index([searchTermNormalized, createdAt])
   @@index([utmSource, utmMedium, utmCampaign])
   @@index([createdAt])
+}
+
+model MarketingIntegration {
+  id         String                       @id @default(cuid())
+  provider   MarketingIntegrationProvider @unique
+  identifier String
+  active     Boolean                      @default(false)
+  createdAt  DateTime                     @default(now())
+  updatedAt  DateTime                     @updatedAt
+
+  @@index([active])
 }
 
 model StoreSettings {
