@@ -1,10 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AnalyticsEventTracker } from "@/components/analytics/analytics-event-tracker";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { ProductImageGallery } from "@/components/catalog/product-image-gallery";
 import { ProductVariantSelector } from "@/components/catalog/product-variant-selector";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
@@ -69,16 +69,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr]">
       <AnalyticsEventTracker productId={product.id} type="PRODUCT_VIEW" />
-      <section className="grid gap-4 sm:grid-cols-2">
-        {product.images.map((image) => (
-          <img
-            key={image.id}
-            alt={image.altText ?? product.description}
-            className="aspect-square w-full rounded-lg border border-border object-cover"
-            src={image.url}
-          />
-        ))}
-      </section>
+      <ProductImageGallery
+        images={product.images}
+        productDescription={product.description}
+      />
       <section className="space-y-6">
         <div className="space-y-3">
           <Link
