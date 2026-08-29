@@ -2,6 +2,7 @@ import { updateStoreSettingsAction } from "@/actions/settings";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { FormError } from "@/components/admin/form-error";
 import { StoreSettingsForm } from "@/components/admin/store-settings-form";
+import { DEFAULT_PRIVACY_PAGE_CONTENT } from "@/lib/privacy-content";
 import { prisma } from "@/lib/prisma";
 
 type SettingsPageProps = {
@@ -18,6 +19,7 @@ const fallbackSettings = {
   address: "",
   mapEmbedUrl: "",
   aboutText: "",
+  privacyPageContent: DEFAULT_PRIVACY_PAGE_CONTENT,
   whatsappNumber: "",
   whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
   bannerTransitionSeconds: 5,

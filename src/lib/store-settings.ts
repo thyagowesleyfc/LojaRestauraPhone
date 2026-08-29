@@ -1,5 +1,6 @@
 import "server-only";
 
+import { DEFAULT_PRIVACY_PAGE_CONTENT } from "@/lib/privacy-content";
 import { prisma } from "@/lib/prisma";
 
 export const fallbackStoreSettings = {
@@ -11,6 +12,7 @@ export const fallbackStoreSettings = {
   address: "",
   mapEmbedUrl: "",
   aboutText: "",
+  privacyPageContent: DEFAULT_PRIVACY_PAGE_CONTENT,
   whatsappNumber: "",
   whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
   bannerTransitionSeconds: 5,

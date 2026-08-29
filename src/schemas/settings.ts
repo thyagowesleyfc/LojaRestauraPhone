@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { sanitizeRichTextHtml } from "@/lib/privacy-content";
+
 const requiredText = z.string().trim().min(1, "Campo obrigatorio.");
 const optionalText = z
   .string()
@@ -55,6 +57,11 @@ export const storeSettingsInputSchema = z
     address: optionalText,
     mapEmbedUrl: optionalText,
     aboutText: optionalText,
+    privacyPageContent: z
+      .string()
+      .trim()
+      .max(20000, "Use no maximo 20000 caracteres na pagina de privacidade.")
+      .transform(sanitizeRichTextHtml),
     whatsappNumber: z
       .string()
       .trim()

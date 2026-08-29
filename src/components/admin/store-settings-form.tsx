@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { Button } from "@/components/ui/button";
 
 type StoreSettingsFormProps = {
@@ -11,6 +12,7 @@ type StoreSettingsFormProps = {
     address: string;
     mapEmbedUrl: string;
     aboutText: string;
+    privacyPageContent: string;
     whatsappNumber: string;
     whatsappInitialMessage: string;
     bannerTransitionSeconds: number;
@@ -95,6 +97,20 @@ export function StoreSettingsForm({
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Página de privacidade</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Conteúdo exibido em /pagina-privacidade e linkado no aviso de cookies.
+          </p>
+        </div>
+        <RichTextEditor
+          defaultValue={settings.privacyPageContent}
+          label="Texto da página"
+          name="privacyPageContent"
+        />
       </section>
 
       <section className="space-y-4">

@@ -311,6 +311,7 @@ model StoreSettings {
   address                       String
   mapEmbedUrl                   String
   aboutText                     String
+  privacyPageContent            String   @default("")
   whatsappNumber                String
   whatsappInitialMessage        String
   bannerTransitionSeconds       Int      @default(5)

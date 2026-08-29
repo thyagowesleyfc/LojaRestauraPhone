@@ -48,6 +48,7 @@ function parseStoreSettingsFormData(formData: FormData) {
     address: getStringValue(formData, "address"),
     mapEmbedUrl: getStringValue(formData, "mapEmbedUrl"),
     aboutText: getStringValue(formData, "aboutText"),
+    privacyPageContent: getStringValue(formData, "privacyPageContent"),
     whatsappNumber: getStringValue(formData, "whatsappNumber"),
     whatsappInitialMessage: getStringValue(formData, "whatsappInitialMessage"),
     bannerTransitionSeconds:
@@ -350,6 +351,7 @@ export async function updateStoreSettingsAction(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/quem-somos");
+  revalidatePath("/pagina-privacidade");
   revalidatePath("/promocoes");
   revalidatePath("/categorias");
   revalidatePath("/carrinho");

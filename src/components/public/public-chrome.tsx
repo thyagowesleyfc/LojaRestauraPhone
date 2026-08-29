@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { MarketingIntegrationScripts } from "@/components/analytics/marketing-integration-scripts";
+import { CookieConsentModal } from "@/components/public/cookie-consent-modal";
 import { OfferCountdownBar } from "@/components/public/offer-countdown-bar";
 import {
   CART_UPDATED_EVENT,
@@ -45,6 +46,7 @@ const links = [
   { href: "/promocoes", label: "Promocoes" },
   { href: "/categorias", label: "Categorias" },
   { href: "/quem-somos", label: "Quem somos" },
+  { href: "/pagina-privacidade", label: "Privacidade" },
   { href: "/carrinho", label: "Carrinho" }
 ];
 
@@ -263,8 +265,6 @@ export function PublicChrome({
     };
   }, []);
 
-
-
   function getLinkLabel(link: { href: string; label: string }) {
     if (link.href === "/carrinho" && cartQuantity > 0) {
       return `${link.label} (${cartQuantity})`;
@@ -482,6 +482,7 @@ export function PublicChrome({
           </div>
         </div>
       </footer>
+      <CookieConsentModal />
       {whatsappHref ? (
         <a
           aria-label="Abrir conversa no WhatsApp"
