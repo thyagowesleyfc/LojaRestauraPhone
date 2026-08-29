@@ -303,26 +303,30 @@ model MarketingIntegration {
 }
 
 model StoreSettings {
-  id                      Int      @id @default(1)
-  tradeName               String
-  cnpj                    String
-  phone                   String
-  email                   String
-  address                 String
-  mapEmbedUrl             String
-  aboutText               String
-  whatsappNumber          String
-  whatsappInitialMessage  String
-  bannerTransitionSeconds Int      @default(5)
-  logoUrl                 String?
-  logoPublicId            String?
-  darkLogoUrl             String?
-  darkLogoPublicId        String?
-  lightPrimaryColor       String
-  lightBackgroundColor    String
-  lightTextColor          String
-  darkPrimaryColor        String
-  darkBackgroundColor     String
-  darkTextColor           String
-  updatedAt               DateTime @updatedAt
+  id                            Int      @id @default(1)
+  tradeName                     String
+  cnpj                          String
+  phone                         String
+  email                         String
+  address                       String
+  mapEmbedUrl                   String
+  aboutText                     String
+  whatsappNumber                String
+  whatsappInitialMessage        String
+  bannerTransitionSeconds       Int      @default(5)
+  offerCountdownHeadline        String   @default("")
+  offerCountdownLink            String   @default("")
+  offerCountdownDurationSeconds Int      @default(0)
+  offerCountdownBackgroundColor String   @default("#16a34a")
+  logoUrl                       String?
+  logoPublicId                  String?
+  darkLogoUrl                   String?
+  darkLogoPublicId              String?
+  lightPrimaryColor             String
+  lightBackgroundColor          String
+  lightTextColor                String
+  darkPrimaryColor              String
+  darkBackgroundColor           String
+  darkTextColor                 String
+  updatedAt                     DateTime @updatedAt
 }

@@ -14,6 +14,10 @@ type StoreSettingsFormProps = {
     whatsappNumber: string;
     whatsappInitialMessage: string;
     bannerTransitionSeconds: number;
+    offerCountdownHeadline: string;
+    offerCountdownLink: string;
+    offerCountdownDurationSeconds: number;
+    offerCountdownBackgroundColor: string;
     logoUrl: string | null;
     darkLogoUrl: string | null;
     lightPrimaryColor: string;
@@ -29,6 +33,14 @@ export function StoreSettingsForm({
   action,
   settings
 }: StoreSettingsFormProps) {
+  const countdownHours = Math.floor(
+    settings.offerCountdownDurationSeconds / 3600
+  );
+  const countdownMinutes = Math.floor(
+    (settings.offerCountdownDurationSeconds % 3600) / 60
+  );
+  const countdownSeconds = settings.offerCountdownDurationSeconds % 60;
+
   return (
     <form action={action} className="space-y-8">
       <section className="space-y-4">
@@ -127,6 +139,56 @@ export function StoreSettingsForm({
           />
         </div>
       </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Countdown de oferta</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            A faixa aparece no site publico quando headline, link e tempo estiverem preenchidos.
+          </p>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <TextField
+            name="offerCountdownHeadline"
+            label="Headline"
+            defaultValue={settings.offerCountdownHeadline}
+          />
+          <TextField
+            name="offerCountdownLink"
+            label="Link"
+            defaultValue={settings.offerCountdownLink}
+          />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          <NumberField
+            name="offerCountdownHours"
+            label="Horas"
+            defaultValue={countdownHours}
+            min={0}
+            max={168}
+          />
+          <NumberField
+            name="offerCountdownMinutes"
+            label="Minutos"
+            defaultValue={countdownMinutes}
+            min={0}
+            max={59}
+          />
+          <NumberField
+            name="offerCountdownSeconds"
+            label="Segundos"
+            defaultValue={countdownSeconds}
+            min={0}
+            max={59}
+          />
+          <ColorField
+            name="offerCountdownBackgroundColor"
+            label="Cor da faixa"
+            defaultValue={settings.offerCountdownBackgroundColor}
+          />
+        </div>
+      </section>
+
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Logos</h2>
         <div className="grid gap-5 lg:grid-cols-2">
@@ -248,6 +310,38 @@ function TextField({
         name={name}
         type={type}
         required={required}
+        defaultValue={defaultValue}
+        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      />
+    </div>
+  );
+}
+
+function NumberField({
+  name,
+  label,
+  defaultValue,
+  min,
+  max
+}: {
+  name: string;
+  label: string;
+  defaultValue: number;
+  min: number;
+  max: number;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium" htmlFor={name}>
+        {label}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type="number"
+        min={min}
+        max={max}
+        step={1}
         defaultValue={defaultValue}
         className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       />

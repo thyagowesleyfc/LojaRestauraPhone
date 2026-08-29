@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { MarketingIntegrationScripts } from "@/components/analytics/marketing-integration-scripts";
+import { OfferCountdownBar } from "@/components/public/offer-countdown-bar";
 import {
   CART_UPDATED_EVENT,
   readCartItems
@@ -31,6 +32,10 @@ type PublicChromeProps = {
     mapEmbedUrl: string;
     whatsappNumber: string;
     whatsappInitialMessage: string;
+    offerCountdownHeadline: string;
+    offerCountdownLink: string;
+    offerCountdownDurationSeconds: number;
+    offerCountdownBackgroundColor: string;
     logoUrl: string | null;
     darkLogoUrl: string | null;
   };
@@ -305,6 +310,12 @@ export function PublicChrome({
   return (
     <>
       <MarketingIntegrationScripts integrations={marketingIntegrations} />
+      <OfferCountdownBar
+        backgroundColor={settings.offerCountdownBackgroundColor}
+        durationSeconds={settings.offerCountdownDurationSeconds}
+        headline={settings.offerCountdownHeadline}
+        href={settings.offerCountdownLink}
+      />
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <Link className="flex min-w-0 items-center gap-3" href="/">

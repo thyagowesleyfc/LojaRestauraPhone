@@ -52,7 +52,7 @@ function createSessionId() {
   return `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
-function getAnalyticsSessionId() {
+export function getAnalyticsSessionId() {
   const storedSessionId = window.localStorage.getItem(ANALYTICS_SESSION_KEY);
 
   if (storedSessionId) {

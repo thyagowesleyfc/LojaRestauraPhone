@@ -52,6 +52,15 @@ function parseStoreSettingsFormData(formData: FormData) {
     whatsappInitialMessage: getStringValue(formData, "whatsappInitialMessage"),
     bannerTransitionSeconds:
       getStringValue(formData, "bannerTransitionSeconds") || "5",
+    offerCountdownHeadline: getStringValue(formData, "offerCountdownHeadline"),
+    offerCountdownLink: getStringValue(formData, "offerCountdownLink"),
+    offerCountdownHours: getStringValue(formData, "offerCountdownHours") || "0",
+    offerCountdownMinutes:
+      getStringValue(formData, "offerCountdownMinutes") || "0",
+    offerCountdownSeconds:
+      getStringValue(formData, "offerCountdownSeconds") || "0",
+    offerCountdownBackgroundColor:
+      getStringValue(formData, "offerCountdownBackgroundColor") || "#16a34a",
     lightPrimaryColor: getStringValue(formData, "lightPrimaryColor"),
     lightBackgroundColor: getStringValue(formData, "lightBackgroundColor"),
     lightTextColor: getStringValue(formData, "lightTextColor"),
@@ -341,6 +350,9 @@ export async function updateStoreSettingsAction(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/quem-somos");
+  revalidatePath("/promocoes");
+  revalidatePath("/categorias");
+  revalidatePath("/carrinho");
   revalidatePath("/admin/configuracoes");
   redirect("/admin/configuracoes");
 }
