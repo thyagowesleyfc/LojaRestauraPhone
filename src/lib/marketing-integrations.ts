@@ -1,6 +1,6 @@
 import "server-only";
 
-import { MarketingIntegrationProvider } from "@prisma/client";
+import { MarketingIntegrationProvider, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -34,25 +34,51 @@ export const marketingIntegrationProviders = [
 export type MarketingIntegrationProviderConfig =
   (typeof marketingIntegrationProviders)[number];
 
-export async function getMarketingIntegrations() {
-  const integrations = await prisma.marketingIntegration.findMany();
-  const integrationByProvider = new Map(
-    integrations.map((integration) => [integration.provider, integration])
+function isMissingSchemaError(error: unknown) {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    (error.code === "P2021" || error.code === "P2022")
   );
+}
 
-  return marketingIntegrationProviders.map((config) => ({
-    ...config,
-    integration: integrationByProvider.get(config.provider) ?? null
-  }));
+export async function getMarketingIntegrations() {
+  try {
+    const integrations = await prisma.marketingIntegration.findMany();
+    const integrationByProvider = new Map(
+      integrations.map((integration) => [integration.provider, integration])
+    );
+
+    return marketingIntegrationProviders.map((config) => ({
+      ...config,
+      integration: integrationByProvider.get(config.provider) ?? null
+    }));
+  } catch (error) {
+    if (isMissingSchemaError(error)) {
+      return marketingIntegrationProviders.map((config) => ({
+        ...config,
+        integration: null
+      }));
+    }
+
+    throw error;
+  }
 }
 
 export async function getActiveMarketingIntegrations() {
-  return prisma.marketingIntegration.findMany({
-    where: { active: true },
-    orderBy: { provider: "asc" },
-    select: {
-      identifier: true,
-      provider: true
+  try {
+    return await prisma.marketingIntegration.findMany({
+      where: { active: true },
+      orderBy: { provider: "asc" },
+      select: {
+        identifier: true,
+        provider: true
+      }
+    });
+  } catch (error) {
+    if (isMissingSchemaError(error)) {
+      return [];
     }
-  });
+
+    throw error;
+  }
 }

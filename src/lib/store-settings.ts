@@ -1,5 +1,7 @@
 import "server-only";
 
+import { Prisma } from "@prisma/client";
+
 import { DEFAULT_PRIVACY_PAGE_CONTENT } from "@/lib/privacy-content";
 import { prisma } from "@/lib/prisma";
 
@@ -33,10 +35,25 @@ export const fallbackStoreSettings = {
   updatedAt: new Date(0)
 };
 
-export async function getStoreSettings() {
+function isMissingSchemaError(error: unknown) {
   return (
-    (await prisma.storeSettings.findUnique({
-      where: { id: 1 }
-    })) ?? fallbackStoreSettings
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    (error.code === "P2021" || error.code === "P2022")
   );
+}
+
+export async function getStoreSettings() {
+  try {
+    return (
+      (await prisma.storeSettings.findUnique({
+        where: { id: 1 }
+      })) ?? fallbackStoreSettings
+    );
+  } catch (error) {
+    if (isMissingSchemaError(error)) {
+      return fallbackStoreSettings;
+    }
+
+    throw error;
+  }
 }

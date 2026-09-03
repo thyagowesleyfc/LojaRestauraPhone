@@ -1,5 +1,7 @@
 import { getStoreSettings } from "@/lib/store-settings";
 
+export const dynamic = "force-dynamic";
+
 export default async function AboutPage() {
   const settings = await getStoreSettings();
 

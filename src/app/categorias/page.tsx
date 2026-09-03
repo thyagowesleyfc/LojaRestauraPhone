@@ -5,6 +5,8 @@ import { ProductCard } from "@/components/catalog/product-card";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoriesPage() {
   const categories = await prisma.category.findMany({
     where: {

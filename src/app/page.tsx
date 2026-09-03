@@ -12,6 +12,8 @@ import {
 import { prisma } from "@/lib/prisma";
 import { getStoreSettings } from "@/lib/store-settings";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getStoreSettings();
 
