@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import {
   addCartItem,
+  buildWhatsAppCheckoutMessage,
   buildWhatsAppOrderMessage,
   calculateCartTotal,
   normalizeCartItems,
@@ -72,5 +73,14 @@ describe("cart helpers", () => {
     assert.doesNotMatch(message, /SKU CAP-PRETO/);
     assert.doesNotMatch(message, /mais informacoes/);
     assert.match(message, /Total: R\$\s?99,80/);
+  });
+
+  it("builds the short WhatsApp checkout message with order code", () => {
+    const message = buildWhatsAppCheckoutMessage("XYZABC0000");
+
+    assert.equal(
+      message,
+      "Olá, gostaria de finalizar meu pedido de código XYZABC0000."
+    );
   });
 });

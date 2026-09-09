@@ -11,3 +11,7 @@ export const cartItemSchema = z.object({
 export const cartPreviewSchema = z.object({
   items: z.array(cartItemSchema).max(100)
 });
+
+export const cartCheckoutSchema = cartPreviewSchema.extend({
+  sessionId: z.string().trim().min(1).max(128).optional()
+});

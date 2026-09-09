@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { getAnalyticsSessionId, trackAnalyticsEvent } from "@/lib/analytics-client";
 import {
   createCartItemKey,
   removeCartItem,
@@ -11,7 +12,6 @@ import {
   type CartItemType,
   type StoredCartItem
 } from "@/lib/cart";
-import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { formatMoneyFromCents } from "@/lib/formatters";
 
 import { readCartItems, writeCartItems } from "./cart-storage";
@@ -38,6 +38,35 @@ type CartPreview = {
   whatsappHref: string | null;
 };
 
+type CartCheckoutResponse = {
+  code: string;
+  whatsappHref: string;
+  whatsappMessage: string;
+};
+
+async function createCheckout(items: StoredCartItem[]) {
+  const response = await fetch("/api/cart/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      items,
+      sessionId: getAnalyticsSessionId()
+    })
+  });
+
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as
+      | { error?: string }
+      | null;
+
+    throw new Error(payload?.error ?? "Nao foi possivel criar o pedido.");
+  }
+
+  return (await response.json()) as CartCheckoutResponse;
+}
+
 async function fetchCartPreview(items: StoredCartItem[]) {
   const response = await fetch("/api/cart/preview", {
     method: "POST",
@@ -59,6 +88,7 @@ export function CartPageClient() {
   const [preview, setPreview] = useState<CartPreview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const refreshPreview = useCallback(async (nextItems: StoredCartItem[]) => {
     if (nextItems.length === 0) {
@@ -179,10 +209,24 @@ export function CartPageClient() {
       return;
     }
 
-    trackAnalyticsEvent({ type: "WHATSAPP_CLICK" });
-    trackAnalyticsEvent({ type: "ORDER_SENT_TO_WHATSAPP" });
-    window.open(latestPreview.whatsappHref, "_blank", "noopener,noreferrer");
-    commitItems([]);
+    setCheckoutLoading(true);
+
+    try {
+      const checkout = await createCheckout(items);
+
+      trackAnalyticsEvent({ type: "WHATSAPP_CLICK" });
+      trackAnalyticsEvent({ type: "ORDER_SENT_TO_WHATSAPP" });
+      window.open(checkout.whatsappHref, "_blank", "noopener,noreferrer");
+      commitItems([]);
+    } catch (caughtError) {
+      window.alert(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Nao foi possivel criar o pedido."
+      );
+    } finally {
+      setCheckoutLoading(false);
+    }
   }
 
   const previewItemsByKey = new Map(
@@ -248,14 +292,20 @@ export function CartPageClient() {
                   <div className="min-w-0 space-y-3 sm:space-y-4">
                     <div className="min-w-0 space-y-1">
                       <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                        {item.type === "combo" ? "Combo" : item.type === "variant" ? "SKU" : "Produto"}
+                        {item.type === "combo"
+                          ? "Combo"
+                          : item.type === "variant"
+                            ? "SKU"
+                            : "Produto"}
                       </p>
                       <h2 className="line-clamp-2 text-sm font-semibold leading-snug sm:text-base">
                         {previewItem?.description ?? "Item indisponivel"}
                       </h2>
                       {previewItem?.detail ? (
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground sm:text-sm">
-                          {previewItem.sku ? `SKU ${previewItem.sku} - ${previewItem.detail}` : previewItem.detail}
+                          {previewItem.sku
+                            ? `SKU ${previewItem.sku} - ${previewItem.detail}`
+                            : previewItem.detail}
                         </p>
                       ) : null}
                       {unavailableItem ? (
@@ -338,14 +388,14 @@ export function CartPageClient() {
             ) : null}
             <div className="grid gap-2">
               <Button
-                disabled={loading || items.length === 0}
+                disabled={loading || checkoutLoading || items.length === 0}
                 onClick={handleCheckout}
                 type="button"
               >
-                Enviar pelo WhatsApp
+                {checkoutLoading ? "Gerando pedido..." : "Enviar pelo WhatsApp"}
               </Button>
               <Button
-                disabled={loading || items.length === 0}
+                disabled={loading || checkoutLoading || items.length === 0}
                 onClick={handleClearCart}
                 type="button"
                 variant="outline"

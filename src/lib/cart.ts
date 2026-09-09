@@ -127,3 +127,6 @@ function formatCentsForMessage(valueInCents: number) {
     currency: "BRL"
   }).format(valueInCents / 100);
 }
+export function buildWhatsAppCheckoutMessage(orderCode: string) {
+  return `Olá, gostaria de finalizar meu pedido de código ${orderCode}.`;
+}

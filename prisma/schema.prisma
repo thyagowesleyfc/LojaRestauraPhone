@@ -31,6 +31,12 @@ enum AnalyticsEventType {
   CATEGORY_VIEW
 }
 
+enum OrderItemType {
+  PRODUCT
+  VARIANT
+  COMBO
+}
+
 model AdminUser {
   id           String         @id @default(cuid())
   email        String         @unique
@@ -194,6 +200,43 @@ model ProductVariantImage {
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 
   @@index([productVariantId, displayOrder])
+}
+
+model CustomerOrder {
+  id              String              @id @default(cuid())
+  code            String              @unique
+  sessionId       String?
+  totalInCents    Int
+  whatsappMessage String
+  createdAt       DateTime            @default(now())
+  items           CustomerOrderItem[]
+
+  @@index([createdAt])
+  @@index([sessionId, createdAt])
+}
+
+model CustomerOrderItem {
+  id                     String        @id @default(cuid())
+  orderId                String
+  type                   OrderItemType
+  sourceProductId        String?
+  sourceProductVariantId String?
+  sourcePromotionId      String?
+  description            String
+  detail                 String?
+  sku                    String?
+  quantity               Int
+  unitPriceInCents       Int
+  subtotalInCents        Int
+  imageUrl               String?
+  createdAt              DateTime      @default(now())
+  order                  CustomerOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([type])
+  @@index([sourceProductId])
+  @@index([sourceProductVariantId])
+  @@index([sourcePromotionId])
 }
 
 model Promotion {
