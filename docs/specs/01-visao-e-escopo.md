@@ -1,48 +1,48 @@
-# 01 — Visão e escopo
+# 01 - Visao e escopo
 
 ## Produto
 
-A RestauraPhone vende acessórios para celulares e divulga serviços de manutenção de aparelhos telefônicos.
+A RestauraPhone vende acessorios para celulares e divulga servicos de manutencao de aparelhos telefonicos.
 
-A primeira versão será uma aplicação web com catálogo público e painel administrativo. O cliente monta um carrinho e envia o pedido para o WhatsApp da loja. A conclusão da venda ocorre fora do sistema.
+A primeira versao e uma aplicacao web com catalogo publico e painel administrativo. O cliente monta um carrinho e envia o pedido para o WhatsApp da loja. A conclusao da venda ocorre fora do sistema.
 
-## Público
+## Publico
 
 ### Administrador
 
-Usuário autenticado que mantém categorias, produtos, promoções, banners, identidade visual e informações institucionais.
+Usuario autenticado que mantem categorias, produtos, promocoes, banners, identidade visual, informacoes institucionais e consulta pedidos enviados pelo WhatsApp.
 
 ### Cliente
 
-Usuário público sem cadastro ou login. Navega, adiciona itens ao carrinho e envia o pedido pelo WhatsApp.
+Usuario publico sem cadastro ou login. Navega, adiciona itens ao carrinho e envia o pedido pelo WhatsApp.
 
 ## Escopo do MVP
 
-- catálogo por categorias;
-- produtos com até seis imagens;
-- promoções por categoria ou combo;
-- banners clicáveis;
-- página institucional;
+- catalogo por categorias;
+- produtos com ate seis imagens;
+- promocoes por categoria ou combo;
+- banners clicaveis;
+- pagina institucional;
 - carrinho no navegador;
 - fechamento pelo WhatsApp;
+- historico de pedidos enviados ao WhatsApp;
 - painel administrativo;
-- temas claro e escuro configuráveis;
-- logo configurável;
+- temas claro e escuro configuraveis;
+- logo configuravel;
 - layout responsivo.
 
 ## Fora do escopo
 
 - pagamento online;
 - controle de estoque;
-- emissão fiscal;
+- emissao fiscal;
 - cadastro de clientes;
-- histórico de pedidos persistido;
 - acompanhamento de entrega;
-- múltiplos administradores com perfis diferentes;
-- agendamento e ordem de serviço de manutenção;
+- multiplos administradores com perfis diferentes;
+- agendamento e ordem de servico de manutencao;
 - marketplace;
 - aplicativo mobile nativo.
 
 ## Volume esperado
 
-A aplicação deve atender confortavelmente entre 100 e 200 visitas por dia, sem arquitetura distribuída.
+A aplicacao deve atender confortavelmente entre 100 e 200 visitas por dia, sem arquitetura distribuida.

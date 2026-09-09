@@ -1,101 +1,104 @@
-# 09 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Planejamento de implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
+# 09 - Planejamento de implementacao
 
-Cada fase deve ser executada e validada separadamente. O Codex nÃƒÆ’Ã‚Â£o deve avanÃƒÆ’Ã‚Â§ar automaticamente.
+Cada fase deve ser executada e validada separadamente. O Codex nao deve avancar automaticamente.
 
-## Fase 0 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â FundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
+## Fase 0 - Fundacao
 
 - [x] criar projeto Next.js com TypeScript e App Router;
 - [x] configurar Tailwind;
 - [x] instalar e configurar shadcn/ui;
-- [x] configurar ESLint padrÃƒÆ’Ã‚Â£o;
+- [x] configurar ESLint padrao;
 - [x] criar estrutura inicial de pastas;
 - [x] configurar Prisma para PostgreSQL;
-- [x] configurar validaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ambiente com Zod;
-- [x] criar pÃƒÆ’Ã‚Â¡gina inicial mÃƒÆ’Ã‚Â­nima;
+- [x] configurar validacao de ambiente com Zod;
+- [x] criar pagina inicial minima;
 - [x] criar rota de health check;
 - [x] criar `.env.example`;
-- [x] documentar execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o local;
+- [x] documentar execucao local;
 - [x] validar lint e build.
 
-## Fase 1 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Banco e autenticaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
+## Fase 1 - Banco e autenticacao
 
 - [x] implementar schema Prisma completo;
 - [x] criar migration inicial;
 - [x] criar seed idempotente;
-- [x] implementar login, sessÃƒÆ’Ã‚Â£o, logout e proteÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de rotas;
-- [x] criar tela mÃƒÆ’Ã‚Â­nima de login;
+- [x] implementar login, sessao, logout e protecao de rotas;
+- [x] criar tela minima de login;
 - [x] criar layout administrativo protegido;
-- [x] testar autenticaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
+- [x] testar autenticacao;
 - [x] validar migration e seed em PostgreSQL real.
 
-## Fase 2 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Categorias e produtos
+## Fase 2 - Categorias e produtos
 
 - [ ] CRUD de categorias;
-- [ ] ordenaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e ativaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de categorias;
+- [ ] ordenacao e ativacao de categorias;
 - [ ] CRUD de produtos;
-- [ ] upload e ordenaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens via Cloudinary;
-- [ ] validaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de 1 a 6 imagens;
+- [ ] upload e ordenacao de imagens via Cloudinary;
+- [ ] validacao de 1 a 6 imagens;
 - [ ] listagem administrativa;
-- [ ] pÃƒÆ’Ã‚Â¡ginas pÃƒÆ’Ã‚Âºblicas de categorias e produtos.
+- [ ] paginas publicas de categorias e produtos.
 
-## Fase 3 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â PromoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes
+## Fase 3 - Promocoes
 
-- [x] CRUD de promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes;
-- [x] promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o percentual por categoria;
-- [x] promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de combo;
-- [x] galeria da promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
-- [x] cÃƒÆ’Ã‚Â¡lculo de preÃƒÆ’Ã‚Â§o promocional;
-- [x] regras de nÃƒÆ’Ã‚Â£o cumulatividade;
-- [x] pÃƒÆ’Ã‚Â¡ginas pÃƒÆ’Ã‚Âºblicas de promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
+- [x] CRUD de promocoes;
+- [x] promocao percentual por categoria;
+- [x] promocao de combo;
+- [x] galeria da promocao;
+- [x] calculo de preco promocional;
+- [x] regras de nao cumulatividade;
+- [x] paginas publicas de promocoes.
 
-## Fase 4 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Banners e configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes
+## Fase 4 - Banners e configuracoes
 
 - [x] CRUD de banners;
-- [x] ordenaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de banners;
-- [x] configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes institucionais;
+- [x] ordenacao de banners;
+- [x] configuracoes institucionais;
 - [x] Quem somos;
-- [x] rodapÃƒÆ’Ã‚Â©;
+- [x] rodape;
 - [x] WhatsApp;
 - [x] logo;
 - [x] cores de tema;
 - [x] mapa.
 
-## Fase 5 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Home e navegaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pÃƒÆ’Ã‚Âºblica
+## Fase 5 - Home e navegacao publica
 
 - [x] menu responsivo;
 - [x] hero em carrossel;
-- [x] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de categorias;
-- [x] seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de promoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes;
-- [x] rodapÃƒÆ’Ã‚Â©;
-- [x] botÃƒÆ’Ã‚Âµes flutuantes;
+- [x] secao de categorias;
+- [x] secao de promocoes;
+- [x] rodape;
+- [x] botoes flutuantes;
 - [x] tema claro e escuro;
-- [x] SEO bÃƒÆ’Ã‚Â¡sico e metadados.
+- [x] SEO basico e metadados.
 
-## Fase 6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Carrinho e WhatsApp
+## Fase 6 - Carrinho, pedidos e WhatsApp
 
 - [x] carrinho em localStorage;
-- [x] produtos e combos;
-- [x] quantidades e remoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
-- [x] revalidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de preÃƒÆ’Ã‚Â§os;
-- [x] geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da mensagem;
-- [x] confirmaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de envio;
+- [x] produtos, SKUs/variantes e combos;
+- [x] quantidades e remocao;
+- [x] revalidacao de precos;
+- [x] persistencia do pedido enviado ao WhatsApp;
+- [x] codigo unico de pedido;
+- [x] mensagem curta de WhatsApp com codigo do pedido;
+- [x] listagem e detalhe administrativo de pedidos;
+- [x] confirmacao de envio;
 - [x] limpeza do carrinho;
-- [x] testes das regras crÃƒÆ’Ã‚Â­ticas.
+- [x] testes das regras criticas.
 
-## Fase 7 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
+## Fase 7 - Producao
 
 - [ ] preparar Heroku;
-- [ ] configurar PostgreSQL de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o;
+- [ ] configurar PostgreSQL de producao;
 - [ ] configurar Cloudinary;
-- [ ] configurar variÃƒÆ’Ã‚Â¡veis de ambiente;
+- [ ] configurar variaveis de ambiente;
 - [ ] configurar GitHub Actions;
-- [ ] configurar deploy automÃƒÆ’Ã‚Â¡tico;
+- [ ] configurar deploy automatico;
 - [ ] executar migrations no release;
-- [ ] revisar seguranÃƒÆ’Ã‚Â§a;
+- [ ] revisar seguranca;
 - [ ] validar responsividade;
-- [ ] executar smoke test de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+- [ ] executar smoke test de producao.
 
-## CritÃƒÆ’Ã‚Â©rios globais
+## Criterios globais
 
 Ao concluir cada fase:
 
@@ -105,7 +108,5 @@ Ao concluir cada fase:
 - corrigir erros;
 - atualizar checklist;
 - listar arquivos alterados;
-- registrar decisÃƒÆ’Ã‚Âµes e pendÃƒÆ’Ã‚Âªncias;
-- nÃƒÆ’Ã‚Â£o avanÃƒÆ’Ã‚Â§ar para a fase seguinte.
-
-
+- registrar decisoes e pendencias;
+- nao avancar para a fase seguinte.

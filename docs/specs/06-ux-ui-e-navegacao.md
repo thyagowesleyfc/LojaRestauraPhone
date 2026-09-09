@@ -1,24 +1,24 @@
-# 06 — UX, UI e navegação
+# 06 - UX, UI e navegacao
 
-## Direção visual
+## Direcao visual
 
 - visual limpo e comercial;
 - mobile-first;
 - Tailwind e shadcn/ui;
-- botões confirmatórios verdes;
-- botões destrutivos ou negativos vermelhos;
-- demais ações com cores neutras;
-- foco visível e navegação por teclado.
+- botoes confirmatorios verdes;
+- botoes destrutivos ou negativos vermelhos;
+- demais acoes com cores neutras;
+- foco visivel e navegacao por teclado.
 
 ## Temas
 
 - tema claro e escuro;
 - escolha salva no navegador;
 - cores principais configuradas pelo administrador;
-- garantir contraste mínimo legível;
-- fallback para cores padrão quando configuração inválida.
+- garantir contraste minimo legivel;
+- fallback para cores padrao quando configuracao invalida.
 
-## Rotas públicas sugeridas
+## Rotas publicas sugeridas
 
 - `/`
 - `/categorias`
@@ -38,10 +38,19 @@
 - `/admin/promocoes`
 - `/admin/banners`
 - `/admin/configuracoes`
+- `/admin/pedidos`
+- `/admin/pedidos/[codigo]`
 
-## Modais de confirmação
+## Pedidos no admin
 
-Usar confirmação para:
+- listagem de pedidos deve priorizar codigo, data, quantidade de itens, total e acao de visualizar;
+- filtros devem permitir busca por codigo e ordenacao por data;
+- detalhe do pedido deve exibir o snapshot dos itens de forma escaneavel e responsiva;
+- pedido e historico operacional, sem acoes de edicao nesta fase.
+
+## Modais de confirmacao
+
+Usar confirmacao para:
 
 - criar;
 - editar;
@@ -51,12 +60,12 @@ Usar confirmação para:
 - limpar carrinho;
 - enviar pedido ao WhatsApp.
 
-Evitar confirmação desnecessária em ações reversíveis e de baixo risco.
+Evitar confirmacao desnecessaria em acoes reversiveis e de baixo risco.
 
 ## Responsividade
 
 - menu compacto em mobile;
 - cards em uma coluna no menor tamanho;
-- galerias adaptáveis;
-- botões flutuantes sem cobrir conteúdo;
-- painel administrativo utilizável em celular, mas otimizado para desktop.
+- galerias adaptaveis;
+- botoes flutuantes sem cobrir conteudo;
+- painel administrativo utilizavel em celular, mas otimizado para desktop.

@@ -1,36 +1,37 @@
-# 11 â€” DecisÃµes e pendÃªncias
+# 11 - Decisoes e pendencias
 
-## DecisÃµes adotadas
+## Decisoes adotadas
 
-- aplicaÃ§Ã£o Ãºnica em Next.js;
-- PostgreSQL desde o inÃ­cio;
-- sem Docker obrigatÃ³rio;
+- aplicacao unica em Next.js;
+- PostgreSQL desde o inicio;
+- sem Docker obrigatorio;
 - Heroku como hospedagem prevista;
 - Cloudinary para imagens;
 - carrinho em localStorage;
-- valores monetÃ¡rios em centavos;
-- sessÃ£o administrativa persistida em banco;
-- uma Ãºnica funÃ§Ã£o administrativa;
-- promoÃ§Ãµes nÃ£o cumulativas;
-- combo como item prÃ³prio do carrinho;
-- promoÃ§Ã£o percentual aplicada aos produtos;
-- exclusÃ£o lÃ³gica preferencial para registros pÃºblicos.
+- pedidos enviados ao WhatsApp persistidos como snapshot historico;
+- valores monetarios em centavos;
+- sessao administrativa persistida em banco;
+- uma unica funcao administrativa;
+- promocoes nao cumulativas;
+- combo como item proprio do carrinho;
+- promocao percentual aplicada aos produtos;
+- exclusao logica preferencial para registros publicos.
 
-## PendÃªncias que nÃ£o bloqueiam o inÃ­cio
+## Pendencias que nao bloqueiam o inicio
 
-- domÃ­nio definitivo da loja;
+- dominio definitivo da loja;
 - credenciais do Cloudinary;
-- plano especÃ­fico do Heroku;
-- conteÃºdo final de Quem somos;
-- dados reais do rodapÃ©;
+- plano especifico do Heroku;
+- conteudo final de Quem somos;
+- dados reais do rodape;
 - cores finais dos temas;
 - logo oficial;
 - texto inicial do WhatsApp;
 - URL final do mapa.
 
-## DecisÃ£o futura
+## Decisao futura
 
-O mÃ³dulo de manutenÃ§Ã£o de aparelhos nÃ£o faz parte deste MVP. Ele deverÃ¡ ser especificado separadamente, incluindo orÃ§amento, aparelho, defeito, serviÃ§o, status e comunicaÃ§Ã£o com o cliente.
+O modulo de manutencao de aparelhos nao faz parte deste MVP. Ele devera ser especificado separadamente, incluindo orcamento, aparelho, defeito, servico, status e comunicacao com o cliente.
 
 ## Decisao operacional de frontend
 

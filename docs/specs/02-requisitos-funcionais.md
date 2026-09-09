@@ -1,6 +1,6 @@
-# 02 — Requisitos funcionais
+# 02 - Requisitos funcionais
 
-## Área pública
+## Area publica
 
 ### Home
 
@@ -9,17 +9,17 @@ A home deve exibir, nesta ordem:
 1. menu superior;
 2. hero com banners;
 3. categorias e produtos;
-4. promoções;
-5. rodapé institucional.
+4. promocoes;
+5. rodape institucional.
 
 ### Menu
 
 Deve conter:
 
-- Promoções;
+- Promocoes;
 - Categorias;
 - Quem somos;
-- alternância entre tema claro e escuro.
+- alternancia entre tema claro e escuro.
 
 ### Banners
 
@@ -31,59 +31,60 @@ Deve conter:
 ### Categorias
 
 - exibir categorias ativas;
-- permitir ordenação configurável;
+- permitir ordenacao configuravel;
 - exibir produtos ativos como cards;
-- cada card deve mostrar imagem principal, descrição e preço;
-- ao clicar, abrir a página do produto;
-- permitir abrir a página da categoria com todos os produtos.
+- cada card deve mostrar imagem principal, descricao e preco;
+- ao clicar, abrir a pagina do produto;
+- permitir abrir a pagina da categoria com todos os produtos.
 
 ### Produto
 
-A página de produto deve mostrar:
+A pagina de produto deve mostrar:
 
 - galeria de imagens;
-- descrição;
-- especificação;
+- descricao;
+- especificacao;
 - categoria;
-- preço atual;
-- promoção aplicável, quando houver;
-- botão para adicionar ao carrinho.
+- preco atual;
+- promocao aplicavel, quando houver;
+- botao para adicionar ao carrinho.
 
-### Promoções
+### Promocoes
 
-A página de promoções deve listar promoções ativas.
+A pagina de promocoes deve listar promocoes ativas.
 
-Cada promoção deve mostrar:
+Cada promocao deve mostrar:
 
 - imagem;
-- descrição;
+- descricao;
 - tipo;
-- preço do combo ou percentual de desconto;
+- preco do combo ou percentual de desconto;
 - produtos ou categoria envolvidos;
-- botão de inclusão no carrinho, quando aplicável.
+- botao de inclusao no carrinho, quando aplicavel.
 
 ### Carrinho
 
 - armazenar dados no navegador;
-- aceitar produtos e combos;
+- aceitar produtos, SKUs/variantes e combos;
 - permitir aumentar, diminuir e remover itens;
 - recalcular totais;
-- confirmar inclusão, remoção e envio;
-- montar texto organizado para WhatsApp;
-- limpar o carrinho após confirmação do envio.
+- confirmar inclusao, remocao e envio;
+- revalidar precos e disponibilidade no servidor;
+- criar pedido persistido com codigo unico antes do redirecionamento ao WhatsApp;
+- limpar o carrinho apos confirmacao do envio.
 
 ### WhatsApp
 
-- botão flutuante permanente;
-- usar número configurado pelo administrador;
-- usar mensagem inicial configurável;
-- no fechamento, gerar mensagem com itens, quantidades, preços e total.
+- botao flutuante permanente;
+- usar numero configurado pelo administrador;
+- usar mensagem inicial configuravel no botao flutuante;
+- no fechamento do carrinho, gerar mensagem curta contendo somente o codigo do pedido.
 
 ### Quem somos
 
-Página editável com história e informações da empresa.
+Pagina editavel com historia e informacoes da empresa.
 
-### Rodapé
+### Rodape
 
 Exibir:
 
@@ -91,17 +92,17 @@ Exibir:
 - CNPJ;
 - telefone;
 - e-mail;
-- endereço;
+- endereco;
 - mapa incorporado.
 
-## Área administrativa
+## Area administrativa
 
-### Autenticação
+### Autenticacao
 
 - login por e-mail e senha;
 - logout;
-- sessão protegida;
-- nenhuma rota administrativa acessível sem autenticação.
+- sessao protegida;
+- nenhuma rota administrativa acessivel sem autenticacao.
 
 ### Cadastros
 
@@ -109,17 +110,25 @@ CRUD de:
 
 - categorias;
 - produtos;
-- promoções;
+- promocoes;
 - banners;
-- configurações da loja.
+- configuracoes da loja.
 
-### Configurações
+### Pedidos
+
+- listar pedidos enviados pelo WhatsApp;
+- permitir busca por codigo do pedido;
+- permitir ordenacao por data do pedido;
+- permitir visualizar os itens de cada pedido;
+- manter pedidos como snapshot historico, sem edicao pelo administrador nesta fase.
+
+### Configuracoes
 
 Permitir editar:
 
 - logo;
-- conteúdo de Quem somos;
-- informações do rodapé;
-- número e mensagem do WhatsApp;
+- conteudo de Quem somos;
+- informacoes do rodape;
+- numero e mensagem do WhatsApp;
 - cores dos temas claro e escuro;
 - mapa incorporado.

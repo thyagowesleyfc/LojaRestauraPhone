@@ -1,9 +1,9 @@
-# 04 — Modelo de domínio
+# 04 - Modelo de dominio
 
 ## AdminUser
 
 - id
-- email único
+- email unico
 - passwordHash
 - active
 - createdAt
@@ -12,7 +12,7 @@
 ## AdminSession
 
 - id
-- tokenHash único
+- tokenHash unico
 - adminUserId
 - expiresAt
 - createdAt
@@ -20,8 +20,8 @@
 ## Category
 
 - id
-- name único
-- slug único
+- name unico
+- slug unico
 - displayOrder
 - active
 - createdAt
@@ -32,7 +32,7 @@
 - id
 - categoryId
 - description
-- slug único
+- slug unico
 - specification
 - priceInCents
 - active
@@ -49,12 +49,68 @@
 - displayOrder
 - createdAt
 
+## Characteristic
+
+- id
+- name unico
+- slug unico
+- displayOrder
+- active
+- createdAt
+- updatedAt
+
+## CharacteristicOption
+
+- id
+- characteristicId
+- name
+- slug
+- displayOrder
+- active
+- createdAt
+- updatedAt
+
+## CategoryCharacteristic
+
+- categoryId
+- characteristicId
+- displayOrder
+- required
+- createdAt
+
+## ProductVariant
+
+- id
+- productId
+- sku unico
+- optionSignature
+- active
+- createdAt
+- updatedAt
+
+## ProductVariantValue
+
+- productVariantId
+- characteristicId
+- characteristicOptionId
+- createdAt
+
+## ProductVariantImage
+
+- id
+- productVariantId
+- url
+- publicId
+- altText opcional
+- displayOrder
+- createdAt
+
 ## Promotion
 
 - id
 - type
 - description
-- slug único
+- slug unico
 - categoryId opcional
 - percentage opcional
 - comboPriceInCents opcional
@@ -87,9 +143,63 @@ Usado somente para combos.
 - id
 - imageUrl
 - imagePublicId
+- mobileImageUrl opcional
+- mobileImagePublicId opcional
 - redirectUrl
 - altText opcional
 - displayOrder
+- active
+- createdAt
+- updatedAt
+
+## CustomerOrder
+
+- id
+- code unico com 10 caracteres A-Z/0-9
+- sessionId opcional
+- totalInCents
+- whatsappMessage
+- createdAt
+
+## CustomerOrderItem
+
+- id
+- orderId
+- type
+- sourceProductId opcional
+- sourceProductVariantId opcional
+- sourcePromotionId opcional
+- description
+- detail opcional
+- sku opcional
+- quantity
+- unitPriceInCents
+- subtotalInCents
+- imageUrl opcional
+- createdAt
+
+## AnalyticsEvent
+
+- id
+- type
+- sessionId
+- dedupeKey opcional
+- productId opcional
+- productVariantId opcional
+- promotionId opcional
+- categoryId opcional
+- searchTerm opcional
+- searchTermNormalized opcional
+- resultsCount opcional
+- pagePath
+- UTM opcional
+- createdAt
+
+## MarketingIntegration
+
+- id
+- provider unico
+- identifier
 - active
 - createdAt
 - updatedAt
@@ -106,10 +216,18 @@ Registro singleton.
 - address
 - mapEmbedUrl
 - aboutText
+- privacyPageContent
 - whatsappNumber
 - whatsappInitialMessage
+- bannerTransitionSeconds
+- offerCountdownHeadline
+- offerCountdownLink
+- offerCountdownDurationSeconds
+- offerCountdownBackgroundColor
 - logoUrl
 - logoPublicId
+- darkLogoUrl
+- darkLogoPublicId
 - lightPrimaryColor
 - lightBackgroundColor
 - lightTextColor
@@ -125,11 +243,39 @@ Registro singleton.
 - CATEGORY_PERCENTAGE
 - PRODUCT_COMBO
 
-## Restrições importantes
+### MarketingIntegrationProvider
 
-- valores monetários em centavos;
-- índices para slugs, ativos, ordenação e relacionamentos;
+- GOOGLE_TAG_MANAGER
+- META_PIXEL
+- TIKTOK_PIXEL
+
+### AnalyticsEventType
+
+- PAGE_VIEW
+- PRODUCT_VIEW
+- SEARCH
+- SEARCH_NO_RESULTS
+- ADD_TO_CART
+- REMOVE_FROM_CART
+- WHATSAPP_CLICK
+- ORDER_SENT_TO_WHATSAPP
+- PROMOTION_VIEW
+- CATEGORY_VIEW
+
+### OrderItemType
+
+- PRODUCT
+- VARIANT
+- COMBO
+
+## Restricoes importantes
+
+- valores monetarios em centavos;
+- indices para slugs, ativos, ordenacao e relacionamentos;
 - unicidade de categoria e slug;
+- SKU unico por variante;
+- codigo unico de pedido validado por formato A-Z/0-9 com 10 caracteres;
 - singleton de StoreSettings;
-- constraints de formato de promoção validadas no banco quando possível e obrigatoriamente na aplicação;
-- limite de imagens validado na aplicação e em transação.
+- constraints de formato de promocao validadas no banco quando possivel e obrigatoriamente na aplicacao;
+- quantidades e valores de itens de pedido validados por constraints de banco;
+- limite de imagens validado na aplicacao e em transacao.

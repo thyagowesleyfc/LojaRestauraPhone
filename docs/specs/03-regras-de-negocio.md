@@ -1,30 +1,30 @@
-# 03 — Regras de negócio
+# 03 - Regras de negocio
 
 ## Categorias
 
 - cada produto pertence a exatamente uma categoria;
-- categoria possui nome único;
+- categoria possui nome unico;
 - categoria pode ser ativada ou desativada;
-- categoria possui posição de exibição configurável.
+- categoria possui posicao de exibicao configuravel.
 
 ## Produtos
 
-Campos obrigatórios:
+Campos obrigatorios:
 
-- descrição curta;
-- especificação;
-- preço;
+- descricao curta;
+- especificacao;
+- preco;
 - categoria;
 - entre 1 e 6 imagens.
 
 Regras:
 
-- preço deve ser maior que zero;
-- a primeira imagem ordenada é a imagem principal;
-- produto inativo não aparece na área pública;
-- exclusão deve ser bloqueada quando comprometer promoções existentes; preferir desativação.
+- preco deve ser maior que zero;
+- a primeira imagem ordenada e a imagem principal;
+- produto inativo nao aparece na area publica;
+- exclusao deve ser bloqueada quando comprometer promocoes existentes; preferir desativacao.
 
-## Promoções
+## Promocoes
 
 Tipos:
 
@@ -36,43 +36,54 @@ Tipos:
 - referencia exatamente uma categoria;
 - percentual deve ser maior que zero e menor que 100;
 - aplica desconto individual aos produtos ativos da categoria;
-- não é adicionado ao carrinho como item separado;
-- o carrinho contém os produtos com preço promocional calculado.
+- nao e adicionado ao carrinho como item separado;
+- o carrinho contem os produtos com preco promocional calculado.
 
 ### Combo
 
 - referencia pelo menos dois produtos;
 - pode conter produtos de categorias diferentes;
-- possui preço fixo maior que zero;
-- é adicionado ao carrinho como item próprio;
+- possui preco fixo maior que zero;
+- e adicionado ao carrinho como item proprio;
 - seus produtos devem ser exibidos ao cliente.
 
 ### Regras gerais
 
-- promoção possui período opcional de início e fim;
-- promoção pode ser ativada ou desativada;
-- promoções não são cumulativas;
-- quando mais de uma promoção percentual se aplicar, usar o maior desconto;
-- combo não recebe desconto adicional de categoria;
-- preço exibido deve ser recalculado no servidor ao carregar dados públicos relevantes.
+- promocao possui periodo opcional de inicio e fim;
+- promocao pode ser ativada ou desativada;
+- promocoes nao sao cumulativas;
+- quando mais de uma promocao percentual se aplicar, usar o maior desconto;
+- combo nao recebe desconto adicional de categoria;
+- preco exibido deve ser recalculado no servidor ao carregar dados publicos relevantes.
 
 ## Banners
 
 - banner possui imagem, link e ordem;
 - somente banners ativos aparecem;
-- links externos devem abrir com segurança apropriada.
+- links externos devem abrir com seguranca apropriada.
 
 ## Carrinho
 
-- persistência em `localStorage`;
-- carrinho não é salvo no banco;
-- preços devem ser revalidados antes da geração da mensagem final;
-- após confirmação do envio ao WhatsApp, limpar o carrinho;
-- não existe reserva de estoque.
+- persistencia em `localStorage`;
+- carrinho continua em `localStorage` e nao e salvo como carrinho no banco;
+- precos devem ser revalidados antes da criacao do pedido final;
+- apos confirmacao do envio ao WhatsApp, limpar o carrinho;
+- nao existe reserva de estoque.
 
-## Configurações
+## Pedidos
 
-- deve existir apenas um registro de configurações da loja;
-- cores devem aceitar valores hexadecimais válidos;
-- número do WhatsApp deve ser armazenado em formato internacional, apenas dígitos;
+- pedido e criado somente no fechamento do carrinho para WhatsApp;
+- cada pedido possui codigo unico de 10 caracteres entre A-Z e 0-9;
+- mensagem enviada ao WhatsApp deve conter apenas o codigo do pedido;
+- itens do pedido devem ser persistidos como snapshot historico;
+- snapshot deve preservar tipo do item, descricao, detalhe, SKU interno quando houver, quantidade, preco unitario, subtotal e total do pedido;
+- alteracoes futuras em produtos, SKUs ou promocoes nao devem alterar pedidos ja gerados;
+- pedidos nao possuem pagamento, status de entrega, cliente cadastrado ou controle de estoque nesta fase;
+- administrador pode listar, buscar, ordenar e visualizar pedidos, sem edicao ou exclusao nesta fase.
+
+## Configuracoes
+
+- deve existir apenas um registro de configuracoes da loja;
+- cores devem aceitar valores hexadecimais validos;
+- numero do WhatsApp deve ser armazenado em formato internacional, apenas digitos;
 - logo e imagens ficam em armazenamento externo.
