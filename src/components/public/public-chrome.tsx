@@ -14,6 +14,7 @@ import {
 } from "@/components/cart/cart-storage";
 import { Button } from "@/components/ui/button";
 import { trackAnalyticsEvent } from "@/lib/analytics-client";
+import { getGoogleMapsLinkUrl } from "@/lib/maps";
 import { cn } from "@/lib/utils";
 
 type ActiveMarketingIntegration = {
@@ -306,6 +307,11 @@ export function PublicChrome({
         settings.whatsappInitialMessage
       )}`
     : null;
+  const mapHref = getGoogleMapsLinkUrl({
+    address: settings.address,
+    mapEmbedUrl: settings.mapEmbedUrl,
+    tradeName: settings.tradeName
+  });
 
   return (
     <>
@@ -469,12 +475,10 @@ export function PublicChrome({
             {settings.phone ? <p>{settings.phone}</p> : null}
             {settings.email ? <p>{settings.email}</p> : null}
             {settings.address ? <p>{settings.address}</p> : null}
-            {settings.mapEmbedUrl ? (
+            {mapHref ? (
               <a
-                className="inline-flex text-primary hover:underline"
-                href={settings.mapEmbedUrl}
-                rel="noreferrer"
-                target="_blank"
+                className="inline-flex text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                href={mapHref}
               >
                 Ver mapa
               </a>
