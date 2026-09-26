@@ -9,6 +9,16 @@ type Coordinates = {
   longitude: string;
 };
 
+const LEGACY_STORE_COORDINATES = {
+  latitude: "-5.064678194912064",
+  longitude: "-42.762723625018445"
+};
+
+const VERIFIED_STORE_COORDINATES = {
+  latitude: "-5.064666666666666",
+  longitude: "-42.76013888888889"
+};
+
 function getHttpUrl(value: string) {
   try {
     const url = new URL(value);
@@ -60,6 +70,17 @@ function getMapsSearchUrl(query: string) {
   )}`;
 }
 
+function normalizeStoreCoordinates(coordinates: Coordinates): Coordinates {
+  if (
+    coordinates.latitude === LEGACY_STORE_COORDINATES.latitude &&
+    coordinates.longitude === LEGACY_STORE_COORDINATES.longitude
+  ) {
+    return VERIFIED_STORE_COORDINATES;
+  }
+
+  return coordinates;
+}
+
 export function getGoogleMapsLinkUrl({
   address,
   mapEmbedUrl,
@@ -80,7 +101,11 @@ export function getGoogleMapsLinkUrl({
     const coordinates = getEmbedCoordinates(trimmedMapUrl);
 
     if (coordinates) {
-      return getMapsSearchUrl(`${coordinates.latitude},${coordinates.longitude}`);
+      const normalizedCoordinates = normalizeStoreCoordinates(coordinates);
+
+      return getMapsSearchUrl(
+        `${normalizedCoordinates.latitude},${normalizedCoordinates.longitude}`
+      );
     }
 
     const placeName = getEmbedPlaceName(trimmedMapUrl);
