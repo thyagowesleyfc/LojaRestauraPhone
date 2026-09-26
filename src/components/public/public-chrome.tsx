@@ -469,7 +469,7 @@ export function PublicChrome({
         </div>
         {searchOpen ? (
           <form
-            className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 pb-4 sm:flex-row"
+            className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 pb-4 shadow-[0_10px_30px_rgba(0,0,0,0.10),0_28px_70px_rgba(0,0,0,0.08)] sm:flex-row dark:shadow-[0_10px_30px_rgba(0,0,0,0.35),0_28px_70px_rgba(0,0,0,0.28)]"
             id="public-search-panel"
             onSubmit={submitSearch}
           >
