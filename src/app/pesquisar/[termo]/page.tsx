@@ -126,7 +126,25 @@ export default async function SearchPage({ params }: SearchPageProps) {
                 <Link href={`/categorias/${category.slug}`}>Ver categoria</Link>
               </Button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="-mx-6 overflow-x-auto px-6 pb-2 sm:hidden">
+              <div className="flex min-w-0 snap-x gap-3">
+                {category.products.map((product) => (
+                  <div className="w-40 shrink-0 snap-start" key={product.id}>
+                    <ProductCard
+                      variant="compact"
+                      product={{
+                        ...product,
+                        ...getPromotionalPriceInCents(
+                          product.priceInCents,
+                          category.promotions
+                        )
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4">
               {category.products.map((product) => (
                 <ProductCard
                   key={product.id}
