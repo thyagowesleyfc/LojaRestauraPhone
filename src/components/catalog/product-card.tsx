@@ -19,6 +19,50 @@ type ProductCardProps = {
   variant?: "default" | "compact" | "list";
 };
 
+type ProductCardPriceSummaryProps = {
+  currentPriceInCents: number;
+  originalPriceInCents: number;
+  percentage?: number | null;
+  compact: boolean;
+};
+
+function ProductCardPriceSummary({
+  currentPriceInCents,
+  originalPriceInCents,
+  percentage,
+  compact
+}: ProductCardPriceSummaryProps) {
+  const hasDiscount = currentPriceInCents < originalPriceInCents;
+
+  return (
+    <div
+      className={`mt-auto border-t border-border/70 pt-2 ${
+        compact ? "space-y-1.5" : "space-y-2"
+      }`}
+    >
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <p
+          className={`font-semibold leading-none text-primary ${
+            compact ? "text-base" : "text-lg"
+          }`}
+        >
+          {formatMoneyFromCents(currentPriceInCents)}
+        </p>
+        {hasDiscount ? (
+          <p className="text-xs leading-none text-muted-foreground line-through">
+            {formatMoneyFromCents(originalPriceInCents)}
+          </p>
+        ) : null}
+      </div>
+      {hasDiscount && percentage ? (
+        <p className="w-fit rounded-md bg-accent px-2 py-1 text-xs font-semibold leading-none text-accent-foreground">
+          {percentage}% OFF
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProductCard({ product, variant = "default" }: ProductCardProps) {
   const mainImage = product.images[0];
   const currentPriceInCents =
@@ -91,7 +135,7 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
       )}
       <div
         className={`flex flex-1 flex-col justify-between ${
-          compact ? "gap-2 p-3 sm:gap-4 sm:p-4" : "gap-4 p-4"
+          compact ? "gap-2.5 p-3 sm:p-3.5" : "gap-3 p-4"
         }`}
       >
         <h3
@@ -101,21 +145,12 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
         >
           {product.description}
         </h3>
-        <div className="space-y-1">
-          {hasDiscount ? (
-            <p className="text-xs text-muted-foreground line-through">
-              {formatMoneyFromCents(product.priceInCents)}
-            </p>
-          ) : null}
-          <p className="text-sm font-medium text-primary">
-            {formatMoneyFromCents(currentPriceInCents)}
-          </p>
-          {hasDiscount && product.appliedPromotion?.percentage ? (
-            <p className="w-fit rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
-              {product.appliedPromotion.percentage}% OFF
-            </p>
-          ) : null}
-        </div>
+        <ProductCardPriceSummary
+          compact={compact}
+          currentPriceInCents={currentPriceInCents}
+          originalPriceInCents={product.priceInCents}
+          percentage={product.appliedPromotion?.percentage}
+        />
       </div>
     </Link>
   );
