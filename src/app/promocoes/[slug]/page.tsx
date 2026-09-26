@@ -108,31 +108,45 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
       promotion.category ? (
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Produtos com desconto</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {promotion.category.products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={{
-                  ...product,
-                  ...getPromotionalPriceInCents(product.priceInCents, [
-                    promotion
-                  ])
-                }}
-              />
-            ))}
+          <div className="-mx-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
+            <div className="flex min-w-0 snap-x gap-3 sm:gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
+              {promotion.category.products.map((product) => (
+                <div
+                  className="w-40 shrink-0 snap-start sm:w-56 md:w-64 lg:w-auto lg:shrink"
+                  key={product.id}
+                >
+                  <ProductCard
+                    variant="compact"
+                    product={{
+                      ...product,
+                      ...getPromotionalPriceInCents(product.priceInCents, [
+                        promotion
+                      ])
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
       {promotion.type === PromotionType.PRODUCT_COMBO ? (
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Produtos do combo</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {promotion.products.map((promotionProduct) => (
-              <ProductCard
-                key={promotionProduct.productId}
-                product={promotionProduct.product}
-              />
-            ))}
+          <div className="-mx-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
+            <div className="flex min-w-0 snap-x gap-3 sm:gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
+              {promotion.products.map((promotionProduct) => (
+                <div
+                  className="w-40 shrink-0 snap-start sm:w-56 md:w-64 lg:w-auto lg:shrink"
+                  key={promotionProduct.productId}
+                >
+                  <ProductCard
+                    variant="compact"
+                    product={promotionProduct.product}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
