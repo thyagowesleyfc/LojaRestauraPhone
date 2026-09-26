@@ -67,13 +67,12 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
   const mainImage = product.images[0];
   const currentPriceInCents =
     product.currentPriceInCents ?? product.priceInCents;
-  const hasDiscount = currentPriceInCents < product.priceInCents;
   const imageAlt = mainImage?.altText ?? product.description;
 
   if (variant === "list") {
     return (
       <Link
-        className="group flex min-h-28 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        className="group flex min-h-32 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         href={`/produtos/${product.slug}`}
       >
         <div className="w-28 shrink-0 bg-muted">
@@ -86,25 +85,16 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
             />
           ) : null}
         </div>
-        <div className="min-w-0 flex flex-1 flex-col justify-center gap-2 p-3">
+        <div className="min-w-0 flex flex-1 flex-col justify-between gap-2.5 p-3">
           <h3 className="line-clamp-2 text-sm font-semibold leading-snug">
             {product.description}
           </h3>
-          <div className="flex flex-wrap items-center gap-2">
-            {hasDiscount ? (
-              <p className="text-xs text-muted-foreground line-through">
-                {formatMoneyFromCents(product.priceInCents)}
-              </p>
-            ) : null}
-            <p className="text-sm font-medium text-primary">
-              {formatMoneyFromCents(currentPriceInCents)}
-            </p>
-            {hasDiscount && product.appliedPromotion?.percentage ? (
-              <span className="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
-                {product.appliedPromotion.percentage}% OFF
-              </span>
-            ) : null}
-          </div>
+          <ProductCardPriceSummary
+            compact
+            currentPriceInCents={currentPriceInCents}
+            originalPriceInCents={product.priceInCents}
+            percentage={product.appliedPromotion?.percentage}
+          />
         </div>
       </Link>
     );
