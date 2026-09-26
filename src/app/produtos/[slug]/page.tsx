@@ -67,32 +67,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const hasDiscount = pricing.currentPriceInCents < pricing.originalPriceInCents;
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr]">
+    <main className="mx-auto grid w-full max-w-6xl gap-5 px-4 py-6 sm:gap-8 sm:px-6 sm:py-10 lg:grid-cols-[1.1fr_0.9fr]">
       <AnalyticsEventTracker productId={product.id} type="PRODUCT_VIEW" />
       <ProductImageGallery
         images={product.images}
         productDescription={product.description}
       />
-      <section className="space-y-6">
+      <section className="space-y-4 sm:space-y-6">
         <div className="space-y-3">
           <Link
-            className="text-sm font-medium text-primary hover:underline"
+            className="text-xs font-semibold uppercase tracking-wide text-primary hover:underline sm:text-sm sm:normal-case sm:tracking-normal"
             href={`/categorias/${product.category.slug}`}
           >
             {product.category.name}
           </Link>
-          <h1 className="text-4xl font-semibold">{product.description}</h1>
-          <div>
-            {hasDiscount ? (
-              <p className="text-sm text-muted-foreground line-through">
-                {formatMoneyFromCents(pricing.originalPriceInCents)}
+          <h1 className="text-2xl font-semibold leading-tight sm:text-4xl">
+            {product.description}
+          </h1>
+          <div className="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-border bg-card p-3 sm:block sm:border-0 sm:bg-transparent sm:p-0">
+            <div className="space-y-1">
+              {hasDiscount ? (
+                <p className="text-xs text-muted-foreground line-through sm:text-sm">
+                  {formatMoneyFromCents(pricing.originalPriceInCents)}
+                </p>
+              ) : null}
+              <p className="text-2xl font-semibold leading-none text-primary">
+                {formatMoneyFromCents(pricing.currentPriceInCents)}
               </p>
-            ) : null}
-            <p className="text-2xl font-semibold text-primary">
-              {formatMoneyFromCents(pricing.currentPriceInCents)}
-            </p>
+            </div>
             {pricing.appliedPromotion?.percentage ? (
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="rounded-md bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground sm:mt-1 sm:w-fit sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:font-normal sm:text-muted-foreground">
                 {pricing.appliedPromotion.description} - {" "}
                 {pricing.appliedPromotion.percentage}% OFF
               </p>
@@ -100,13 +104,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <h2 className="font-semibold">Especificacao</h2>
-          <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+        <div className="space-y-2 rounded-lg border border-border p-3 sm:border-0 sm:p-0">
+          <h2 className="font-semibold">Informacoes do produto</h2>
+          <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground sm:leading-7">
             {product.specification}
           </p>
         </div>
-
         {product.variants.length > 0 ? (
           <ProductVariantSelector
             productDescription={product.description}
@@ -115,6 +118,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         ) : (
           <AddToCartButton
+            className="w-full sm:w-auto"
             item={{
               type: "product",
               id: product.id,

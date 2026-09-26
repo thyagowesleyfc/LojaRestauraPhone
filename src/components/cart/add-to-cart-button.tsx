@@ -13,11 +13,13 @@ type AddToCartButtonProps = {
     description: string;
   };
   children?: string;
+  className?: string;
 };
 
 export function AddToCartButton({
   item,
-  children = "Adicionar ao carrinho"
+  children = "Adicionar ao carrinho",
+  className
 }: AddToCartButtonProps) {
   function handleAddToCart() {
     const confirmed = window.confirm(
@@ -45,7 +47,7 @@ export function AddToCartButton({
   }
 
   return (
-    <Button onClick={handleAddToCart} type="button">
+    <Button className={className} onClick={handleAddToCart} type="button">
       {children}
     </Button>
   );

@@ -29,24 +29,24 @@ export function ProductImageGallery({
   if (!selectedImage) {
     return (
       <section className="flex justify-center">
-        <div className="aspect-square w-4/5 max-w-xl rounded-lg border border-border bg-muted" />
+        <div className="aspect-[4/3] w-full max-w-sm rounded-lg border border-border bg-muted sm:aspect-square sm:w-4/5 sm:max-w-xl" />
       </section>
     );
   }
 
   return (
-    <section className="space-y-3">
-      <div className="mx-auto w-4/5 max-w-xl">
+    <section className="space-y-2 sm:space-y-3">
+      <div className="mx-auto w-full max-w-sm sm:w-4/5 sm:max-w-xl">
         <img
           alt={selectedImage.altText ?? productDescription}
-          className="aspect-square w-full rounded-lg border border-border object-cover"
+          className="aspect-[4/3] w-full rounded-lg border border-border object-cover sm:aspect-square"
           src={selectedImage.url}
         />
       </div>
       {images.length > 1 ? (
         <div
           aria-label="Selecionar foto do produto"
-          className="mx-auto flex w-4/5 max-w-xl gap-2 overflow-x-auto pb-1"
+          className="mx-auto flex w-full max-w-sm gap-2 overflow-x-auto pb-1 sm:w-4/5 sm:max-w-xl"
         >
           {images.map((image, index) => {
             const isSelected = image.id === selectedImage.id;
@@ -56,7 +56,7 @@ export function ProductImageGallery({
                 aria-current={isSelected ? "true" : undefined}
                 aria-label={`Exibir foto ${index + 1} de ${productDescription}`}
                 className={cn(
-                  "size-16 shrink-0 rounded-md border bg-background p-1 transition-all focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:size-20",
+                  "size-14 shrink-0 rounded-md border bg-background p-1 transition-all focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:size-20",
                   isSelected
                     ? "border-primary bg-primary/10 ring-2 ring-inset ring-primary"
                     : "border-border opacity-70 hover:border-primary/70 hover:opacity-100"

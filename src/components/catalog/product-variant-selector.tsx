@@ -77,7 +77,7 @@ export function ProductVariantSelector({
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border p-4">
+    <section className="flex flex-col gap-3 rounded-lg border border-border p-3 sm:gap-4 sm:p-4">
       <div>
         <h2 className="font-semibold">Escolha a variacao</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -112,7 +112,7 @@ export function ProductVariantSelector({
         </dl>
       ) : null}
       <Button
-        className="self-start"
+        className="w-full sm:self-start sm:w-auto"
         disabled={!selectedVariant}
         onClick={handleAddToCart}
         type="button"
