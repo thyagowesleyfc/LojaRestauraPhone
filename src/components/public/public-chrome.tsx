@@ -111,19 +111,82 @@ function SearchIcon() {
   );
 }
 
-function MenuIcon() {
+
+function OffersIcon() {
   return (
     <svg
       aria-hidden="true"
-      className="shrink-0"
+      className="size-5"
       fill="none"
-      height={16}
       viewBox="0 0 24 24"
     >
       <path
-        d="M4 7h16M4 12h16M4 17h16"
+        d="M20 12.5 12.5 20a2.1 2.1 0 0 1-3 0L4 14.5V4h10.5L20 9.5a2.1 2.1 0 0 1 0 3ZM8 8h.01"
         stroke="currentColor"
         strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function CategoriesIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-5"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M4 5.5A1.5 1.5 0 0 1 5.5 4h4A1.5 1.5 0 0 1 11 5.5v4A1.5 1.5 0 0 1 9.5 11h-4A1.5 1.5 0 0 1 4 9.5v-4Zm9 0A1.5 1.5 0 0 1 14.5 4h4A1.5 1.5 0 0 1 20 5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4A1.5 1.5 0 0 1 13 9.5v-4Zm-9 9A1.5 1.5 0 0 1 5.5 13h4a1.5 1.5 0 0 1 1.5 1.5v4A1.5 1.5 0 0 1 9.5 20h-4A1.5 1.5 0 0 1 4 18.5v-4Zm9 0a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5v-4Z"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      height={16}
+      style={{ height: 16, width: 16 }}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path
+        d="M12 3 19 6v5.2c0 4.3-2.9 7.9-7 9.8-4.1-1.9-7-5.5-7-9.8V6l7-3Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      height={16}
+      style={{ height: 16, width: 16 }}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path
+        d="M12 17v-6m0-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         strokeWidth="2"
       />
     </svg>
@@ -231,7 +294,6 @@ export function PublicChrome({
 }: PublicChromeProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [cartQuantity, setCartQuantity] = useState(0);
@@ -284,7 +346,6 @@ export function PublicChrome({
     }
 
     setSearchOpen(false);
-    setMenuOpen(false);
     router.push(`/pesquisar/${encodeURIComponent(normalizedSearchTerm)}`);
   }
 
@@ -295,12 +356,15 @@ export function PublicChrome({
     window.localStorage.setItem("rp_theme", nextIsDark ? "dark" : "light");
   }
 
+  function isActiveHref(href: string) {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   if (isAdmin) {
     return <>{children}</>;
   }
 
   const cartBadgeLabel = cartQuantity > 99 ? "99+" : String(cartQuantity);
-  const mobileLinks = links.filter((link) => link.href !== "/carrinho");
 
   const whatsappHref = settings.whatsappNumber
     ? `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
@@ -323,11 +387,11 @@ export function PublicChrome({
         href={settings.offerCountdownLink}
       />
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
           <Link className="flex min-w-0 items-center gap-3" href="/">
             <BrandLogo
               darkLogoUrl={settings.darkLogoUrl}
-              imageClassName="h-16 w-40 shrink-0 border-0 bg-transparent object-contain p-0 shadow-none ring-0 sm:h-[72px] sm:w-64"
+              imageClassName="h-11 w-32 shrink-0 border-0 bg-transparent object-contain p-0 shadow-none ring-0 md:h-[72px] md:w-64"
               logoUrl={settings.logoUrl}
               textClassName="truncate font-semibold"
               tradeName={settings.tradeName}
@@ -368,45 +432,39 @@ export function PublicChrome({
               <ThemeToggleIcon />
             </Button>
           </nav>
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1 md:hidden">
             <Button
-              aria-controls="public-search-panel"
-              aria-expanded={searchOpen}
-              aria-label="Pesquisar"
-              onClick={() => setSearchOpen((open) => !open)}
+              asChild
+              className={cn(isActiveHref("/pagina-privacidade") && "bg-accent")}
               size="icon"
-              title="Pesquisar"
+              title="Privacidade"
+              variant="ghost"
+            >
+              <Link aria-label="Privacidade" href="/pagina-privacidade">
+                <ShieldIcon />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className={cn(isActiveHref("/quem-somos") && "bg-accent")}
+              size="icon"
+              title="Quem somos"
+              variant="ghost"
+            >
+              <Link aria-label="Quem somos" href="/quem-somos">
+                <InfoIcon />
+              </Link>
+            </Button>
+            <Button
+              aria-label="Alternar tema"
+              onClick={toggleTheme}
+              size="icon"
+              title="Alternar tema"
               type="button"
               variant="outline"
             >
-              <SearchIcon />
+              <ThemeToggleIcon />
             </Button>
-            <Button
-              aria-expanded={menuOpen}
-              aria-label="Abrir menu"
-              onClick={() => setMenuOpen((open) => !open)}
-              size="icon"
-              title="Menu"
-              type="button"
-              variant="outline"
-            >
-              <MenuIcon />
-            </Button>
-            {cartQuantity > 0 ? (
-              <Button asChild size="icon" variant="outline">
-                <Link
-                  aria-label={`Abrir carrinho com ${cartQuantity} itens`}
-                  className="relative"
-                  href="/carrinho"
-                  title="Carrinho"
-                >
-                  <CartIcon />
-                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.68rem] font-semibold leading-5 text-primary-foreground">
-                    {cartBadgeLabel}
-                  </span>
-                </Link>
-              </Button>
-            ) : null}
           </div>
         </div>
         {searchOpen ? (
@@ -432,30 +490,103 @@ export function PublicChrome({
             </Button>
           </form>
         ) : null}
-        {menuOpen ? (
-          <nav className="mx-auto grid w-full max-w-6xl gap-2 px-6 pb-4 md:hidden">
-            {mobileLinks.map((link) => (
-              <Link
-                className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-                href={link.href}
-                key={link.href}
-                onClick={() => setMenuOpen(false)}
-              >
-                {getLinkLabel(link)}
-              </Link>
-            ))}
-            <button
-              className="rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-accent"
-              onClick={toggleTheme}
-              type="button"
-            >
-              Alternar tema
-            </button>
-          </nav>
-        ) : null}
+
       </header>
       {children}
-      <footer className="border-t border-border bg-muted/40">
+      <nav
+        aria-label="Navegação principal"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 backdrop-blur md:hidden"
+      >
+        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <Button
+            asChild
+            className={cn(
+              "h-12 w-full rounded-lg",
+              isActiveHref("/promocoes") && "bg-accent text-primary"
+            )}
+            size="icon"
+            title="Promoções"
+            variant="ghost"
+          >
+            <Link
+              aria-current={isActiveHref("/promocoes") ? "page" : undefined}
+              aria-label="Promoções"
+              href="/promocoes"
+              onClick={() => setSearchOpen(false)}
+            >
+              <OffersIcon />
+              <span className="sr-only">Promoções</span>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            className={cn(
+              "h-12 w-full rounded-lg",
+              isActiveHref("/categorias") && "bg-accent text-primary"
+            )}
+            size="icon"
+            title="Categorias"
+            variant="ghost"
+          >
+            <Link
+              aria-current={isActiveHref("/categorias") ? "page" : undefined}
+              aria-label="Categorias"
+              href="/categorias"
+              onClick={() => setSearchOpen(false)}
+            >
+              <CategoriesIcon />
+              <span className="sr-only">Categorias</span>
+            </Link>
+          </Button>
+          <Button
+            aria-controls="public-search-panel"
+            aria-expanded={searchOpen}
+            aria-label="Pesquisar"
+            className={cn(
+              "h-12 w-full rounded-lg",
+              (searchOpen || pathname.startsWith("/pesquisar")) &&
+                "bg-accent text-primary"
+            )}
+            onClick={() => setSearchOpen((open) => !open)}
+            size="icon"
+            title="Pesquisar"
+            type="button"
+            variant="ghost"
+          >
+            <SearchIcon />
+          </Button>
+          <Button
+            asChild
+            className={cn(
+              "relative h-12 w-full rounded-lg",
+              isActiveHref("/carrinho") && "bg-accent text-primary"
+            )}
+            size="icon"
+            title="Carrinho"
+            variant="ghost"
+          >
+            <Link
+              aria-current={isActiveHref("/carrinho") ? "page" : undefined}
+              aria-label={
+                cartQuantity > 0
+                  ? `Carrinho com ${cartQuantity} itens`
+                  : "Carrinho"
+              }
+              href="/carrinho"
+              onClick={() => setSearchOpen(false)}
+            >
+              <CartIcon />
+              <span className="sr-only">Carrinho</span>
+              {cartQuantity > 0 ? (
+                <span className="absolute right-2 top-1 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.68rem] font-semibold leading-5 text-primary-foreground">
+                  {cartBadgeLabel}
+                </span>
+              ) : null}
+            </Link>
+          </Button>
+        </div>
+      </nav>
+      <footer className="border-t border-border bg-muted/40 pb-24 md:pb-0">
         <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
           <div className="space-y-3">
             <Link className="flex items-center gap-3" href="/">
@@ -490,7 +621,7 @@ export function PublicChrome({
       {whatsappHref ? (
         <a
           aria-label="Abrir conversa no WhatsApp"
-          className="fixed bottom-5 right-5 z-50 inline-flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="fixed bottom-24 right-5 z-50 inline-flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 md:bottom-5"
           href={whatsappHref}
           onClick={() => trackAnalyticsEvent({ type: "WHATSAPP_CLICK" })}
           rel="noreferrer"
