@@ -45,7 +45,7 @@ export function CookieConsentModal() {
   }
 
   return (
-    <div className="fixed inset-x-4 bottom-24 z-[100] mx-auto max-w-3xl rounded-lg border border-border bg-card p-4 pr-11 text-card-foreground shadow-lg sm:pr-12 md:bottom-6">
+    <div className="fixed inset-x-4 bottom-24 z-[100] mx-auto max-w-3xl rounded-lg border border-border bg-card p-4 pr-11 text-card-foreground shadow-[0_-10px_30px_rgba(0,0,0,0.10),0_-28px_70px_rgba(0,0,0,0.08)] sm:pr-12 md:bottom-6 dark:shadow-[0_-10px_30px_rgba(0,0,0,0.35),0_-28px_70px_rgba(0,0,0,0.28)]">
       <button
         aria-label="Fechar e rejeitar cookies"
         className="absolute right-2 top-2 inline-flex size-7 items-center justify-center rounded-md text-xs font-semibold leading-none text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
