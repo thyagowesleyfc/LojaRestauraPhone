@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Evento de analytics invalido." },
+      { error: "Evento de analytics inválido." },
       { status: 400 }
     );
   }

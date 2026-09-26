@@ -85,7 +85,7 @@ async function createOrderWithUniqueCode({
     }
   }
 
-  throw new Error("Nao foi possivel gerar um codigo unico para o pedido.");
+  throw new Error("Não foi possível gerar um código único para o pedido.");
 }
 
 export async function POST(request: Request) {
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Carrinho invalido." },
+      { error: "Carrinho inválido." },
       { status: 400 }
     );
   }
@@ -106,21 +106,21 @@ export async function POST(request: Request) {
 
   if (preview.items.length === 0) {
     return NextResponse.json(
-      { error: "Carrinho vazio ou indisponivel para envio." },
+      { error: "Carrinho vazio ou indisponível para envio." },
       { status: 400 }
     );
   }
 
   if (preview.unavailableItems.length > 0) {
     return NextResponse.json(
-      { error: "Remova itens indisponiveis antes de enviar o pedido." },
+      { error: "Remova itens indisponíveis antes de enviar o pedido." },
       { status: 409 }
     );
   }
 
   if (!settings.whatsappNumber) {
     return NextResponse.json(
-      { error: "WhatsApp da loja nao configurado." },
+      { error: "WhatsApp da loja não configurado." },
       { status: 409 }
     );
   }

@@ -32,7 +32,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div>
           <h1 className="text-3xl font-semibold">Produtos</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Gerencie itens, precos, imagens e status publico.
+            Gerencie itens, preços, imagens e status público.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -65,7 +65,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="space-y-1">
               <h2 className="font-semibold">{product.description}</h2>
               <p className="text-sm text-muted-foreground">
-                {product.category.name} Â·{" "}
+                {product.category.name} -{" "}
                 {formatMoneyFromCents(product.priceInCents)}
               </p>
               <p className="text-sm">

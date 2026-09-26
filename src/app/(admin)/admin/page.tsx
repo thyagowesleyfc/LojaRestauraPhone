@@ -4,31 +4,31 @@ const cards = [
   {
     href: "/admin/categorias",
     title: "Categorias",
-    description: "Cadastre, ordene e ative as secoes do catalogo."
+    description: "Cadastre, ordene e ative as seções do catálogo."
   },
   {
     href: "/admin/produtos",
     title: "Produtos",
-    description: "Cadastre itens, precos, imagens e disponibilidade publica."
+    description: "Cadastre itens, preços, imagens e disponibilidade pública."
   },
   {
     href: "/admin/caracteristicas",
-    title: "Caracteristicas",
-    description: "Defina atributos e opcoes usados nas variacoes dos produtos."
+    title: "Características",
+    description: "Defina atributos e opções usados nas variações dos produtos."
   },
   {
     href: "/admin/promocoes",
-    title: "Promocoes",
+    title: "Promoções",
     description: "Configure descontos por categoria e combos."
   },
   {
     href: "/admin/banners",
     title: "Banners",
-    description: "Gerencie imagens, links e ordem de exibicao."
+    description: "Gerencie imagens, links e ordem de exibição."
   },
   {
     href: "/admin/configuracoes",
-    title: "Configuracoes",
+    title: "Configurações",
     description: "Atualize loja, WhatsApp, logo, cores e mapa."
   },
   {
@@ -48,7 +48,7 @@ export default function AdminPage() {
     <section className="space-y-4">
       <h1 className="text-3xl font-semibold">Painel administrativo</h1>
       <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-        Gerencie o catalogo publico e as configuracoes da RestauraPhone.
+        Gerencie o catálogo público e as configurações da RestauraPhone.
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (

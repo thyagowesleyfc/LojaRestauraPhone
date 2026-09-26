@@ -48,9 +48,9 @@ export function MarketingIntegrationsForm({
         ))}
       </div>
       <p className="text-xs leading-5 text-muted-foreground">
-        Somente IDs estruturados sao aceitos. O painel nao salva JavaScript livre.
+        Somente IDs estruturados são aceitos. O painel não salva JavaScript livre.
       </p>
-      <Button type="submit">Salvar integracoes</Button>
+      <Button type="submit">Salvar integrações</Button>
     </form>
   );
 }

@@ -193,7 +193,7 @@ export async function createPromotionAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/promocoes/nova",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -202,7 +202,7 @@ export async function createPromotionAction(formData: FormData) {
   if (files.length < 1 || files.length > 6) {
     redirectWithError(
       "/admin/promocoes/nova",
-      "Envie entre 1 e 6 imagens da promocao."
+      "Envie entre 1 e 6 imagens da promoção."
     );
   }
 
@@ -251,7 +251,7 @@ export async function createPromotionAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError("/admin/promocoes/nova", "Promocao ja cadastrada.");
+      redirectWithError("/admin/promocoes/nova", "Promoção já cadastrada.");
     }
 
     throw error;
@@ -272,8 +272,8 @@ export async function updatePromotionAction(formData: FormData) {
     redirectWithError(
       `/admin/promocoes/${id}/editar`,
       parsed.success
-        ? "Promocao invalida."
-        : parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? "Promoção inválida."
+        : parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -285,7 +285,7 @@ export async function updatePromotionAction(formData: FormData) {
   });
 
   if (!promotion) {
-    redirectWithError("/admin/promocoes", "Promocao nao encontrada.");
+    redirectWithError("/admin/promocoes", "Promoção não encontrada.");
   }
 
   const removeImageIds = new Set(getRemovedImageIds(formData));
@@ -298,7 +298,7 @@ export async function updatePromotionAction(formData: FormData) {
   if (totalImages < 1 || totalImages > 6) {
     redirectWithError(
       `/admin/promocoes/${id}/editar`,
-      "A promocao deve ficar com 1 a 6 imagens."
+      "A promoção deve ficar com 1 a 6 imagens."
     );
   }
 
@@ -384,7 +384,7 @@ export async function updatePromotionAction(formData: FormData) {
     ) {
       redirectWithError(
         `/admin/promocoes/${id}/editar`,
-        "Promocao ja cadastrada."
+        "Promoção já cadastrada."
       );
     }
 
@@ -408,7 +408,7 @@ export async function deletePromotionAction(formData: FormData) {
   const id = getStringValue(formData, "id");
 
   if (!id) {
-    redirectWithError("/admin/promocoes", "Promocao invalida.");
+    redirectWithError("/admin/promocoes", "Promoção inválida.");
   }
 
   const promotion = await prisma.promotion.findUnique({
@@ -419,7 +419,7 @@ export async function deletePromotionAction(formData: FormData) {
   });
 
   if (!promotion) {
-    redirectWithError("/admin/promocoes", "Promocao nao encontrada.");
+    redirectWithError("/admin/promocoes", "Promoção não encontrada.");
   }
 
   await prisma.promotion.delete({ where: { id } });

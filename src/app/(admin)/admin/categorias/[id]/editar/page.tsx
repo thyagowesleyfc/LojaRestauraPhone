@@ -52,7 +52,7 @@ export default async function EditCategoryPage({
         <div>
           <h1 className="text-3xl font-semibold">Editar categoria</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Atualize nome, ordem, disponibilidade e caracteristicas para SKUs.
+            Atualize nome, ordem, disponibilidade e características para SKUs.
           </p>
         </div>
         <Button asChild variant="outline">

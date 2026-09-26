@@ -8,7 +8,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "RestauraPhone",
-  description: "Catalogo publico e painel administrativo da RestauraPhone."
+  description: "Catálogo público e painel administrativo da RestauraPhone."
 };
 
 export default async function RootLayout({

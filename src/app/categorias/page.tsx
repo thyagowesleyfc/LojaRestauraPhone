@@ -45,11 +45,11 @@ export default async function CategoriesPage() {
     <main className="mx-auto w-full max-w-6xl space-y-10 px-4 py-8 sm:px-6 sm:py-10">
       <header className="space-y-3">
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
-          Catalogo
+          Catálogo
         </p>
         <h1 className="text-4xl font-semibold">Categorias</h1>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-          Encontre acessorios, carregadores, cabos e itens selecionados para o
+          Encontre acessórios, carregadores, cabos e itens selecionados para o
           seu aparelho.
         </p>
       </header>

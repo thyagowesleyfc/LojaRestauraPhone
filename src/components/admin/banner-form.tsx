@@ -60,7 +60,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Recomendado: 1920x520px, horizontal panoramico para o novo hero.
+            Recomendado: 1920x520px, horizontal panorâmico para o novo hero.
           </p>
         </div>
         <div className="space-y-2">
@@ -105,12 +105,12 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
             name="altText"
             type="text"
             maxLength={160}
-            placeholder="Ex.: Promocao de capas e carregadores"
+            placeholder="Ex.: Promoção de capas e carregadores"
             defaultValue={banner?.altText ?? ""}
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Descreve a imagem para acessibilidade e identificacao interna.
+            Descreve a imagem para acessibilidade e identificação interna.
           </p>
         </div>
         <div className="space-y-2">

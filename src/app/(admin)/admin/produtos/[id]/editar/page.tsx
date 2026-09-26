@@ -71,7 +71,7 @@ export default async function EditProductPage({
         <div>
           <h1 className="text-3xl font-semibold">Editar produto</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Atualize dados, imagens, status publico e SKUs do produto.
+            Atualize dados, imagens, status público e SKUs do produto.
           </p>
         </div>
         <Button asChild variant="outline">

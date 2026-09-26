@@ -61,7 +61,7 @@ export function PromotionForm({
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="description">
-            Descricao
+            Descrição
           </label>
           <input
             id="description"
@@ -127,7 +127,7 @@ export function PromotionForm({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="comboPrice">
-            Preco do combo
+            Preço do combo
           </label>
           <input
             id="comboPrice"
@@ -147,7 +147,7 @@ export function PromotionForm({
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="startsAt">
-            Inicio
+            Início
           </label>
           <input
             id="startsAt"

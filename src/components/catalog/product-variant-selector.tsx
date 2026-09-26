@@ -33,7 +33,7 @@ function getVariantLabel(variant: ProductVariantSelectorProps["variants"][number
     )
     .join(" / ");
 
-  return values || "Variacao disponivel";
+  return values || "Variação disponível";
 }
 
 export function ProductVariantSelector({
@@ -49,7 +49,7 @@ export function ProductVariantSelector({
 
   function handleAddToCart() {
     if (!selectedVariant) {
-      window.alert("Selecione uma variacao antes de adicionar ao carrinho.");
+      window.alert("Selecione uma variação antes de adicionar ao carrinho.");
       return;
     }
 
@@ -79,19 +79,19 @@ export function ProductVariantSelector({
   return (
     <section className="flex flex-col gap-3 rounded-lg border border-border p-3 sm:gap-4 sm:p-4">
       <div>
-        <h2 className="font-semibold">Escolha a variacao</h2>
+        <h2 className="font-semibold">Escolha a variação</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          A selecao sera enviada junto com o pedido no WhatsApp.
+          A seleção será enviada junto com o pedido no WhatsApp.
         </p>
       </div>
       <label className="block space-y-2 text-sm">
-        <span className="font-medium">Variacao disponivel</span>
+        <span className="font-medium">Variação disponível</span>
         <select
           value={selectedVariantId}
           onChange={(event) => setSelectedVariantId(event.target.value)}
           className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <option value="">Selecionar opcao</option>
+          <option value="">Selecionar opção</option>
           {variants.map((variant) => (
             <option key={variant.id} value={variant.id}>
               {getVariantLabel(variant)}

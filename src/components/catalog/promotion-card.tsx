@@ -65,7 +65,7 @@ export function PromotionCard({ promotion }: PromotionCardProps) {
           ) : null}
         </div>
         <Button asChild variant="outline">
-          <Link href={`/promocoes/${promotion.slug}`}>Ver promocao</Link>
+          <Link href={`/promocoes/${promotion.slug}`}>Ver promoção</Link>
         </Button>
       </div>
     </article>

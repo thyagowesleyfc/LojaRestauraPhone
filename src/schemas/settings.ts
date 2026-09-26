@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { sanitizeRichTextHtml } from "@/lib/privacy-content";
 
-const requiredText = z.string().trim().min(1, "Campo obrigatorio.");
+const requiredText = z.string().trim().min(1, "Campo obrigatório.");
 const optionalText = z
   .string()
   .trim()
@@ -18,10 +18,10 @@ const optionalTextMax = (max: number, message: string) =>
 const hexColor = z
   .string()
   .trim()
-  .regex(/^#[0-9A-Fa-f]{6}$/, "Use uma cor hexadecimal valida.");
+  .regex(/^#[0-9A-Fa-f]{6}$/, "Use uma cor hexadecimal válida.");
 const countdownSegment = z.coerce
   .number()
-  .int("Use um numero inteiro.")
+  .int("Use um número inteiro.")
   .min(0, "Use um valor maior ou igual a zero.");
 
 function isValidOfferLink(value: string) {
@@ -42,7 +42,7 @@ function isValidOfferLink(value: string) {
 }
 
 export const bannerInputSchema = z.object({
-  redirectUrl: requiredText.max(500, "Use no maximo 500 caracteres."),
+  redirectUrl: requiredText.max(500, "Use no máximo 500 caracteres."),
   altText: optionalText,
   displayOrder: z.coerce.number().int().min(0),
   active: z.coerce.boolean()
@@ -50,41 +50,41 @@ export const bannerInputSchema = z.object({
 
 export const storeSettingsInputSchema = z
   .object({
-    tradeName: requiredText.max(120, "Use no maximo 120 caracteres."),
+    tradeName: requiredText.max(120, "Use no máximo 120 caracteres."),
     cnpj: optionalText,
     phone: optionalText,
-    email: z.string().trim().email("E-mail invalido."),
+    email: z.string().trim().email("E-mail inválido."),
     address: optionalText,
     mapEmbedUrl: optionalText,
     aboutText: optionalText,
     privacyPageContent: z
       .string()
       .trim()
-      .max(20000, "Use no maximo 20000 caracteres na pagina de privacidade.")
+      .max(20000, "Use no máximo 20000 caracteres na página de privacidade.")
       .transform(sanitizeRichTextHtml),
     whatsappNumber: z
       .string()
       .trim()
-      .regex(/^$|^[0-9]+$/, "Use apenas digitos no WhatsApp."),
+      .regex(/^$|^[0-9]+$/, "Use apenas dígitos no WhatsApp."),
     whatsappInitialMessage: requiredText.max(
       300,
-      "Use no maximo 300 caracteres."
+      "Use no máximo 300 caracteres."
     ),
     bannerTransitionSeconds: z.coerce
       .number()
-      .int("Use um numero inteiro de segundos.")
-      .min(3, "Use no minimo 3 segundos.")
-      .max(30, "Use no maximo 30 segundos."),
+      .int("Use um número inteiro de segundos.")
+      .min(3, "Use no mínimo 3 segundos.")
+      .max(30, "Use no máximo 30 segundos."),
     offerCountdownHeadline: optionalTextMax(
       140,
-      "Use no maximo 140 caracteres na headline da oferta."
+      "Use no máximo 140 caracteres na headline da oferta."
     ),
     offerCountdownLink: z
       .string()
       .trim()
-      .max(500, "Use no maximo 500 caracteres no link da oferta.")
+      .max(500, "Use no máximo 500 caracteres no link da oferta.")
       .refine(isValidOfferLink, "Use um caminho iniciado por / ou uma URL http(s)."),
-    offerCountdownHours: countdownSegment.max(168, "Use no maximo 168 horas."),
+    offerCountdownHours: countdownSegment.max(168, "Use no máximo 168 horas."),
     offerCountdownMinutes: countdownSegment.max(59, "Use entre 0 e 59 minutos."),
     offerCountdownSeconds: countdownSegment.max(59, "Use entre 0 e 59 segundos."),
     offerCountdownBackgroundColor: hexColor,

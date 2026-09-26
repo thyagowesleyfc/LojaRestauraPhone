@@ -105,7 +105,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <div className="space-y-2 rounded-lg border border-border p-3 sm:border-0 sm:p-0">
-          <h2 className="font-semibold">Informacoes do produto</h2>
+          <h2 className="font-semibold">Informações do produto</h2>
           <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground sm:leading-7">
             {product.specification}
           </p>

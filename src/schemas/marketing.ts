@@ -19,7 +19,7 @@ function validateProviderIdentifier({
   }
 
   if (identifier && !pattern.test(identifier)) {
-    return `${label}: identificador invalido.`;
+    return `${label}: identificador inválido.`;
   }
 
   return null;

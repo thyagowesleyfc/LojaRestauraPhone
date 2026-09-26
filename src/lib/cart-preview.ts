@@ -172,7 +172,7 @@ export async function getCartPreview(inputItems: StoredCartItem[]) {
       if (!product) {
         unavailableItems.push({
           ...requestedItem,
-          reason: "Produto indisponivel."
+          reason: "Produto indisponível."
         });
         continue;
       }
@@ -206,7 +206,7 @@ export async function getCartPreview(inputItems: StoredCartItem[]) {
       if (!variant) {
         unavailableItems.push({
           ...requestedItem,
-          reason: "SKU indisponivel."
+          reason: "SKU indisponível."
         });
         continue;
       }
@@ -244,7 +244,7 @@ export async function getCartPreview(inputItems: StoredCartItem[]) {
     if (!combo || combo.comboPriceInCents === null) {
       unavailableItems.push({
         ...requestedItem,
-        reason: "Combo indisponivel."
+        reason: "Combo indisponível."
       });
       continue;
     }

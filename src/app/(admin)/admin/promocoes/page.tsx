@@ -45,7 +45,7 @@ export default async function PromotionsPage({
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">Promocoes</h1>
+          <h1 className="text-3xl font-semibold">Promoções</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Gerencie descontos por categoria e combos de produtos.
           </p>
@@ -53,7 +53,7 @@ export default async function PromotionsPage({
         <div className="flex flex-wrap items-center gap-2">
           <AdminDashboardLink />
           <Button asChild>
-            <Link href="/admin/promocoes/nova">Nova promocao</Link>
+            <Link href="/admin/promocoes/nova">Nova promoção</Link>
           </Button>
         </div>
       </div>
@@ -82,8 +82,8 @@ export default async function PromotionsPage({
               <p className="text-sm text-muted-foreground">
                 {promotionTypeLabel(promotion.type)}
                 {promotion.type === PromotionType.CATEGORY_PERCENTAGE
-                  ? ` Â· ${promotion.percentage}% em ${promotion.category?.name ?? "categoria"}`
-                  : ` Â· ${formatMoneyFromCents(promotion.comboPriceInCents ?? 0)}`}
+                  ? ` - ${promotion.percentage}% em ${promotion.category?.name ?? "categoria"}`
+                  : ` - ${formatMoneyFromCents(promotion.comboPriceInCents ?? 0)}`}
               </p>
               <p className="text-sm">
                 {promotion.active ? "Ativa" : "Inativa"}
@@ -106,7 +106,7 @@ export default async function PromotionsPage({
         ))}
         {promotions.length === 0 ? (
           <p className="rounded-lg border border-border p-6 text-sm text-muted-foreground">
-            Nenhuma promocao cadastrada.
+            Nenhuma promoção cadastrada.
           </p>
         ) : null}
       </div>

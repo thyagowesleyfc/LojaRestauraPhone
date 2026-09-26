@@ -37,7 +37,7 @@ export async function updateMarketingIntegrationsAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/marketing",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -84,7 +84,7 @@ export async function updateMarketingIntegrationsAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError("/admin/marketing", "Integracao duplicada.");
+      redirectWithError("/admin/marketing", "Integração duplicada.");
     }
 
     throw error;

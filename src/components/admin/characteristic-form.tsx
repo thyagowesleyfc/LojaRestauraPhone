@@ -91,7 +91,7 @@ export function CharacteristicForm({
 
       {characteristic?.options.length ? (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Opcoes existentes</h2>
+          <h2 className="text-lg font-semibold">Opções existentes</h2>
           <div className="grid gap-3">
             {characteristic.options.map((option) => (
               <div
@@ -159,9 +159,9 @@ export function CharacteristicForm({
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-lg font-semibold">Novas opcoes</h2>
+          <h2 className="text-lg font-semibold">Novas opções</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Use linhas vazias quando nao precisar adicionar mais valores.
+            Use linhas vazias quando não precisar adicionar mais valores.
           </p>
         </div>
         <div className="grid gap-3">

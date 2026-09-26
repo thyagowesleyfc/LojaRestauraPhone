@@ -60,14 +60,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <div className="flex flex-wrap items-center gap-2">
           <AdminDashboardLink />
           <Button asChild variant="outline">
-            <Link href="/admin/pedidos">Voltar aos pedidos</Link>
+            <Link href="/admin/pedidos">Voltar para pedidos</Link>
           </Button>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <article className="rounded-lg border border-border bg-card p-4">
-          <p className="text-sm text-muted-foreground">Codigo</p>
+          <p className="text-sm text-muted-foreground">Código</p>
           <strong className="mt-2 block text-xl">{order.code}</strong>
         </article>
         <article className="rounded-lg border border-border bg-card p-4">

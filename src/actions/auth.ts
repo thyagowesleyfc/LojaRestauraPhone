@@ -24,7 +24,7 @@ export async function loginAction(
 
   if (!parsed.success) {
     return {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos."
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos."
     };
   }
 
@@ -32,7 +32,7 @@ export async function loginAction(
 
   if (!admin) {
     return {
-      error: "E-mail ou senha invalidos."
+      error: "E-mail ou senha inválidos."
     };
   }
 

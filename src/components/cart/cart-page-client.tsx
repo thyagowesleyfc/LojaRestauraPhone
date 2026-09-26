@@ -61,7 +61,7 @@ async function createCheckout(items: StoredCartItem[]) {
       | { error?: string }
       | null;
 
-    throw new Error(payload?.error ?? "Nao foi possivel criar o pedido.");
+    throw new Error(payload?.error ?? "Não foi possível criar o pedido.");
   }
 
   return (await response.json()) as CartCheckoutResponse;
@@ -77,7 +77,7 @@ async function fetchCartPreview(items: StoredCartItem[]) {
   });
 
   if (!response.ok) {
-    throw new Error("Nao foi possivel validar o carrinho.");
+    throw new Error("Não foi possível validar o carrinho.");
   }
 
   return (await response.json()) as CartPreview;
@@ -109,7 +109,7 @@ export function CartPageClient() {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Nao foi possivel validar o carrinho."
+          : "Não foi possível validar o carrinho."
       );
       return null;
     } finally {
@@ -187,19 +187,19 @@ export function CartPageClient() {
     const latestPreview = await refreshPreview(items);
 
     if (!latestPreview || latestPreview.items.length === 0) {
-      window.alert("Carrinho vazio ou indisponivel para envio.");
+      window.alert("Carrinho vazio ou indisponível para envio.");
       return;
     }
 
     if (latestPreview.unavailableItems.length > 0) {
       window.alert(
-        "Alguns itens estao indisponiveis. Remova-os antes de enviar o pedido."
+        "Alguns itens estão indisponíveis. Remova-os antes de enviar o pedido."
       );
       return;
     }
 
     if (!latestPreview.whatsappHref) {
-      window.alert("WhatsApp da loja nao configurado.");
+      window.alert("WhatsApp da loja não configurado.");
       return;
     }
 
@@ -222,7 +222,7 @@ export function CartPageClient() {
       window.alert(
         caughtError instanceof Error
           ? caughtError.message
-          : "Nao foi possivel criar o pedido."
+          : "Não foi possível criar o pedido."
       );
     } finally {
       setCheckoutLoading(false);
@@ -258,7 +258,7 @@ export function CartPageClient() {
 
       {items.length === 0 ? (
         <section className="space-y-4 rounded-lg border border-border p-6">
-          <h2 className="text-xl font-semibold">Seu carrinho esta vazio</h2>
+          <h2 className="text-xl font-semibold">Seu carrinho está vazio</h2>
           <p className="text-sm text-muted-foreground">
             Escolha produtos ou combos ativos para montar seu pedido.
           </p>
@@ -299,7 +299,7 @@ export function CartPageClient() {
                             : "Produto"}
                       </p>
                       <h2 className="line-clamp-2 text-sm font-semibold leading-snug sm:text-base">
-                        {previewItem?.description ?? "Item indisponivel"}
+                        {previewItem?.description ?? "Item indisponível"}
                       </h2>
                       {previewItem?.detail ? (
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground sm:text-sm">
@@ -383,7 +383,7 @@ export function CartPageClient() {
             </div>
             {preview?.unavailableItems.length ? (
               <p className="text-sm text-destructive">
-                Remova itens indisponiveis antes de enviar.
+                Remova itens indisponíveis antes de enviar.
               </p>
             ) : null}
             <div className="grid gap-2">
@@ -405,7 +405,7 @@ export function CartPageClient() {
             </div>
             {loading ? (
               <p className="text-xs text-muted-foreground">
-                Validando precos atuais...
+                Validando preços atuais...
               </p>
             ) : null}
           </aside>

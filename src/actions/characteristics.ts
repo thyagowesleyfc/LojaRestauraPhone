@@ -146,14 +146,14 @@ export async function createCharacteristicAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/caracteristicas/nova",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
   if (!newOptions.success) {
     redirectWithError(
       "/admin/caracteristicas/nova",
-      newOptions.error.issues[0]?.message ?? "Dados invalidos."
+      newOptions.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -178,7 +178,7 @@ export async function createCharacteristicAction(formData: FormData) {
     ) {
       redirectWithError(
         "/admin/caracteristicas/nova",
-        "Caracteristica ou opcao ja cadastrada."
+        "Característica ou opção já cadastrada."
       );
     }
 
@@ -201,12 +201,12 @@ export async function updateCharacteristicAction(formData: FormData) {
     redirectWithError(
       errorPath,
       !parsed.success
-        ? parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? parsed.error.issues[0]?.message ?? "Dados inválidos."
         : !existingOptions.success
-          ? existingOptions.error.issues[0]?.message ?? "Dados invalidos."
+          ? existingOptions.error.issues[0]?.message ?? "Dados inválidos."
           : !newOptions.success
-            ? newOptions.error.issues[0]?.message ?? "Dados invalidos."
-            : "Caracteristica invalida."
+            ? newOptions.error.issues[0]?.message ?? "Dados inválidos."
+            : "Característica inválida."
     );
   }
 
@@ -218,7 +218,7 @@ export async function updateCharacteristicAction(formData: FormData) {
     if (usedOptions > 0) {
       redirectWithError(
         errorPath,
-        "Nao remova opcoes ja usadas por variantes. Inative a opcao."
+        "Não remova opções já usadas por variantes. Inative a opção."
       );
     }
   }
@@ -272,7 +272,7 @@ export async function updateCharacteristicAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError(errorPath, "Caracteristica ou opcao ja cadastrada.");
+      redirectWithError(errorPath, "Característica ou opção já cadastrada.");
     }
 
     throw error;
@@ -287,7 +287,7 @@ export async function deleteCharacteristicAction(formData: FormData) {
   const id = getStringValue(formData, "id");
 
   if (!id) {
-    redirectWithError("/admin/caracteristicas", "Caracteristica invalida.");
+    redirectWithError("/admin/caracteristicas", "Característica inválida.");
   }
 
   const characteristic = await prisma.characteristic.findUnique({
@@ -304,7 +304,7 @@ export async function deleteCharacteristicAction(formData: FormData) {
   });
 
   if (!characteristic) {
-    redirectWithError("/admin/caracteristicas", "Caracteristica nao encontrada.");
+    redirectWithError("/admin/caracteristicas", "Característica não encontrada.");
   }
 
   if (
@@ -333,8 +333,8 @@ export async function updateCategoryCharacteristicsAction(formData: FormData) {
     redirectWithError(
       errorPath,
       parsed.success
-        ? "Categoria invalida."
-        : parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? "Categoria inválida."
+        : parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -358,7 +358,7 @@ export async function updateCategoryCharacteristicsAction(formData: FormData) {
     if (usedValues > 0) {
       redirectWithError(
         errorPath,
-        "Nao remova caracteristicas ja usadas por variantes desta categoria."
+        "Não remova características já usadas por variantes desta categoria."
       );
     }
   }

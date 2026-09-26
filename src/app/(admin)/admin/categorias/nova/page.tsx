@@ -22,7 +22,7 @@ export default async function NewCategoryPage({
         <div>
           <h1 className="text-3xl font-semibold">Nova categoria</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre uma secao do catalogo publico.
+            Cadastre uma seção do catálogo público.
           </p>
         </div>
         <Button asChild variant="outline">

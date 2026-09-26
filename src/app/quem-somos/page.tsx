@@ -16,13 +16,13 @@ export default async function AboutPage() {
       <section className="space-y-4 rounded-lg border border-border p-6">
         <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
           {settings.aboutText ||
-            "Conteudo institucional ainda nao configurado."}
+            "Conteúdo institucional ainda não configurado."}
         </p>
       </section>
       <section className="grid gap-4 text-sm text-muted-foreground sm:grid-cols-2">
         {settings.phone ? <p>Telefone: {settings.phone}</p> : null}
         {settings.email ? <p>E-mail: {settings.email}</p> : null}
-        {settings.address ? <p>Endereco: {settings.address}</p> : null}
+        {settings.address ? <p>Endereço: {settings.address}</p> : null}
         {settings.cnpj ? <p>CNPJ: {settings.cnpj}</p> : null}
       </section>
       {settings.mapEmbedUrl ? (

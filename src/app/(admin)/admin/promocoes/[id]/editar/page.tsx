@@ -49,9 +49,9 @@ export default async function EditPromotionPage({
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">Editar promocao</h1>
+          <h1 className="text-3xl font-semibold">Editar promoção</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Atualize regra, produtos, periodo, imagens e status publico.
+            Atualize regra, produtos, período, imagens e status público.
           </p>
         </div>
         <Button asChild variant="outline">

@@ -272,7 +272,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
   const marketingIntegrations = await getMarketingIntegrations();
   const funnel = [
     {
-      label: "Sessoes",
+      label: "Sessões",
       rate: "100%",
       value: sessionGroups.length
     },
@@ -282,12 +282,12 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
       value: productViews
     },
     {
-      label: "Add to cart",
+      label: "Itens adicionados ao carrinho",
       rate: getStepRate(addToCart, productViews),
       value: addToCart
     },
     {
-      label: "WhatsApp click",
+      label: "Cliques no WhatsApp",
       rate: getStepRate(whatsappClicks, addToCart),
       value: whatsappClicks
     },
@@ -304,14 +304,14 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold">Marketing</h1>
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Acompanhe sessoes, buscas, produtos visualizados, carrinho,
+            Acompanhe sessões, buscas, produtos visualizados, carrinho,
             WhatsApp e origem por UTM.
           </p>
           <AdminDashboardLink />
         </div>
         <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[460px]">
           <label className="space-y-2 text-sm">
-            <span className="font-medium">Inicio</span>
+            <span className="font-medium">Início</span>
             <input
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               name="inicio"
@@ -341,15 +341,15 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
       ) : null}
       {successMessage === "integracoes" ? (
         <p className="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary">
-          Integracoes atualizadas.
+          Integrações atualizadas.
         </p>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MetricCard label="Visitas Home" value={homeVisits} />
+        <MetricCard label="Visitas à home" value={homeVisits} />
         <MetricCard label="Produtos vistos" value={productViews} />
         <MetricCard label="Buscas" value={searches} />
         <MetricCard label="Buscas sem resultado" value={searchesWithoutResults} />
-        <MetricCard label="Add to cart" value={addToCart} />
+        <MetricCard label="Itens adicionados ao carrinho" value={addToCart} />
         <MetricCard label="Pedidos no WhatsApp" value={ordersSent} />
       </div>
 
@@ -372,7 +372,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Remocoes do carrinho no periodo: {formatNumber(removeFromCart)}.
+          Remoções do carrinho no período: {formatNumber(removeFromCart)}.
         </p>
       </section>
 
@@ -385,7 +385,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
                 <thead className="bg-muted text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Produto</th>
-                    <th className="px-4 py-3 font-medium">Views</th>
+                    <th className="px-4 py-3 font-medium">Visualizações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -420,7 +420,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
               </table>
             </div>
           ) : (
-            <EmptyState>Nenhuma visualizacao de produto no periodo.</EmptyState>
+            <EmptyState>Nenhuma visualização de produto no período.</EmptyState>
           )}
         </section>
 
@@ -453,7 +453,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
               </table>
             </div>
           ) : (
-            <EmptyState>Nenhuma busca registrada no periodo.</EmptyState>
+            <EmptyState>Nenhuma busca registrada no período.</EmptyState>
           )}
         </section>
       </div>
@@ -467,7 +467,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
                 <thead className="bg-muted text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Termo</th>
-                    <th className="px-4 py-3 font-medium">Ocorrencias</th>
+                    <th className="px-4 py-3 font-medium">Ocorrências</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -488,7 +488,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
               </table>
             </div>
           ) : (
-            <EmptyState>Nenhuma busca sem resultado no periodo.</EmptyState>
+            <EmptyState>Nenhuma busca sem resultado no período.</EmptyState>
           )}
         </section>
 
@@ -499,9 +499,9 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
               <table className="w-full min-w-[560px] text-left text-sm">
                 <thead className="bg-muted text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 font-medium">Source</th>
-                    <th className="px-4 py-3 font-medium">Medium</th>
-                    <th className="px-4 py-3 font-medium">Campaign</th>
+                    <th className="px-4 py-3 font-medium">Origem</th>
+                    <th className="px-4 py-3 font-medium">Mídia</th>
+                    <th className="px-4 py-3 font-medium">Campanha</th>
                     <th className="px-4 py-3 font-medium">Eventos</th>
                   </tr>
                 </thead>
@@ -523,16 +523,16 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
               </table>
             </div>
           ) : (
-            <EmptyState>Nenhum evento com UTM no periodo.</EmptyState>
+            <EmptyState>Nenhum evento com UTM no período.</EmptyState>
           )}
         </section>
       </div>
       <section className="space-y-4">
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Integracoes</h2>
+          <h2 className="text-xl font-semibold">Integrações</h2>
           <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
             Configure marcadores externos de marketing. Os eventos continuam
-            sendo registrados internamente e tambem sao encaminhados aos
+            sendo registrados internamente e também são encaminhados aos
             providers ativos.
           </p>
         </div>

@@ -162,7 +162,7 @@ async function validateVariantSelection(
   });
 
   if (!product) {
-    redirectWithError("/admin/produtos", "Produto nao encontrado.");
+    redirectWithError("/admin/produtos", "Produto não encontrado.");
   }
 
   const configured = product.category.characteristics;
@@ -170,7 +170,7 @@ async function validateVariantSelection(
   if (configured.length === 0) {
     redirectWithError(
       errorPath,
-      "Configure caracteristicas na categoria antes de criar variantes."
+      "Configure características na categoria antes de criar variantes."
     );
   }
 
@@ -199,7 +199,7 @@ async function validateVariantSelection(
     );
 
     if (!option) {
-      redirectWithError(errorPath, "Opcao de caracteristica invalida.");
+      redirectWithError(errorPath, "Opção de característica inválida.");
     }
 
     validSelections.push(selection);
@@ -207,7 +207,7 @@ async function validateVariantSelection(
   }
 
   if (validSelections.length === 0) {
-    redirectWithError(errorPath, "Selecione ao menos uma caracteristica.");
+    redirectWithError(errorPath, "Selecione ao menos uma característica.");
   }
 
   return {
@@ -235,7 +235,7 @@ export async function createProductVariantAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       errorPath,
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -287,7 +287,7 @@ export async function createProductVariantAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError(errorPath, "SKU ou combinacao de caracteristicas ja existe.");
+      redirectWithError(errorPath, "SKU ou combinação de características já existe.");
     }
 
     throw error;
@@ -302,7 +302,7 @@ export async function updateProductVariantAction(formData: FormData) {
   const variantId = getStringValue(formData, "variantId");
 
   if (!variantId) {
-    redirectWithError("/admin/produtos", "SKU invalido.");
+    redirectWithError("/admin/produtos", "SKU inválido.");
   }
 
   const variant = await prisma.productVariant.findUnique({
@@ -314,7 +314,7 @@ export async function updateProductVariantAction(formData: FormData) {
   });
 
   if (!variant) {
-    redirectWithError("/admin/produtos", "SKU nao encontrado.");
+    redirectWithError("/admin/produtos", "SKU não encontrado.");
   }
 
   const productId = variant.productId;
@@ -333,7 +333,7 @@ export async function updateProductVariantAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       errorPath,
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -424,7 +424,7 @@ export async function updateProductVariantAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError(errorPath, "SKU ou combinacao de caracteristicas ja existe.");
+      redirectWithError(errorPath, "SKU ou combinação de características já existe.");
     }
 
     throw error;
@@ -443,7 +443,7 @@ export async function deleteProductVariantAction(formData: FormData) {
   const variantId = getStringValue(formData, "variantId");
 
   if (!variantId) {
-    redirectWithError("/admin/produtos", "SKU invalido.");
+    redirectWithError("/admin/produtos", "SKU inválido.");
   }
 
   const variant = await prisma.productVariant.findUnique({
@@ -452,7 +452,7 @@ export async function deleteProductVariantAction(formData: FormData) {
   });
 
   if (!variant) {
-    redirectWithError("/admin/produtos", "SKU nao encontrado.");
+    redirectWithError("/admin/produtos", "SKU não encontrado.");
   }
 
   await prisma.productVariant.delete({ where: { id: variantId } });

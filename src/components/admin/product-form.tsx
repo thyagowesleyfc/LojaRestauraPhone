@@ -37,7 +37,7 @@ export function ProductForm({
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="description">
-            Descricao curta
+            Descrição curta
           </label>
           <input
             id="description"
@@ -73,7 +73,7 @@ export function ProductForm({
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium" htmlFor="price">
-          Preco
+          Preço
         </label>
         <input
           id="price"
@@ -90,7 +90,7 @@ export function ProductForm({
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium" htmlFor="specification">
-          Especificacao
+          Especificação
         </label>
         <textarea
           id="specification"

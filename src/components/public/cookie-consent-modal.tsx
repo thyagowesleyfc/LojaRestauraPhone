@@ -61,13 +61,13 @@ export function CookieConsentModal() {
         role="dialog"
       >
         <p className="min-w-0 flex-1 text-left text-sm leading-6 text-muted-foreground">
-          Usamos cookies para melhorar sua experiencia. Consulte mais
-          informacoes na nossa{" "}
+          Usamos cookies para melhorar sua experiência. Consulte mais
+          informações na nossa{" "}
           <Link
             className="font-medium text-primary underline underline-offset-4"
             href="/pagina-privacidade"
           >
-            Pagina de privacidade
+            Página de privacidade
           </Link>
           .
         </p>

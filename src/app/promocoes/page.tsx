@@ -34,7 +34,7 @@ export default async function PromotionsPage() {
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           Ofertas
         </p>
-        <h1 className="text-4xl font-semibold">Promocoes</h1>
+        <h1 className="text-4xl font-semibold">Promoções</h1>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
           Descontos por categoria e combos selecionados pela loja.
         </p>
@@ -46,7 +46,7 @@ export default async function PromotionsPage() {
       </div>
       {activePromotions.length === 0 ? (
         <p className="rounded-lg border border-border p-6 text-sm text-muted-foreground">
-          Nenhuma promocao ativa no momento.
+          Nenhuma promoção ativa no momento.
         </p>
       ) : null}
     </main>

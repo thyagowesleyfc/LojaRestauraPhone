@@ -182,7 +182,7 @@ export async function createCategoryAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/categorias/nova",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -200,7 +200,7 @@ export async function createCategoryAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError("/admin/categorias/nova", "Categoria ja cadastrada.");
+      redirectWithError("/admin/categorias/nova", "Categoria já cadastrada.");
     }
 
     throw error;
@@ -220,8 +220,8 @@ export async function updateCategoryAction(formData: FormData) {
     redirectWithError(
       `/admin/categorias/${id}/editar`,
       parsed.success
-        ? "Categoria invalida."
-        : parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? "Categoria inválida."
+        : parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -242,7 +242,7 @@ export async function updateCategoryAction(formData: FormData) {
     ) {
       redirectWithError(
         `/admin/categorias/${id}/editar`,
-        "Categoria ja cadastrada."
+        "Categoria já cadastrada."
       );
     }
 
@@ -260,7 +260,7 @@ export async function deleteCategoryAction(formData: FormData) {
   const id = getStringValue(formData, "id");
 
   if (!id) {
-    redirectWithError("/admin/categorias", "Categoria invalida.");
+    redirectWithError("/admin/categorias", "Categoria inválida.");
   }
 
   const category = await prisma.category.findUnique({
@@ -277,7 +277,7 @@ export async function deleteCategoryAction(formData: FormData) {
   });
 
   if (!category) {
-    redirectWithError("/admin/categorias", "Categoria nao encontrada.");
+    redirectWithError("/admin/categorias", "Categoria não encontrada.");
   }
 
   if (category._count.products > 0 || category._count.promotions > 0) {
@@ -302,7 +302,7 @@ export async function createProductAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/produtos/novo",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -364,8 +364,8 @@ export async function updateProductAction(formData: FormData) {
     redirectWithError(
       `/admin/produtos/${id}/editar`,
       parsed.success
-        ? "Produto invalido."
-        : parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? "Produto inválido."
+        : parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -375,7 +375,7 @@ export async function updateProductAction(formData: FormData) {
   });
 
   if (!product) {
-    redirectWithError("/admin/produtos", "Produto nao encontrado.");
+    redirectWithError("/admin/produtos", "Produto não encontrado.");
   }
 
   const removeImageIds = new Set(getRemovedImageIds(formData));
@@ -474,7 +474,7 @@ export async function deleteProductAction(formData: FormData) {
   const id = getStringValue(formData, "id");
 
   if (!id) {
-    redirectWithError("/admin/produtos", "Produto invalido.");
+    redirectWithError("/admin/produtos", "Produto inválido.");
   }
 
   const product = await prisma.product.findUnique({
@@ -491,7 +491,7 @@ export async function deleteProductAction(formData: FormData) {
   });
 
   if (!product) {
-    redirectWithError("/admin/produtos", "Produto nao encontrado.");
+    redirectWithError("/admin/produtos", "Produto não encontrado.");
   }
 
   if (product._count.promotions > 0 || product._count.variants > 0) {

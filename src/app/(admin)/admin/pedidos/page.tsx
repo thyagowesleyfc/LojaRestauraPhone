@@ -61,7 +61,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           <h1 className="text-3xl font-semibold">Pedidos</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
             Acompanhe os pedidos enviados pelo WhatsApp e consulte os itens de
-            cada codigo.
+            cada código.
           </p>
         </div>
         <AdminDashboardLink />
@@ -69,7 +69,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
       <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[1fr_220px_auto] sm:items-end">
         <label className="space-y-2 text-sm">
-          <span className="font-medium">Buscar por codigo</span>
+          <span className="font-medium">Buscar por código</span>
           <input
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm uppercase outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
             defaultValue={search}
@@ -95,11 +95,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       {orders.length > 0 ? (
         <div className="overflow-hidden rounded-lg border border-border bg-card">
           <div className="hidden grid-cols-[1.2fr_1fr_0.7fr_0.8fr_auto] gap-4 bg-muted px-4 py-3 text-sm font-medium text-muted-foreground md:grid">
-            <span>Codigo</span>
+            <span>Código</span>
             <span>Data</span>
             <span>Itens</span>
             <span>Total</span>
-            <span className="text-right">Acao</span>
+            <span className="text-right">Ação</span>
           </div>
           <div className="divide-y divide-border">
             {orders.map((order) => (
@@ -109,7 +109,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               >
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground md:hidden">
-                    Codigo
+                    Código
                   </p>
                   <p className="font-semibold">{order.code}</p>
                 </div>
@@ -147,7 +147,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       ) : (
         <p className="rounded-lg border border-border p-6 text-sm text-muted-foreground">
           {search
-            ? "Nenhum pedido encontrado para este codigo."
+            ? "Nenhum pedido encontrado para este código."
             : "Nenhum pedido enviado ainda."}
         </p>
       )}

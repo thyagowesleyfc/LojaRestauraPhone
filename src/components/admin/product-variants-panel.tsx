@@ -78,7 +78,7 @@ function VariantSelectors({
             defaultValue={getSelectedOptionId(variant, item.characteristicId)}
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
-            <option value="">{item.required ? "Selecione" : "Nao usar"}</option>
+            <option value="">{item.required ? "Selecione" : "Não usar"}</option>
             {item.characteristic.options.map((option) => (
               <option key={option.id} value={option.id} disabled={!option.active}>
                 {option.name}
@@ -163,7 +163,7 @@ export function ProductVariantsPanel({
         </form>
       ) : (
         <p className="rounded-md border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-          Configure caracteristicas na categoria do produto antes de criar SKUs.
+          Configure características na categoria do produto antes de criar SKUs.
         </p>
       )}
 

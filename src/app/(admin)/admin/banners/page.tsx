@@ -25,7 +25,7 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
           <h1 className="text-3xl font-semibold">Banners</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Cadastre imagens desktop/mobile, headline, links, ordem e
-            disponibilidade publica.
+            disponibilidade pública.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

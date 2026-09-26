@@ -32,15 +32,15 @@ export default async function CharacteristicsPage({
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">Caracteristicas</h1>
+          <h1 className="text-3xl font-semibold">Características</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Gerencie atributos reutilizaveis para formar SKUs por produto.
+            Gerencie atributos reutilizáveis para formar SKUs por produto.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <AdminDashboardLink />
           <Button asChild>
-            <Link href="/admin/caracteristicas/nova">Nova caracteristica</Link>
+            <Link href="/admin/caracteristicas/nova">Nova característica</Link>
           </Button>
         </div>
       </div>
@@ -55,10 +55,10 @@ export default async function CharacteristicsPage({
             <tr>
               <th className="px-4 py-3 font-medium">Nome</th>
               <th className="px-4 py-3 font-medium">Slug</th>
-              <th className="px-4 py-3 font-medium">Opcoes</th>
+              <th className="px-4 py-3 font-medium">Opções</th>
               <th className="px-4 py-3 font-medium">Categorias</th>
               <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Acoes</th>
+              <th className="px-4 py-3 font-medium">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -89,7 +89,7 @@ export default async function CharacteristicsPage({
             {characteristics.length === 0 ? (
               <tr>
                 <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
-                  Nenhuma caracteristica cadastrada.
+                  Nenhuma característica cadastrada.
                 </td>
               </tr>
             ) : null}

@@ -32,7 +32,7 @@ export default async function CategoriesPage({
         <div>
           <h1 className="text-3xl font-semibold">Categorias</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Ordene e controle a exibicao publica das categorias.
+            Ordene e controle a exibição pública das categorias.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -55,7 +55,7 @@ export default async function CategoriesPage({
               <th className="px-4 py-3 font-medium">Ordem</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Produtos</th>
-              <th className="px-4 py-3 font-medium">Acoes</th>
+              <th className="px-4 py-3 font-medium">Ações</th>
             </tr>
           </thead>
           <tbody>

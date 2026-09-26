@@ -70,7 +70,7 @@ export function StoreSettingsForm({
         </div>
         <TextField
           name="address"
-          label="Endereco"
+          label="Endereço"
           defaultValue={settings.address}
         />
         <div className="space-y-2">
@@ -134,7 +134,7 @@ export function StoreSettingsForm({
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
-            Padrao recomendado: 5 segundos. Use entre 3 e 30 segundos.
+            Padrão recomendado: 5 segundos. Use entre 3 e 30 segundos.
           </p>
         </div>
       </section>
@@ -144,7 +144,7 @@ export function StoreSettingsForm({
         <div className="grid gap-5 lg:grid-cols-2">
           <TextField
             name="whatsappNumber"
-            label="Numero internacional"
+            label="Número internacional"
             defaultValue={settings.whatsappNumber}
           />
           <TextField
@@ -158,9 +158,9 @@ export function StoreSettingsForm({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold">Countdown de oferta</h2>
+          <h2 className="text-xl font-semibold">Contador de oferta</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            A faixa aparece no site publico quando headline, link e tempo estiverem preenchidos.
+            A faixa aparece no site público quando headline, link e tempo estiverem preenchidos.
           </p>
         </div>
         <div className="grid gap-5 lg:grid-cols-2">
@@ -229,7 +229,7 @@ export function StoreSettingsForm({
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <ColorField
             name="lightPrimaryColor"
-            label="Primaria clara"
+            label="Primária clara"
             defaultValue={settings.lightPrimaryColor}
           />
           <ColorField
@@ -244,7 +244,7 @@ export function StoreSettingsForm({
           />
           <ColorField
             name="darkPrimaryColor"
-            label="Primaria escura"
+            label="Primária escura"
             defaultValue={settings.darkPrimaryColor}
           />
           <ColorField
@@ -259,7 +259,7 @@ export function StoreSettingsForm({
           />
         </div>
       </section>
-      <Button type="submit">Salvar configuracoes</Button>
+      <Button type="submit">Salvar configurações</Button>
     </form>
   );
 }

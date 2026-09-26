@@ -19,8 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getStoreSettings();
 
   return {
-    title: `${settings.tradeName} | Catalogo e promocoes`,
-    description: `Veja categorias, produtos e promocoes da ${settings.tradeName}.`
+    title: `${settings.tradeName} | Catálogo e promoções`,
+    description: `Veja categorias, produtos e promoções da ${settings.tradeName}.`
   };
 }
 

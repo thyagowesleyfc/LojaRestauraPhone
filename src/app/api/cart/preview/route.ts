@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Carrinho invalido." },
+      { error: "Carrinho inválido." },
       { status: 400 }
     );
   }

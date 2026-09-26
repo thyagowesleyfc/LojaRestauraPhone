@@ -44,7 +44,7 @@ type PublicChromeProps = {
 };
 
 const links = [
-  { href: "/promocoes", label: "Promocoes" },
+  { href: "/promocoes", label: "Promoções" },
   { href: "/categorias", label: "Categorias" },
   { href: "/quem-somos", label: "Quem somos" },
   { href: "/pagina-privacidade", label: "Privacidade" },
@@ -423,7 +423,7 @@ export function PublicChrome({
               className="h-10 min-h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:flex-1"
               id="public-search-input"
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por descricao ou especificacao"
+              placeholder="Buscar por descrição ou especificação"
               type="search"
               value={searchTerm}
             />
@@ -468,7 +468,7 @@ export function PublicChrome({
               />
             </Link>
             <p className="text-sm leading-6 text-muted-foreground">
-              {settings.cnpj ? `CNPJ: ${settings.cnpj}` : "CNPJ nao informado"}
+              {settings.cnpj ? `CNPJ: ${settings.cnpj}` : "CNPJ não informado"}
             </p>
           </div>
           <div className="space-y-2 text-sm text-muted-foreground">

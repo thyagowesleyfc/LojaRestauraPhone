@@ -127,7 +127,7 @@ export async function createBannerAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/banners/novo",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -170,15 +170,15 @@ export async function updateBannerAction(formData: FormData) {
     redirectWithError(
       `/admin/banners/${id}/editar`,
       parsed.success
-        ? "Banner invalido."
-        : parsed.error.issues[0]?.message ?? "Dados invalidos."
+        ? "Banner inválido."
+        : parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
   const banner = await prisma.banner.findUnique({ where: { id } });
 
   if (!banner) {
-    redirectWithError("/admin/banners", "Banner nao encontrado.");
+    redirectWithError("/admin/banners", "Banner não encontrado.");
   }
 
   const desktopImage = getImageFile(formData, "desktopImage");
@@ -236,13 +236,13 @@ export async function deleteBannerAction(formData: FormData) {
   const id = getStringValue(formData, "id");
 
   if (!id) {
-    redirectWithError("/admin/banners", "Banner invalido.");
+    redirectWithError("/admin/banners", "Banner inválido.");
   }
 
   const banner = await prisma.banner.findUnique({ where: { id } });
 
   if (!banner) {
-    redirectWithError("/admin/banners", "Banner nao encontrado.");
+    redirectWithError("/admin/banners", "Banner não encontrado.");
   }
 
   await prisma.banner.delete({ where: { id } });
@@ -272,7 +272,7 @@ export async function updateStoreSettingsAction(formData: FormData) {
   if (!parsed.success) {
     redirectWithError(
       "/admin/configuracoes",
-      parsed.error.issues[0]?.message ?? "Dados invalidos."
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
     );
   }
 
@@ -328,7 +328,7 @@ export async function updateStoreSettingsAction(formData: FormData) {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      redirectWithError("/admin/configuracoes", "Configuracao duplicada.");
+      redirectWithError("/admin/configuracoes", "Configuração duplicada.");
     }
 
     throw error;

@@ -1,12 +1,12 @@
 export const DEFAULT_PRIVACY_PAGE_CONTENT = `
-<p>A RestauraPhone utiliza cookies e tecnologias semelhantes para melhorar sua experiencia, entender a navegacao no site e manter recursos como carrinho e preferencias de uso.</p>
-<p>As informacoes podem incluir identificadores anonimos de sessao, paginas acessadas, termos pesquisados e interacoes com produtos, carrinho e WhatsApp.</p>
+<p>A RestauraPhone utiliza cookies e tecnologias semelhantes para melhorar sua experiência, entender a navegação no site e manter recursos como carrinho e preferências de uso.</p>
+<p>As informações podem incluir identificadores anônimos de sessão, páginas acessadas, termos pesquisados e interações com produtos, carrinho e WhatsApp.</p>
 <ul>
-  <li>Melhorar a navegacao e o desempenho do catalogo.</li>
+  <li>Melhorar a navegação e o desempenho do catálogo.</li>
   <li>Medir visitas, buscas e interesse em produtos.</li>
-  <li>Manter preferencias e funcionalidades essenciais do site.</li>
+  <li>Manter preferências e funcionalidades essenciais do site.</li>
 </ul>
-<p>Para solicitar mais informacoes, entre em contato pelos canais informados no site.</p>
+<p>Para solicitar mais informações, entre em contato pelos canais informados no site.</p>
 `.trim();
 
 const allowedTags = new Set([

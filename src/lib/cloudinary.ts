@@ -57,7 +57,7 @@ export function isUploadableImage(file: File) {
 
 export async function uploadCatalogImage(file: File): Promise<UploadedImage> {
   if (!isUploadableImage(file)) {
-    throw new Error("Imagem invalida. Use JPG, PNG, WEBP ou AVIF ate 5 MB.");
+    throw new Error("Imagem inválida. Use JPG, PNG, WEBP ou AVIF até 5 MB.");
   }
 
   const { cloudName, apiKey, apiSecret } = assertCloudinaryConfig();
@@ -90,7 +90,7 @@ export async function uploadCatalogImage(file: File): Promise<UploadedImage> {
   };
 
   if (!result.secure_url || !result.public_id) {
-    throw new Error("Resposta invalida do Cloudinary.");
+    throw new Error("Resposta inválida do Cloudinary.");
   }
 
   return {

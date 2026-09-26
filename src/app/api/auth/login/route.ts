@@ -8,14 +8,14 @@ export async function POST(request: Request) {
   const parsed = loginSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: "Dados invalidos." }, { status: 400 });
+    return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
   }
 
   const admin = await authenticateAdmin(parsed.data);
 
   if (!admin) {
     return NextResponse.json(
-      { error: "E-mail ou senha invalidos." },
+      { error: "E-mail ou senha inválidos." },
       { status: 401 }
     );
   }

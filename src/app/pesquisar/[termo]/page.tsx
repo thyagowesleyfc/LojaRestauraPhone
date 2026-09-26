@@ -112,8 +112,8 @@ export default async function SearchPage({ params }: SearchPageProps) {
         <h1 className="text-4xl font-semibold">Resultados para {searchTerm}</h1>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
           {resultCount === 1
-            ? "1 produto encontrado por descricao ou especificacao."
-            : `${resultCount} produtos encontrados por descricao ou especificacao.`}
+            ? "1 produto encontrado por descrição ou especificação."
+            : `${resultCount} produtos encontrados por descrição ou especificação.`}
         </p>
       </header>
 

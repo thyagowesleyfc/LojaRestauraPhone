@@ -34,13 +34,13 @@ export function CategoryCharacteristicsForm({
     <section className="space-y-4 rounded-lg border border-border p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold">Caracteristicas da categoria</h2>
+          <h2 className="text-lg font-semibold">Características da categoria</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Defina quais caracteristicas podem formar SKUs dos produtos desta categoria.
+            Defina quais características podem formar SKUs dos produtos desta categoria.
           </p>
         </div>
         <Button asChild size="sm" variant="outline">
-          <Link href="/admin/caracteristicas/nova">Nova caracteristica</Link>
+          <Link href="/admin/caracteristicas/nova">Nova característica</Link>
         </Button>
       </div>
 
@@ -90,17 +90,17 @@ export function CategoryCharacteristicsForm({
                       defaultChecked={selected?.required ?? true}
                       className="size-4 rounded border-input"
                     />
-                    Obrigatoria
+                    Obrigatória
                   </label>
                 </div>
               );
             })}
           </div>
-          <Button type="submit">Salvar caracteristicas</Button>
+          <Button type="submit">Salvar características</Button>
         </form>
       ) : (
         <p className="rounded-md border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-          Cadastre caracteristicas antes de vincula-las a categorias.
+          Cadastre características antes de vinculá-las a categorias.
         </p>
       )}
     </section>

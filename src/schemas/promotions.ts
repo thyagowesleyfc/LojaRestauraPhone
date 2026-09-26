@@ -1,7 +1,7 @@
 import { PromotionType } from "@prisma/client";
 import { z } from "zod";
 
-const requiredText = z.string().trim().min(1, "Campo obrigatorio.");
+const requiredText = z.string().trim().min(1, "Campo obrigatório.");
 const optionalDate = z
   .string()
   .trim()
@@ -14,7 +14,7 @@ export const promotionInputSchema = z
       PromotionType.CATEGORY_PERCENTAGE,
       PromotionType.PRODUCT_COMBO
     ]),
-    description: requiredText.max(180, "Use no maximo 180 caracteres."),
+    description: requiredText.max(180, "Use no máximo 180 caracteres."),
     categoryId: z.string().trim().optional(),
     percentage: z.coerce.number().int().optional(),
     comboPrice: z.coerce.number().optional(),
@@ -28,7 +28,7 @@ export const promotionInputSchema = z
       context.addIssue({
         code: "custom",
         path: ["endsAt"],
-        message: "A data final deve ser posterior ao inicio."
+        message: "A data final deve ser posterior ao início."
       });
     }
 
@@ -55,7 +55,7 @@ export const promotionInputSchema = z
         context.addIssue({
           code: "custom",
           path: ["comboPrice"],
-          message: "Preco do combo deve ser maior que zero."
+          message: "Preço do combo deve ser maior que zero."
         });
       }
 
@@ -72,7 +72,7 @@ export const promotionInputSchema = z
 export const promotionImageAltSchema = z
   .string()
   .trim()
-  .max(160, "Use no maximo 160 caracteres.")
+  .max(160, "Use no máximo 160 caracteres.")
   .optional()
   .transform((value) => value || undefined);
 

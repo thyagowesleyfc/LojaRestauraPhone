@@ -21,7 +21,7 @@ const fallbackSettings = {
   aboutText: "",
   privacyPageContent: DEFAULT_PRIVACY_PAGE_CONTENT,
   whatsappNumber: "",
-  whatsappInitialMessage: "Ola, tenho interesse em um pedido.",
+  whatsappInitialMessage: "Olá, tenho interesse em um pedido.",
   bannerTransitionSeconds: 5,
   offerCountdownHeadline: "",
   offerCountdownLink: "",
@@ -46,7 +46,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   return (
     <section className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Configuracoes</h1>
+        <h1 className="text-3xl font-semibold">Configurações</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Atualize dados institucionais, WhatsApp, logo, tema e mapa.
         </p>

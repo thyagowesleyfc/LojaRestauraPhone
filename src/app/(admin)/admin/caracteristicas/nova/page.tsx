@@ -20,9 +20,9 @@ export default async function NewCharacteristicPage({
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">Nova caracteristica</h1>
+          <h1 className="text-3xl font-semibold">Nova característica</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre uma caracteristica e seus valores possiveis.
+            Cadastre uma característica e seus valores possíveis.
           </p>
         </div>
         <Button asChild variant="outline">
