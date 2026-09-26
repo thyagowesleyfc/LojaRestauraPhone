@@ -89,6 +89,24 @@ function SunIcon() {
   );
 }
 
+function HomeIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-5 shrink-0"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
 function SearchIcon() {
   return (
     <svg
@@ -357,6 +375,10 @@ export function PublicChrome({
   }
 
   function isActiveHref(href: string) {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
@@ -495,95 +517,91 @@ export function PublicChrome({
       {children}
       <nav
         aria-label="Navegação principal"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden"
       >
-        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
-          <Button
-            asChild
+        <div className="mx-auto grid h-16 max-w-md grid-cols-5 items-center gap-1 rounded-full border border-border bg-card px-2 text-card-foreground shadow-[0_16px_44px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_44px_rgba(0,0,0,0.36)]">
+          <Link
+            aria-current={isActiveHref("/") ? "page" : undefined}
+            aria-label="Home"
             className={cn(
-              "h-12 w-full rounded-lg",
-              isActiveHref("/promocoes") && "bg-accent text-primary"
+              "relative inline-flex h-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              isActiveHref("/") && "bg-primary text-primary-foreground shadow-sm"
             )}
-            size="icon"
+            href="/"
+            onClick={() => setSearchOpen(false)}
+            title="Home"
+          >
+            <HomeIcon />
+            <span className="sr-only">Home</span>
+
+          </Link>
+          <Link
+            aria-current={isActiveHref("/promocoes") ? "page" : undefined}
+            aria-label="Promoções"
+            className={cn(
+              "relative inline-flex h-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              isActiveHref("/promocoes") && "bg-primary text-primary-foreground shadow-sm"
+            )}
+            href="/promocoes"
+            onClick={() => setSearchOpen(false)}
             title="Promoções"
-            variant="ghost"
           >
-            <Link
-              aria-current={isActiveHref("/promocoes") ? "page" : undefined}
-              aria-label="Promoções"
-              href="/promocoes"
-              onClick={() => setSearchOpen(false)}
-            >
-              <OffersIcon />
-              <span className="sr-only">Promoções</span>
-            </Link>
-          </Button>
-          <Button
-            asChild
+            <OffersIcon />
+            <span className="sr-only">Promoções</span>
+          </Link>
+          <Link
+            aria-current={isActiveHref("/categorias") ? "page" : undefined}
+            aria-label="Categorias"
             className={cn(
-              "h-12 w-full rounded-lg",
-              isActiveHref("/categorias") && "bg-accent text-primary"
+              "relative inline-flex h-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              isActiveHref("/categorias") && "bg-primary text-primary-foreground shadow-sm"
             )}
-            size="icon"
+            href="/categorias"
+            onClick={() => setSearchOpen(false)}
             title="Categorias"
-            variant="ghost"
           >
-            <Link
-              aria-current={isActiveHref("/categorias") ? "page" : undefined}
-              aria-label="Categorias"
-              href="/categorias"
-              onClick={() => setSearchOpen(false)}
-            >
-              <CategoriesIcon />
-              <span className="sr-only">Categorias</span>
-            </Link>
-          </Button>
-          <Button
+            <CategoriesIcon />
+            <span className="sr-only">Categorias</span>
+          </Link>
+          <button
             aria-controls="public-search-panel"
             aria-expanded={searchOpen}
             aria-label="Pesquisar"
             className={cn(
-              "h-12 w-full rounded-lg",
+              "relative inline-flex h-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
               (searchOpen || pathname.startsWith("/pesquisar")) &&
-                "bg-accent text-primary"
+                "bg-primary text-primary-foreground shadow-sm"
             )}
             onClick={() => setSearchOpen((open) => !open)}
-            size="icon"
             title="Pesquisar"
             type="button"
-            variant="ghost"
           >
             <SearchIcon />
-          </Button>
-          <Button
-            asChild
+            <span className="sr-only">Pesquisar</span>
+          </button>
+          <Link
+            aria-current={isActiveHref("/carrinho") ? "page" : undefined}
+            aria-label={
+              cartQuantity > 0
+                ? `Carrinho com ${cartQuantity} itens`
+                : "Carrinho"
+            }
             className={cn(
-              "relative h-12 w-full rounded-lg",
-              isActiveHref("/carrinho") && "bg-accent text-primary"
+              "relative inline-flex h-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              isActiveHref("/carrinho") && "bg-primary text-primary-foreground shadow-sm"
             )}
-            size="icon"
+            href="/carrinho"
+            onClick={() => setSearchOpen(false)}
             title="Carrinho"
-            variant="ghost"
           >
-            <Link
-              aria-current={isActiveHref("/carrinho") ? "page" : undefined}
-              aria-label={
-                cartQuantity > 0
-                  ? `Carrinho com ${cartQuantity} itens`
-                  : "Carrinho"
-              }
-              href="/carrinho"
-              onClick={() => setSearchOpen(false)}
-            >
-              <CartIcon />
-              <span className="sr-only">Carrinho</span>
-              {cartQuantity > 0 ? (
-                <span className="absolute right-2 top-1 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.68rem] font-semibold leading-5 text-primary-foreground">
-                  {cartBadgeLabel}
-                </span>
-              ) : null}
-            </Link>
-          </Button>
+            <CartIcon />
+            <span className="sr-only">Carrinho</span>
+            {cartQuantity > 0 ? (
+              <span className="absolute right-1 top-0 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.68rem] font-semibold leading-5 text-primary-foreground">
+                {cartBadgeLabel}
+              </span>
+            ) : null}
+          </Link>
         </div>
       </nav>
       <footer className="border-t border-border bg-muted/40 pb-24 md:pb-0">
