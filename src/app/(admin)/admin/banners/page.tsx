@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
-import { deleteBannerAction } from "@/actions/settings";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
+import { BannerDeleteDialog } from "@/components/admin/banner-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
@@ -76,12 +76,10 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
               <Button asChild size="sm" variant="outline">
                 <Link href={`/admin/banners/${banner.id}/editar`}>Editar</Link>
               </Button>
-              <form action={deleteBannerAction}>
-                <input type="hidden" name="id" value={banner.id} />
-                <Button type="submit" size="sm" variant="destructive">
-                  Excluir
-                </Button>
-              </form>
+              <BannerDeleteDialog
+                bannerId={banner.id}
+                bannerName={banner.altText || "Banner"}
+              />
             </div>
           </article>
         ))}
