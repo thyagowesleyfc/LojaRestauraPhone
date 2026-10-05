@@ -2,6 +2,7 @@ import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/catalog/product-card";
+import { Button } from "@/components/ui/button";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
 
@@ -60,12 +61,9 @@ export default async function CategoriesPage() {
               <h2 className="text-[1.8rem] font-semibold leading-tight sm:text-[2rem]">
                 {category.name}
               </h2>
-              <Link
-                className="text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                href={`/categorias/${category.slug}`}
-              >
-                Ver mais
-              </Link>
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/categorias/${category.slug}`}>Ver mais</Link>
+              </Button>
             </div>
             <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
               <div className="flex min-w-0 snap-x gap-3 sm:gap-4 lg:grid lg:grid-cols-4 lg:items-stretch">
