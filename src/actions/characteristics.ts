@@ -312,13 +312,13 @@ export async function deleteCharacteristicAction(formData: FormData) {
     characteristic._count.options > 0 ||
     characteristic._count.values > 0
   ) {
-    await prisma.characteristic.update({
-      where: { id },
-      data: { active: false }
-    });
-  } else {
-    await prisma.characteristic.delete({ where: { id } });
+    redirectWithError(
+      "/admin/caracteristicas",
+      "Característica vinculada a opção, categoria ou SKU. Remova os vínculos antes de excluir."
+    );
   }
+
+  await prisma.characteristic.delete({ where: { id } });
 
   revalidatePath("/admin/caracteristicas");
   redirect("/admin/caracteristicas");

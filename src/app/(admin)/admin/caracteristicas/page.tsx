@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { deleteCharacteristicAction } from "@/actions/characteristics";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
+import { CharacteristicDeleteDialog } from "@/components/admin/characteristic-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +10,26 @@ type CharacteristicsPageProps = {
     erro?: string;
   }>;
 };
+
+function getCharacteristicBlockers(characteristic: {
+  _count: {
+    categories: number;
+    options: number;
+    values: number;
+  };
+}) {
+  return [
+    characteristic._count.options > 0
+      ? `${characteristic._count.options} ${characteristic._count.options > 1 ? "opções" : "opção"}`
+      : null,
+    characteristic._count.categories > 0
+      ? `${characteristic._count.categories} categoria${characteristic._count.categories > 1 ? "s" : ""}`
+      : null,
+    characteristic._count.values > 0
+      ? `${characteristic._count.values} SKU${characteristic._count.values > 1 ? "s" : ""}`
+      : null
+  ].filter(Boolean);
+}
 
 export default async function CharacteristicsPage({
   searchParams
@@ -62,30 +82,54 @@ export default async function CharacteristicsPage({
             </tr>
           </thead>
           <tbody>
-            {characteristics.map((characteristic) => (
-              <tr key={characteristic.id} className="border-t border-border">
-                <td className="px-4 py-3 font-medium">{characteristic.name}</td>
-                <td className="px-4 py-3 text-muted-foreground">{characteristic.slug}</td>
-                <td className="px-4 py-3">{characteristic._count.options}</td>
-                <td className="px-4 py-3">{characteristic._count.categories}</td>
-                <td className="px-4 py-3">
-                  {characteristic.active ? "Ativa" : "Inativa"}
-                </td>
-                <td className="flex flex-wrap gap-2 px-4 py-3">
-                  <Button asChild size="sm" variant="outline">
-                    <Link href={`/admin/caracteristicas/${characteristic.id}/editar`}>
-                      Editar
-                    </Link>
-                  </Button>
-                  <form action={deleteCharacteristicAction}>
-                    <input type="hidden" name="id" value={characteristic.id} />
-                    <Button type="submit" size="sm" variant="destructive">
-                      Excluir
-                    </Button>
-                  </form>
-                </td>
-              </tr>
-            ))}
+            {characteristics.map((characteristic) => {
+              const blockers = getCharacteristicBlockers(characteristic);
+              const disabledReason = blockers.length
+                ? `Vinculada a ${blockers.join(" e ")}.`
+                : undefined;
+
+              return (
+                <tr key={characteristic.id} className="border-t border-border">
+                  <td className="px-4 py-3 font-medium">
+                    {characteristic.name}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {characteristic.slug}
+                  </td>
+                  <td className="px-4 py-3">{characteristic._count.options}</td>
+                  <td className="px-4 py-3">
+                    {characteristic._count.categories}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="space-y-1">
+                      <p>{characteristic.active ? "Ativa" : "Inativa"}</p>
+                      {disabledReason ? (
+                        <p className="text-xs text-muted-foreground">
+                          Exclusão bloqueada: {disabledReason}
+                        </p>
+                      ) : null}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link
+                          href={`/admin/caracteristicas/${characteristic.id}/editar`}
+                        >
+                          Editar
+                        </Link>
+                      </Button>
+                      <CharacteristicDeleteDialog
+                        canDelete={blockers.length === 0}
+                        characteristicId={characteristic.id}
+                        characteristicName={characteristic.name}
+                        disabledReason={disabledReason}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
             {characteristics.length === 0 ? (
               <tr>
                 <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
