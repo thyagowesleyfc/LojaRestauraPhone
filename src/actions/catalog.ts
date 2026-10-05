@@ -495,16 +495,16 @@ export async function deleteProductAction(formData: FormData) {
   }
 
   if (product._count.promotions > 0 || product._count.variants > 0) {
-    await prisma.product.update({
-      where: { id },
-      data: { active: false }
-    });
-  } else {
-    await prisma.product.delete({ where: { id } });
-    await Promise.allSettled(
-      product.images.map((image) => deleteCatalogImage(image.publicId))
+    redirectWithError(
+      "/admin/produtos",
+      "Produto vinculado a SKU ou promoção. Remova os vínculos antes de excluir."
     );
   }
+
+  await prisma.product.delete({ where: { id } });
+  await Promise.allSettled(
+    product.images.map((image) => deleteCatalogImage(image.publicId))
+  );
 
   revalidatePath("/");
   revalidatePath("/categorias");
