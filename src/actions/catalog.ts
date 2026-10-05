@@ -269,6 +269,7 @@ export async function deleteCategoryAction(formData: FormData) {
       slug: true,
       _count: {
         select: {
+          characteristics: true,
           products: true,
           promotions: true
         }
@@ -280,14 +281,18 @@ export async function deleteCategoryAction(formData: FormData) {
     redirectWithError("/admin/categorias", "Categoria não encontrada.");
   }
 
-  if (category._count.products > 0 || category._count.promotions > 0) {
-    await prisma.category.update({
-      where: { id },
-      data: { active: false }
-    });
-  } else {
-    await prisma.category.delete({ where: { id } });
+  if (
+    category._count.characteristics > 0 ||
+    category._count.products > 0 ||
+    category._count.promotions > 0
+  ) {
+    redirectWithError(
+      "/admin/categorias",
+      "Categoria vinculada a produto, promoção ou característica. Remova os vínculos antes de excluir."
+    );
   }
+
+  await prisma.category.delete({ where: { id } });
 
   revalidatePath("/");
   revalidatePath("/categorias");
