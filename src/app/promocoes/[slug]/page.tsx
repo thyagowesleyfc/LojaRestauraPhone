@@ -62,6 +62,13 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
     notFound();
   }
 
+  const comboOriginalPriceInCents = promotion.products.reduce(
+    (total, promotionProduct) =>
+      total + promotionProduct.product.priceInCents,
+    0
+  );
+  const comboPriceInCents = promotion.comboPriceInCents ?? 0;
+
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-6 py-10">
       <header className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -82,11 +89,25 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
               : "Combo"}
           </p>
           <h1 className="text-4xl font-semibold">{promotion.description}</h1>
-          <p className="text-xl font-semibold text-primary">
-            {promotion.type === PromotionType.CATEGORY_PERCENTAGE
-              ? `${promotion.percentage}% OFF`
-              : formatMoneyFromCents(promotion.comboPriceInCents ?? 0)}
-          </p>
+          {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
+            <p className="text-xl font-semibold text-primary">
+              {promotion.percentage}% OFF
+            </p>
+          ) : (
+            <div className="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-border bg-card p-3 sm:block sm:border-0 sm:bg-transparent sm:p-0">
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground sm:text-sm">
+                  De {" "}
+                  <span className="line-through">
+                    {formatMoneyFromCents(comboOriginalPriceInCents)}
+                  </span>
+                </p>
+                <p className="text-2xl font-semibold leading-none text-primary">
+                  Por {formatMoneyFromCents(comboPriceInCents)}
+                </p>
+              </div>
+            </div>
+          )}
           {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
             <p className="text-sm text-muted-foreground">
               Categoria: {promotion.category?.name}
