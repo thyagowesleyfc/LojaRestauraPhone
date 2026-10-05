@@ -2,8 +2,8 @@
 import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 
-import { deletePromotionAction } from "@/actions/promotions";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
+import { PromotionDeleteDialog } from "@/components/admin/promotion-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { prisma } from "@/lib/prisma";
@@ -95,12 +95,10 @@ export default async function PromotionsPage({
                   Editar
                 </Link>
               </Button>
-              <form action={deletePromotionAction}>
-                <input type="hidden" name="id" value={promotion.id} />
-                <Button type="submit" size="sm" variant="destructive">
-                  Excluir
-                </Button>
-              </form>
+              <PromotionDeleteDialog
+                promotionDescription={promotion.description}
+                promotionId={promotion.id}
+              />
             </div>
           </article>
         ))}
