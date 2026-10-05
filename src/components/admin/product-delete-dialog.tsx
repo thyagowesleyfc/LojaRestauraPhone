@@ -48,7 +48,7 @@ export function ProductDeleteDialog({
       <dialog
         aria-describedby={`delete-product-${productId}-description`}
         aria-labelledby={`delete-product-${productId}-title`}
-        className="w-[min(92vw,28rem)] rounded-lg border border-border bg-card p-0 text-card-foreground shadow-2xl backdrop:bg-black/45"
+        className="fixed left-1/2 top-1/2 m-0 max-h-[calc(100dvh-2rem)] w-[min(92vw,28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-card p-0 text-card-foreground shadow-2xl backdrop:bg-black/45"
         ref={dialogRef}
       >
         <div className="space-y-5 p-5">
