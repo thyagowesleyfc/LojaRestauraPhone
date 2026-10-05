@@ -70,15 +70,15 @@ export default async function CharacteristicsPage({
         </p>
       ) : null}
       <div className="overflow-hidden rounded-lg border border-border">
-        <table className="w-full text-left text-sm">
+        <table className="w-full table-fixed text-left text-sm">
           <thead className="bg-muted text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 font-medium">Nome</th>
-              <th className="px-4 py-3 font-medium">Slug</th>
-              <th className="px-4 py-3 font-medium">Opções</th>
-              <th className="px-4 py-3 font-medium">Categorias</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Ações</th>
+              <th className="w-[32%] px-3 py-3 font-medium md:w-auto md:px-4">Nome</th>
+              <th className="hidden px-4 py-3 font-medium md:table-cell">Slug</th>
+              <th className="hidden px-4 py-3 font-medium md:table-cell">Opções</th>
+              <th className="w-[18%] px-2 py-3 text-center text-xs font-medium md:w-auto md:px-4 md:text-left md:text-sm"><span className="md:hidden">Cat.</span><span className="hidden md:inline">Categorias</span></th>
+              <th className="w-[22%] px-2 py-3 text-xs font-medium md:w-auto md:px-4 md:text-sm">Status</th>
+              <th className="w-[28%] px-2 py-3 font-medium md:w-auto md:px-4">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -90,28 +90,28 @@ export default async function CharacteristicsPage({
 
               return (
                 <tr key={characteristic.id} className="border-t border-border">
-                  <td className="px-4 py-3 font-medium">
+                  <td className="w-[32%] break-words px-3 py-3 font-medium md:w-auto md:px-4">
                     {characteristic.name}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
+                  <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">
                     {characteristic.slug}
                   </td>
-                  <td className="px-4 py-3">{characteristic._count.options}</td>
-                  <td className="px-4 py-3">
+                  <td className="hidden px-4 py-3 md:table-cell">{characteristic._count.options}</td>
+                  <td className="w-[18%] px-2 py-3 text-center md:w-auto md:px-4 md:text-left">
                     {characteristic._count.categories}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="w-[22%] px-2 py-3 text-xs md:w-auto md:px-4 md:text-sm">
                     <div className="space-y-1">
                       <p>{characteristic.active ? "Ativa" : "Inativa"}</p>
                       {disabledReason ? (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="hidden text-xs text-muted-foreground md:block">
                           Exclusão bloqueada: {disabledReason}
                         </p>
                       ) : null}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
+                  <td className="w-[28%] px-2 py-3 md:w-auto md:px-4">
+                    <div className="grid gap-2 md:flex md:flex-wrap">
                       <Button asChild size="sm" variant="outline">
                         <Link
                           href={`/admin/caracteristicas/${characteristic.id}/editar`}
