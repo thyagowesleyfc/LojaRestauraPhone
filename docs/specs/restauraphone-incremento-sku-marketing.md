@@ -292,6 +292,7 @@ Também podem existir:
 
 - `PROMOTION_VIEW`
 - `CATEGORY_VIEW`
+- `LINK_CLICK` para cliques em botões da página `/links`, com `linkId`.
 
 Cada evento deve registrar apenas dados necessários para análise.
 
@@ -539,6 +540,8 @@ Ranking dos termos que não retornaram produtos.
 
 ### Campanhas
 Agrupar eventos por:
+
+- links mais acessados, ordenados pela quantidade de `LINK_CLICK`;
 
 - utm_source;
 - utm_medium;

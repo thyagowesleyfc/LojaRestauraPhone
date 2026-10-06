@@ -62,6 +62,14 @@ Tipos:
 - somente banners ativos aparecem;
 - links externos devem abrir com seguranca apropriada.
 
+## Links
+
+- link possui título, URL de redirecionamento, ordem, descrição, status e imagem opcional;
+- somente links ativos aparecem na página pública `/links`;
+- URL de redirecionamento deve ser caminho interno iniciado por `/` ou URL `http(s)`;
+- clique em link público deve gerar evento `LINK_CLICK` com referência ao link cadastrado;
+- imagens ficam em armazenamento externo e devem ser removidas quando o link for excluído.
+
 ## Carrinho
 
 - persistencia em `localStorage`;

@@ -17,7 +17,8 @@ const FORWARDED_EVENT_TYPES = new Set<AnalyticsEventType>([
   "ADD_TO_CART",
   "REMOVE_FROM_CART",
   "WHATSAPP_CLICK",
-  "ORDER_SENT_TO_WHATSAPP"
+  "ORDER_SENT_TO_WHATSAPP",
+  "LINK_CLICK"
 ]);
 
 type StoredUtm = NonNullable<AnalyticsEventInput["utm"]>;
@@ -121,7 +122,8 @@ function toMetaEventName(type: AnalyticsEventType) {
     ORDER_SENT_TO_WHATSAPP: "Lead",
     PRODUCT_VIEW: "ViewContent",
     SEARCH: "Search",
-    WHATSAPP_CLICK: "Contact"
+    WHATSAPP_CLICK: "Contact",
+    LINK_CLICK: "Lead"
   };
 
   return eventNames[type] ?? null;
@@ -133,7 +135,8 @@ function toTikTokEventName(type: AnalyticsEventType) {
     ORDER_SENT_TO_WHATSAPP: "SubmitForm",
     PRODUCT_VIEW: "ViewContent",
     SEARCH: "Search",
-    WHATSAPP_CLICK: "Contact"
+    WHATSAPP_CLICK: "Contact",
+    LINK_CLICK: "ClickButton"
   };
 
   return eventNames[type] ?? null;
@@ -142,6 +145,7 @@ function toTikTokEventName(type: AnalyticsEventType) {
 function buildExternalPayload(event: AnalyticsEventInput): ExternalTrackingPayload {
   return {
     category_id: event.categoryId ?? null,
+    link_id: event.linkId ?? null,
     page_path: event.pagePath,
     product_id: event.productId ?? null,
     product_variant_id: event.productVariantId ?? null,

@@ -10,7 +10,8 @@ export const analyticsEventTypes = [
   "WHATSAPP_CLICK",
   "ORDER_SENT_TO_WHATSAPP",
   "PROMOTION_VIEW",
-  "CATEGORY_VIEW"
+  "CATEGORY_VIEW",
+  "LINK_CLICK"
 ] as const;
 
 const optionalTextSchema = z
@@ -35,6 +36,7 @@ export const analyticsEventSchema = z.object({
   productVariantId: optionalTextSchema,
   promotionId: optionalTextSchema,
   categoryId: optionalTextSchema,
+  linkId: optionalTextSchema,
   searchTerm: optionalTextSchema,
   resultsCount: z.coerce.number().int().min(0).max(100000).optional(),
   pagePath: z.string().trim().min(1).max(2048),

@@ -48,6 +48,7 @@ const links = [
   { href: "/categorias", label: "Categorias" },
   { href: "/quem-somos", label: "Quem somos" },
   { href: "/pagina-privacidade", label: "Privacidade" },
+  { href: "/links", label: "Links" },
   { href: "/carrinho", label: "Carrinho" }
 ];
 
@@ -211,6 +212,28 @@ function InfoIcon() {
   );
 }
 
+
+function LinkIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      height={16}
+      style={{ height: 16, width: 16 }}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path
+        d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
 function CartIcon() {
   return (
     <svg
@@ -455,6 +478,17 @@ export function PublicChrome({
             </Button>
           </nav>
           <div className="flex items-center gap-1 md:hidden">
+            <Button
+              asChild
+              className={cn(isActiveHref("/links") && "bg-accent")}
+              size="icon"
+              title="Links"
+              variant="ghost"
+            >
+              <Link aria-label="Links" href="/links">
+                <LinkIcon />
+              </Link>
+            </Button>
             <Button
               asChild
               className={cn(isActiveHref("/pagina-privacidade") && "bg-accent")}

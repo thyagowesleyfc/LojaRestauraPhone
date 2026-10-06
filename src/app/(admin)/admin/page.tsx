@@ -27,6 +27,11 @@ const cards = [
     description: "Gerencie imagens, links e ordem de exibição."
   },
   {
+    href: "/admin/links",
+    title: "Meus Links",
+    description: "Monte a página pública de links com botões e métricas."
+  },
+  {
     href: "/admin/configuracoes",
     title: "Configurações",
     description: "Atualize loja, WhatsApp, logo, cores e mapa."

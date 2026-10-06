@@ -152,6 +152,19 @@ Usado somente para combos.
 - createdAt
 - updatedAt
 
+## StoreLink
+
+- id
+- title
+- description
+- redirectUrl
+- imageUrl opcional
+- imagePublicId opcional
+- displayOrder
+- active
+- createdAt
+- updatedAt
+
 ## CustomerOrder
 
 - id
@@ -188,6 +201,7 @@ Usado somente para combos.
 - productVariantId opcional
 - promotionId opcional
 - categoryId opcional
+- linkId opcional
 - searchTerm opcional
 - searchTermNormalized opcional
 - resultsCount opcional
@@ -261,6 +275,7 @@ Registro singleton.
 - ORDER_SENT_TO_WHATSAPP
 - PROMOTION_VIEW
 - CATEGORY_VIEW
+- LINK_CLICK
 
 ### OrderItemType
 

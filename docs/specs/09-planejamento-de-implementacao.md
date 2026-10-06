@@ -69,7 +69,8 @@ Cada fase deve ser executada e validada separadamente. O Codex nao deve avancar 
 - [x] rodape;
 - [x] botoes flutuantes;
 - [x] tema claro e escuro;
-- [x] SEO basico e metadados.
+- [x] SEO basico e metadados;
+- [x] página pública de links e cadastro administrativo de Meus Links.
 
 ## Fase 6 - Carrinho, pedidos e WhatsApp
 

@@ -80,6 +80,16 @@ Cada promocao deve mostrar:
 - usar mensagem inicial configuravel no botao flutuante;
 - no fechamento do carrinho, gerar mensagem curta contendo somente o codigo do pedido.
 
+### Links
+
+A página `/links` deve:
+
+- manter cabeçalho e rodapé públicos;
+- exibir apenas os links ativos cadastrados no admin;
+- ordenar por ordem configurável e, em empate, pelo mais recente;
+- exibir título, descrição e imagem opcional em botões com estilo herdado dos cards;
+- registrar clique de usuário em analytics antes do redirecionamento.
+
 ### Quem somos
 
 Pagina editavel com historia e informacoes da empresa.
@@ -112,7 +122,19 @@ CRUD de:
 - produtos;
 - promocoes;
 - banners;
+- links públicos;
 - configuracoes da loja.
+
+### Links administrativos
+
+Permitir cadastrar, editar, listar e excluir links com:
+
+- título;
+- ordem;
+- link de redirecionamento;
+- descrição em várias linhas;
+- imagem opcional para ícone do botão;
+- status ativo/inativo.
 
 ### Pedidos
 

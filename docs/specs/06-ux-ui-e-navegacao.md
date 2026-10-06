@@ -69,3 +69,6 @@ Evitar confirmacao desnecessaria em acoes reversiveis e de baixo risco.
 - galerias adaptaveis;
 - botoes flutuantes sem cobrir conteudo;
 - painel administrativo utilizavel em celular, mas otimizado para desktop.
+## Página de links
+
+A rota /links deve manter o mesmo cabeçalho e rodapé públicos, com corpo limpo e focado nos links cadastrados. Os botões de link devem herdar a linguagem visual dos cards do site, como borda, fundo, estados de hover e foco, sem replicar o layout de cards de produto ou promoção. A apresentação deve priorizar uma lista simples, responsiva e sem distrações para o cliente final.

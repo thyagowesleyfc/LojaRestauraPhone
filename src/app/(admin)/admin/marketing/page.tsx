@@ -43,6 +43,10 @@ type CampaignGroup = CountGroup & {
   utmSource: string | null;
 };
 
+type LinkClickGroup = CountGroup & {
+  linkId: string | null;
+};
+
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -163,6 +167,8 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
     removeFromCart,
     whatsappClicks,
     ordersSent,
+    linkClicks,
+    linkClickGroups,
     sessionGroups,
     searchGroups,
     searchNoResultGroups,
@@ -199,6 +205,17 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
     }),
     prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
+    }),
+    prisma.analyticsEvent.count({
+      where: metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK)
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["linkId"],
+      where: {
+        ...metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK),
+        linkId: { not: null }
+      },
+      _count: { _all: true }
     }),
     prisma.analyticsEvent.groupBy({
       by: ["sessionId"],
@@ -269,31 +286,49 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
     searchNoResultGroups as SearchTermGroup[]
   ).slice(0, 10);
   const topCampaigns = sortByCount(campaignGroups as CampaignGroup[]).slice(0, 10);
+  const topLinkGroups = sortByCount(linkClickGroups as LinkClickGroup[]).slice(0, 10);
+  const linkIds = topLinkGroups
+    .map((group) => group.linkId)
+    .filter((linkId): linkId is string => Boolean(linkId));
+  const storeLinks = linkIds.length
+    ? await prisma.storeLink.findMany({
+        where: { id: { in: linkIds } },
+        select: { id: true, redirectUrl: true, title: true }
+      })
+    : [];
+  const storeLinksById = new Map(
+    storeLinks.map((storeLink) => [storeLink.id, storeLink])
+  );
   const marketingIntegrations = await getMarketingIntegrations();
   const funnel = [
     {
+      description: "Base do período",
       label: "Sessões",
-      rate: "100%",
       value: sessionGroups.length
     },
     {
+      description: `${getStepRate(linkClicks, sessionGroups.length)} das sessões`,
+      label: "Links acessados",
+      value: linkClicks
+    },
+    {
+      description: `${getStepRate(productViews, sessionGroups.length)} das sessões`,
       label: "Produtos vistos",
-      rate: getStepRate(productViews, sessionGroups.length),
       value: productViews
     },
     {
+      description: `${getStepRate(addToCart, productViews)} dos produtos vistos`,
       label: "Itens adicionados ao carrinho",
-      rate: getStepRate(addToCart, productViews),
       value: addToCart
     },
     {
+      description: `${getStepRate(whatsappClicks, addToCart)} dos itens adicionados`,
       label: "Cliques no WhatsApp",
-      rate: getStepRate(whatsappClicks, addToCart),
       value: whatsappClicks
     },
     {
+      description: `${getStepRate(ordersSent, whatsappClicks)} dos cliques no WhatsApp`,
       label: "Pedido enviado",
-      rate: getStepRate(ordersSent, whatsappClicks),
       value: ordersSent
     }
   ];
@@ -351,6 +386,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
         <MetricCard label="Buscas sem resultado" value={searchesWithoutResults} />
         <MetricCard label="Itens adicionados ao carrinho" value={addToCart} />
         <MetricCard label="Pedidos no WhatsApp" value={ordersSent} />
+        <MetricCard label="Links acessados" value={linkClicks} />
       </div>
 
       <section className="space-y-4">
@@ -366,7 +402,7 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
                 {formatNumber(step.value)}
               </strong>
               <p className="mt-1 text-xs text-muted-foreground">
-                {step.rate} do passo anterior
+                {step.description}
               </p>
             </article>
           ))}
@@ -458,6 +494,57 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
         </section>
       </div>
 
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Links mais acessados</h2>
+        {topLinkGroups.length > 0 ? (
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-muted text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Link</th>
+                  <th className="px-4 py-3 font-medium">Acessos</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topLinkGroups.map((group) => {
+                  const storeLink = group.linkId
+                    ? storeLinksById.get(group.linkId)
+                    : null;
+
+                  return (
+                    <tr className="border-t border-border" key={group.linkId}>
+                      <td className="px-4 py-3">
+                        {storeLink ? (
+                          <div className="space-y-1">
+                            <a
+                              className="font-medium text-primary hover:underline"
+                              href={storeLink.redirectUrl}
+                            >
+                              {storeLink.title}
+                            </a>
+                            <p className="break-all text-xs text-muted-foreground">
+                              {storeLink.redirectUrl}
+                            </p>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            Link removido
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {formatNumber(group._count._all)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyState>Nenhum acesso a link no período.</EmptyState>
+        )}
+      </section>
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Pesquisas sem resultado</h2>

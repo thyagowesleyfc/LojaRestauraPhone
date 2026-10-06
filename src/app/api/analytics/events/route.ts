@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     productVariantId: event.productVariantId ?? null,
     promotionId: event.promotionId ?? null,
     categoryId: event.categoryId ?? null,
+    linkId: event.linkId ?? null,
     searchTerm: event.searchTerm ?? null,
     searchTermNormalized: normalizeSearchTerm(event.searchTerm),
     resultsCount: event.resultsCount ?? null,

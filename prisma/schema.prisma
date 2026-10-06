@@ -29,6 +29,7 @@ enum AnalyticsEventType {
   ORDER_SENT_TO_WHATSAPP
   PROMOTION_VIEW
   CATEGORY_VIEW
+  LINK_CLICK
 }
 
 enum OrderItemType {
@@ -202,6 +203,21 @@ model ProductVariantImage {
   @@index([productVariantId, displayOrder])
 }
 
+model StoreLink {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  redirectUrl   String
+  imageUrl      String?
+  imagePublicId String?
+  displayOrder  Int      @default(0)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([active, displayOrder])
+}
+
 model CustomerOrder {
   id              String              @id @default(cuid())
   code            String              @unique
@@ -312,6 +328,7 @@ model AnalyticsEvent {
   productVariantId     String?
   promotionId          String?
   categoryId           String?
+  linkId               String?
   searchTerm           String?
   searchTermNormalized String?
   resultsCount         Int?
@@ -329,6 +346,7 @@ model AnalyticsEvent {
   @@index([productVariantId, createdAt])
   @@index([promotionId, createdAt])
   @@index([categoryId, createdAt])
+  @@index([linkId, createdAt])
   @@index([searchTermNormalized, createdAt])
   @@index([utmSource, utmMedium, utmCampaign])
   @@index([createdAt])
