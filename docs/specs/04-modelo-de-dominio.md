@@ -17,6 +17,26 @@
 - expiresAt
 - createdAt
 
+## AdminPasswordResetToken
+
+- id
+- tokenHash unico
+- adminUserId
+- expiresAt
+- usedAt opcional
+- createdAt
+
+## AdminPasswordResetAttempt
+
+- id
+- sessionHash unico
+- requestCount
+- penaltyCount
+- lastRequestedAt opcional
+- blockedUntil opcional
+- createdAt
+- updatedAt
+
 ## Category
 
 - id
@@ -67,6 +87,26 @@
 - slug
 - displayOrder
 - active
+- createdAt
+- updatedAt
+
+## AdminPasswordResetToken
+
+- id
+- tokenHash unico
+- adminUserId
+- expiresAt
+- usedAt opcional
+- createdAt
+
+## AdminPasswordResetAttempt
+
+- id
+- sessionHash unico
+- requestCount
+- penaltyCount
+- lastRequestedAt opcional
+- blockedUntil opcional
 - createdAt
 - updatedAt
 

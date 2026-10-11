@@ -112,7 +112,9 @@ Exibir:
 - login por e-mail e senha;
 - logout;
 - sessao protegida;
-- nenhuma rota administrativa acessivel sem autenticacao.
+- nenhuma rota administrativa acessivel sem autenticacao;
+- recuperacao de senha administrativa por e-mail com link de redefinicao;
+- limite de solicitacoes de recuperacao por sessao anonima com penalidade crescente.
 
 ### Cadastros
 

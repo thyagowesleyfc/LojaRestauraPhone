@@ -39,13 +39,14 @@ enum OrderItemType {
 }
 
 model AdminUser {
-  id           String         @id @default(cuid())
-  email        String         @unique
+  id           String                    @id @default(cuid())
+  email        String                    @unique
   passwordHash String
-  active       Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  active       Boolean                   @default(true)
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
   sessions     AdminSession[]
+  resetTokens  AdminPasswordResetToken[]
 
   @@index([active])
 }
@@ -60,6 +61,33 @@ model AdminSession {
 
   @@index([adminUserId])
   @@index([expiresAt])
+}
+
+model AdminPasswordResetToken {
+  id          String    @id @default(cuid())
+  tokenHash   String    @unique
+  adminUserId String
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@index([expiresAt])
+  @@index([usedAt])
+}
+
+model AdminPasswordResetAttempt {
+  id              String    @id @default(cuid())
+  sessionHash     String    @unique
+  requestCount    Int       @default(0)
+  penaltyCount    Int       @default(0)
+  lastRequestedAt DateTime?
+  blockedUntil    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([blockedUntil])
 }
 
 model Category {
