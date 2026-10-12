@@ -44,7 +44,8 @@
 ## Pedidos no admin
 
 - listagem de pedidos deve priorizar codigo, data, quantidade de itens, total e acao de visualizar;
-- filtros devem permitir busca por codigo e ordenacao por data;
+- indicadores devem exibir quantidade de pedidos e quantidade de pedidos convertidos antes dos filtros;
+- filtros devem permitir busca por codigo, data inicial, data final e ordenacao por data;
 - detalhe do pedido deve exibir o snapshot dos itens de forma escaneavel e responsiva;
 - pedido e historico operacional, sem acoes de edicao nesta fase.
 

@@ -142,7 +142,9 @@ Permitir cadastrar, editar, listar e excluir links com:
 ### Pedidos
 
 - listar pedidos enviados pelo WhatsApp;
+- exibir indicadores de quantidade de pedidos e quantidade de pedidos convertidos;
 - permitir busca por codigo do pedido;
+- permitir filtro por data inicial e data final de criacao do pedido;
 - permitir ordenacao por data do pedido;
 - permitir visualizar os itens de cada pedido;
 - permitir marcar conversao do pedido mediante confirmacao;
