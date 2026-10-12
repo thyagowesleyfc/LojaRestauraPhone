@@ -47,6 +47,10 @@ type LinkClickGroup = CountGroup & {
   linkId: string | null;
 };
 
+type SessionGroup = {
+  sessionId: string | null;
+};
+
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -84,6 +88,25 @@ function getStepRate(current: number, previous: number) {
   }
 
   return formatPercent((current / previous) * 100);
+}
+
+function getSessionSet(groups: SessionGroup[]) {
+  return new Set(
+    groups
+      .map((group) => group.sessionId)
+      .filter((sessionId): sessionId is string => Boolean(sessionId))
+  );
+}
+
+function getProgressiveSessionSet(
+  currentStepSessions: Set<string>,
+  previousStepSessions: Set<string>
+) {
+  return new Set(
+    Array.from(currentStepSessions).filter((sessionId) =>
+      previousStepSessions.has(sessionId)
+    )
+  );
 }
 
 function normalizeDateRange({
@@ -165,12 +188,15 @@ export default async function MarketingPage({
     searchesWithoutResults,
     addToCart,
     removeFromCart,
-    whatsappClicks,
     ordersSent,
     ordersCreated,
     convertedOrders,
     linkClicks,
     linkClickGroups,
+    addToCartSessionGroups,
+    whatsappClickSessionGroups,
+    orderSentSessionGroups,
+    orderSessionGroups,
     sessionGroups,
     searchGroups,
     searchNoResultGroups,
@@ -203,9 +229,6 @@ export default async function MarketingPage({
       where: metricWhere(baseWhere, AnalyticsEventType.REMOVE_FROM_CART)
     }),
     prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.WHATSAPP_CLICK)
-    }),
-    prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
     }),
     prisma.customerOrder.count({
@@ -235,6 +258,28 @@ export default async function MarketingPage({
         linkId: { not: null }
       },
       _count: { _all: true }
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART)
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.WHATSAPP_CLICK)
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
+    }),
+    prisma.customerOrder.groupBy({
+      by: ["sessionId"],
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        },
+        sessionId: { not: null }
+      }
     }),
     prisma.analyticsEvent.groupBy({
       by: ["sessionId"],
@@ -319,6 +364,40 @@ export default async function MarketingPage({
     storeLinks.map((storeLink) => [storeLink.id, storeLink])
   );
   const marketingIntegrations = await getMarketingIntegrations();
+  const sessionIds = getSessionSet(sessionGroups as SessionGroup[]);
+  const productViewSessionIds = getSessionSet(
+    productViewSessionGroups as SessionGroup[]
+  );
+  const addToCartSessionIds = getSessionSet(
+    addToCartSessionGroups as SessionGroup[]
+  );
+  const whatsappClickSessionIds = getSessionSet(
+    whatsappClickSessionGroups as SessionGroup[]
+  );
+  const orderSentSessionIds = getSessionSet(
+    orderSentSessionGroups as SessionGroup[]
+  );
+  const orderSessionIds = getSessionSet(orderSessionGroups as SessionGroup[]);
+  const productViewFunnelSessionIds = getProgressiveSessionSet(
+    productViewSessionIds,
+    sessionIds
+  );
+  const addToCartFunnelSessionIds = getProgressiveSessionSet(
+    addToCartSessionIds,
+    productViewFunnelSessionIds
+  );
+  const whatsappClickFunnelSessionIds = getProgressiveSessionSet(
+    whatsappClickSessionIds,
+    addToCartFunnelSessionIds
+  );
+  const orderSentFunnelSessionIds = getProgressiveSessionSet(
+    orderSentSessionIds,
+    whatsappClickFunnelSessionIds
+  );
+  const orderFunnelSessionIds = getProgressiveSessionSet(
+    orderSessionIds,
+    orderSentFunnelSessionIds
+  );
   const funnel = [
     {
       description: "Base do período",
@@ -326,29 +405,29 @@ export default async function MarketingPage({
       value: sessionGroups.length
     },
     {
-      description: `${getStepRate(linkClicks, sessionGroups.length)} das sessões`,
-      label: "Links acessados",
-      value: linkClicks
+      description: `${getStepRate(productViewFunnelSessionIds.size, sessionGroups.length)} das sessões`,
+      label: "Sessões com produto visto",
+      value: productViewFunnelSessionIds.size
     },
     {
-      description: `${getStepRate(productViews, sessionGroups.length)} das sessões`,
-      label: "Produtos vistos",
-      value: productViews
+      description: `${getStepRate(addToCartFunnelSessionIds.size, productViewFunnelSessionIds.size)} das sessões com produto visto`,
+      label: "Sessões com carrinho",
+      value: addToCartFunnelSessionIds.size
     },
     {
-      description: `${getStepRate(addToCart, productViews)} dos produtos vistos`,
-      label: "Itens adicionados ao carrinho",
-      value: addToCart
+      description: `${getStepRate(whatsappClickFunnelSessionIds.size, addToCartFunnelSessionIds.size)} das sessões com carrinho`,
+      label: "Sessões com clique no WhatsApp",
+      value: whatsappClickFunnelSessionIds.size
     },
     {
-      description: `${getStepRate(whatsappClicks, addToCart)} dos itens adicionados`,
-      label: "Cliques no WhatsApp",
-      value: whatsappClicks
+      description: `${getStepRate(orderSentFunnelSessionIds.size, whatsappClickFunnelSessionIds.size)} das sessões com clique no WhatsApp`,
+      label: "Sessões com pedido no WhatsApp",
+      value: orderSentFunnelSessionIds.size
     },
     {
-      description: `${getStepRate(ordersCreated, whatsappClicks)} dos cliques no WhatsApp`,
-      label: "Pedidos registrados",
-      value: ordersCreated
+      description: `${getStepRate(orderFunnelSessionIds.size, orderSentFunnelSessionIds.size)} das sessões com pedido no WhatsApp`,
+      label: "Sessões com pedido registrado",
+      value: orderFunnelSessionIds.size
     },
     {
       description: `${getStepRate(convertedOrders, ordersCreated)} dos pedidos registrados`,
