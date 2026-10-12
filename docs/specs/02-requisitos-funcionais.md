@@ -145,7 +145,8 @@ Permitir cadastrar, editar, listar e excluir links com:
 - permitir busca por codigo do pedido;
 - permitir ordenacao por data do pedido;
 - permitir visualizar os itens de cada pedido;
-- manter pedidos como snapshot historico, sem edicao pelo administrador nesta fase.
+- permitir marcar conversao do pedido mediante confirmacao;
+- manter itens do pedido como snapshot historico, sem edicao ou exclusao pelo administrador nesta fase.
 
 ### Configuracoes
 

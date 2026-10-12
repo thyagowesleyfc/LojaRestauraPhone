@@ -150,7 +150,7 @@ export default async function MarketingPage({
   
   const errorMessage = getSingleParam(resolvedSearchParams.erro);
   const successMessage = getSingleParam(resolvedSearchParams.sucesso);
-const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
+  const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
   const baseWhere: Prisma.AnalyticsEventWhereInput = {
     createdAt: {
       gte: startDate,
@@ -167,6 +167,8 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
     removeFromCart,
     whatsappClicks,
     ordersSent,
+    ordersCreated,
+    convertedOrders,
     linkClicks,
     linkClickGroups,
     sessionGroups,
@@ -205,6 +207,23 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
     }),
     prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
+    }),
+    prisma.customerOrder.count({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+    prisma.customerOrder.count({
+      where: {
+        converted: true,
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
     }),
     prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK)
@@ -327,9 +346,14 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
       value: whatsappClicks
     },
     {
-      description: `${getStepRate(ordersSent, whatsappClicks)} dos cliques no WhatsApp`,
-      label: "Pedido enviado",
-      value: ordersSent
+      description: `${getStepRate(ordersCreated, whatsappClicks)} dos cliques no WhatsApp`,
+      label: "Pedidos registrados",
+      value: ordersCreated
+    },
+    {
+      description: `${getStepRate(convertedOrders, ordersCreated)} dos pedidos registrados`,
+      label: "Pedidos convertidos",
+      value: convertedOrders
     }
   ];
 
@@ -386,12 +410,13 @@ const { endDate, startDate } = normalizeDateRange(resolvedSearchParams);
         <MetricCard label="Buscas sem resultado" value={searchesWithoutResults} />
         <MetricCard label="Itens adicionados ao carrinho" value={addToCart} />
         <MetricCard label="Pedidos no WhatsApp" value={ordersSent} />
+        <MetricCard label="Pedidos convertidos" value={convertedOrders} />
         <MetricCard label="Links acessados" value={linkClicks} />
       </div>
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Funil</h2>
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           {funnel.map((step) => (
             <article
               className="rounded-lg border border-border bg-card p-4"

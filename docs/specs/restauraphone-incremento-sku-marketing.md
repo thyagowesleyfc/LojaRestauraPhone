@@ -387,7 +387,7 @@ O dashboard deve exibir, no mínimo:
 
 O dashboard deve conseguir agregar:
 
-`Sessões → Visualizações de produto → Adições ao carrinho → Cliques no WhatsApp → Pedidos enviados ao WhatsApp`
+`Sessões → Visualizações de produto → Adições ao carrinho → Cliques no WhatsApp → Pedidos registrados → Pedidos convertidos`
 
 Métricas mínimas:
 
@@ -397,6 +397,7 @@ Métricas mínimas:
 - remove from cart;
 - WhatsApp clicks;
 - pedidos enviados;
+- percentual de conversao dos pedidos;
 - taxa de avanço entre etapas.
 
 O objetivo é um dashboard operacional simples, não uma plataforma de BI complexa.

@@ -90,26 +90,6 @@
 - createdAt
 - updatedAt
 
-## AdminPasswordResetToken
-
-- id
-- tokenHash unico
-- adminUserId
-- expiresAt
-- usedAt opcional
-- createdAt
-
-## AdminPasswordResetAttempt
-
-- id
-- sessionHash unico
-- requestCount
-- penaltyCount
-- lastRequestedAt opcional
-- blockedUntil opcional
-- createdAt
-- updatedAt
-
 ## CategoryCharacteristic
 
 - categoryId
@@ -212,6 +192,7 @@ Usado somente para combos.
 - sessionId opcional
 - totalInCents
 - whatsappMessage
+- converted
 - createdAt
 
 ## CustomerOrderItem

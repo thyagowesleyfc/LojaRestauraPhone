@@ -252,10 +252,12 @@ model CustomerOrder {
   sessionId       String?
   totalInCents    Int
   whatsappMessage String
+  converted       Boolean             @default(false)
   createdAt       DateTime            @default(now())
   items           CustomerOrderItem[]
 
   @@index([createdAt])
+  @@index([converted, createdAt])
   @@index([sessionId, createdAt])
 }
 

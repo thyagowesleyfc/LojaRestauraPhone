@@ -84,6 +84,7 @@ Cada fase deve ser executada e validada separadamente. O Codex nao deve avancar 
 - [x] codigo unico de pedido;
 - [x] mensagem curta de WhatsApp com codigo do pedido;
 - [x] listagem e detalhe administrativo de pedidos;
+- [x] marcacao de conversao de pedidos;
 - [x] confirmacao de envio;
 - [x] limpeza do carrinho;
 - [x] testes das regras criticas.

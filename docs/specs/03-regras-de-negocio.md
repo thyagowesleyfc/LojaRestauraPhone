@@ -87,7 +87,9 @@ Tipos:
 - snapshot deve preservar tipo do item, descricao, detalhe, SKU interno quando houver, quantidade, preco unitario, subtotal e total do pedido;
 - alteracoes futuras em produtos, SKUs ou promocoes nao devem alterar pedidos ja gerados;
 - pedidos nao possuem pagamento, status de entrega, cliente cadastrado ou controle de estoque nesta fase;
-- administrador pode listar, buscar, ordenar e visualizar pedidos, sem edicao ou exclusao nesta fase.
+- administrador pode marcar um pedido como convertido mediante confirmacao;
+- a marcacao de conversao nao altera o snapshot dos itens do pedido;
+- administrador pode listar, buscar, ordenar e visualizar pedidos, sem editar itens ou excluir pedidos nesta fase.
 
 ## Configuracoes
 
