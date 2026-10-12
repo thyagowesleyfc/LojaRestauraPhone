@@ -387,16 +387,22 @@ O dashboard deve exibir, no mínimo:
 
 O dashboard deve conseguir agregar:
 
-`Sessões → Visualizações de produto → Adições ao carrinho → Cliques no WhatsApp → Pedidos registrados → Pedidos convertidos`
+`Sessões → Buscas → Buscas sem resultado → Visualizações de produto → Carrinho → Cliques no WhatsApp → Pedidos no WhatsApp → Pedidos registrados → Pedidos convertidos → Links acessados`
 
 Métricas mínimas:
 
 - sessões;
-- product views;
-- add to cart;
-- remove from cart;
-- WhatsApp clicks;
-- pedidos enviados;
+- sessões com buscas;
+- sessões com busca sem resultado;
+- sessões com produto visto;
+- sessões com carrinho;
+- total de itens adicionados aos carrinhos;
+- sessões com clique no WhatsApp;
+- sessões com pedido no WhatsApp;
+- sessões com pedido registrado;
+- pedidos convertidos;
+- total de links acessados;
+- remoções do carrinho;
 - percentual de conversao dos pedidos;
 - taxa de avanço entre etapas.
 
@@ -512,14 +518,19 @@ Eventos mínimos para encaminhamento:
 
 Criar `/admin/marketing`.
 
-Cards mínimos:
+Indicadores mínimos:
 
-- visitas à Home;
-- visualizações de produtos;
-- buscas;
-- buscas sem resultado;
-- adições ao carrinho;
-- pedidos enviados ao WhatsApp.
+- sessões;
+- sessões com buscas;
+- sessões com busca sem resultado;
+- sessões com produto visto;
+- sessões com carrinho;
+- total de itens adicionados aos carrinhos;
+- sessões com clique no WhatsApp;
+- sessões com pedido no WhatsApp;
+- sessões com pedido registrado;
+- pedidos convertidos;
+- total de links acessados.
 
 Seções:
 
@@ -534,10 +545,16 @@ Ranking dos termos que não retornaram produtos.
 
 ### Funil
 - sessões;
-- product views;
-- add to cart;
-- WhatsApp click;
-- order sent.
+- sessões com buscas;
+- sessões com busca sem resultado;
+- sessões com produto visto;
+- sessões com carrinho;
+- total de itens adicionados aos carrinhos;
+- sessões com clique no WhatsApp;
+- sessões com pedido no WhatsApp;
+- sessões com pedido registrado;
+- pedidos convertidos;
+- total de links acessados.
 
 ### Campanhas
 Agrupar eventos por:

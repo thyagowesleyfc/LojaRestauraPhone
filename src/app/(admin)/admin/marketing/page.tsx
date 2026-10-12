@@ -98,17 +98,6 @@ function getSessionSet(groups: SessionGroup[]) {
   );
 }
 
-function getProgressiveSessionSet(
-  currentStepSessions: Set<string>,
-  previousStepSessions: Set<string>
-) {
-  return new Set(
-    Array.from(currentStepSessions).filter((sessionId) =>
-      previousStepSessions.has(sessionId)
-    )
-  );
-}
-
 function normalizeDateRange({
   fim,
   inicio
@@ -147,17 +136,6 @@ function sortByCount<T extends CountGroup>(items: T[]) {
   return [...items].sort((a, b) => b._count._all - a._count._all);
 }
 
-function MetricCard({ label, value }: { label: string; value: number }) {
-  return (
-    <article className="rounded-lg border border-border bg-card p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <strong className="mt-2 block text-3xl font-semibold">
-        {formatNumber(value)}
-      </strong>
-    </article>
-  );
-}
-
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
     <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
@@ -182,17 +160,15 @@ export default async function MarketingPage({
   };
 
   const [
-    homeVisitGroups,
     productViewSessionGroups,
-    searches,
-    searchesWithoutResults,
     addToCart,
     removeFromCart,
-    ordersSent,
     ordersCreated,
     convertedOrders,
     linkClicks,
     linkClickGroups,
+    searchSessionGroups,
+    searchNoResultSessionGroups,
     addToCartSessionGroups,
     whatsappClickSessionGroups,
     orderSentSessionGroups,
@@ -203,13 +179,6 @@ export default async function MarketingPage({
     campaignGroups
   ] = await Promise.all([
     prisma.analyticsEvent.groupBy({
-      by: ["sessionId"],
-      where: {
-        ...metricWhere(baseWhere, AnalyticsEventType.PAGE_VIEW),
-        OR: [{ pagePath: "/" }, { pagePath: { startsWith: "/?" } }]
-      }
-    }),
-    prisma.analyticsEvent.groupBy({
       by: ["productId", "sessionId"],
       where: {
         ...metricWhere(baseWhere, AnalyticsEventType.PRODUCT_VIEW),
@@ -217,19 +186,10 @@ export default async function MarketingPage({
       }
     }),
     prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.SEARCH)
-    }),
-    prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.SEARCH_NO_RESULTS)
-    }),
-    prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART)
     }),
     prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.REMOVE_FROM_CART)
-    }),
-    prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
     }),
     prisma.customerOrder.count({
       where: {
@@ -258,6 +218,14 @@ export default async function MarketingPage({
         linkId: { not: null }
       },
       _count: { _all: true }
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.SEARCH)
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.SEARCH_NO_RESULTS)
     }),
     prisma.analyticsEvent.groupBy({
       by: ["sessionId"],
@@ -316,8 +284,6 @@ export default async function MarketingPage({
     })
   ]);
 
-  const homeVisits = homeVisitGroups.length;
-  const productViews = productViewSessionGroups.length;
   const productViewCounts = new Map<string, number>();
 
   for (const group of productViewSessionGroups as ProductViewSessionGroup[]) {
@@ -364,7 +330,10 @@ export default async function MarketingPage({
     storeLinks.map((storeLink) => [storeLink.id, storeLink])
   );
   const marketingIntegrations = await getMarketingIntegrations();
-  const sessionIds = getSessionSet(sessionGroups as SessionGroup[]);
+  const searchSessionIds = getSessionSet(searchSessionGroups as SessionGroup[]);
+  const searchNoResultSessionIds = getSessionSet(
+    searchNoResultSessionGroups as SessionGroup[]
+  );
   const productViewSessionIds = getSessionSet(
     productViewSessionGroups as SessionGroup[]
   );
@@ -378,26 +347,6 @@ export default async function MarketingPage({
     orderSentSessionGroups as SessionGroup[]
   );
   const orderSessionIds = getSessionSet(orderSessionGroups as SessionGroup[]);
-  const productViewFunnelSessionIds = getProgressiveSessionSet(
-    productViewSessionIds,
-    sessionIds
-  );
-  const addToCartFunnelSessionIds = getProgressiveSessionSet(
-    addToCartSessionIds,
-    productViewFunnelSessionIds
-  );
-  const whatsappClickFunnelSessionIds = getProgressiveSessionSet(
-    whatsappClickSessionIds,
-    addToCartFunnelSessionIds
-  );
-  const orderSentFunnelSessionIds = getProgressiveSessionSet(
-    orderSentSessionIds,
-    whatsappClickFunnelSessionIds
-  );
-  const orderFunnelSessionIds = getProgressiveSessionSet(
-    orderSessionIds,
-    orderSentFunnelSessionIds
-  );
   const funnel = [
     {
       description: "Base do período",
@@ -405,34 +354,54 @@ export default async function MarketingPage({
       value: sessionGroups.length
     },
     {
-      description: `${getStepRate(productViewFunnelSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(searchSessionIds.size, sessionGroups.length)} das sessões`,
+      label: "Sessões com buscas",
+      value: searchSessionIds.size
+    },
+    {
+      description: `${getStepRate(searchNoResultSessionIds.size, sessionGroups.length)} das sessões`,
+      label: "Sessões com busca sem resultado",
+      value: searchNoResultSessionIds.size
+    },
+    {
+      description: `${getStepRate(productViewSessionIds.size, sessionGroups.length)} das sessões`,
       label: "Sessões com produto visto",
-      value: productViewFunnelSessionIds.size
+      value: productViewSessionIds.size
     },
     {
-      description: `${getStepRate(addToCartFunnelSessionIds.size, productViewFunnelSessionIds.size)} das sessões com produto visto`,
+      description: `${getStepRate(addToCartSessionIds.size, sessionGroups.length)} das sessões`,
       label: "Sessões com carrinho",
-      value: addToCartFunnelSessionIds.size
+      value: addToCartSessionIds.size
     },
     {
-      description: `${getStepRate(whatsappClickFunnelSessionIds.size, addToCartFunnelSessionIds.size)} das sessões com carrinho`,
+      description: "Soma de adições no período",
+      label: "Total de itens adicionados aos carrinhos",
+      value: addToCart
+    },
+    {
+      description: `${getStepRate(whatsappClickSessionIds.size, sessionGroups.length)} das sessões`,
       label: "Sessões com clique no WhatsApp",
-      value: whatsappClickFunnelSessionIds.size
+      value: whatsappClickSessionIds.size
     },
     {
-      description: `${getStepRate(orderSentFunnelSessionIds.size, whatsappClickFunnelSessionIds.size)} das sessões com clique no WhatsApp`,
+      description: `${getStepRate(orderSentSessionIds.size, sessionGroups.length)} das sessões`,
       label: "Sessões com pedido no WhatsApp",
-      value: orderSentFunnelSessionIds.size
+      value: orderSentSessionIds.size
     },
     {
-      description: `${getStepRate(orderFunnelSessionIds.size, orderSentFunnelSessionIds.size)} das sessões com pedido no WhatsApp`,
+      description: `${getStepRate(orderSessionIds.size, sessionGroups.length)} das sessões`,
       label: "Sessões com pedido registrado",
-      value: orderFunnelSessionIds.size
+      value: orderSessionIds.size
     },
     {
       description: `${getStepRate(convertedOrders, ordersCreated)} dos pedidos registrados`,
       label: "Pedidos convertidos",
       value: convertedOrders
+    },
+    {
+      description: "Cliques em links no período",
+      label: "Total de links acessados",
+      value: linkClicks
     }
   ];
 
@@ -482,20 +451,9 @@ export default async function MarketingPage({
           Integrações atualizadas.
         </p>
       ) : null}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MetricCard label="Visitas à home" value={homeVisits} />
-        <MetricCard label="Produtos vistos" value={productViews} />
-        <MetricCard label="Buscas" value={searches} />
-        <MetricCard label="Buscas sem resultado" value={searchesWithoutResults} />
-        <MetricCard label="Itens adicionados ao carrinho" value={addToCart} />
-        <MetricCard label="Pedidos no WhatsApp" value={ordersSent} />
-        <MetricCard label="Pedidos convertidos" value={convertedOrders} />
-        <MetricCard label="Links acessados" value={linkClicks} />
-      </div>
-
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Funil</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {funnel.map((step) => (
             <article
               className="rounded-lg border border-border bg-card p-4"
