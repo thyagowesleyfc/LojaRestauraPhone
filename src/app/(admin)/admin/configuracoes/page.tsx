@@ -50,14 +50,11 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
   return (
     <section className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-semibold">Configurações</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Atualize dados institucionais, WhatsApp, logo, tema, mapa e senha.
-        </p>
-        <div className="mt-4">
-          <AdminDashboardLink />
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Configurações
+        </h1>
+        <AdminDashboardLink />
       </div>
       <FormError message={erro} />
       <AdminPasswordForm error={erroSenha} success={passwordSuccess} />

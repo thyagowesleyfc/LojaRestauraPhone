@@ -2,6 +2,7 @@
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
 
+import { AdminCreateLink } from "@/components/admin/admin-create-link";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { ProductDeleteDialog } from "@/components/admin/product-delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -93,18 +94,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">Produtos</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Gerencie itens, preços, imagens e status público.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Produtos
+        </h1>
+        <div className="flex shrink-0 items-center gap-2">
           <AdminDashboardLink />
-          <Button asChild>
-            <Link href="/admin/produtos/novo">Novo produto</Link>
-          </Button>
+          <AdminCreateLink href="/admin/produtos/novo" label="Novo produto">
+            Novo produto
+          </AdminCreateLink>
         </div>
       </div>
 

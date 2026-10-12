@@ -408,12 +408,10 @@ export default async function MarketingPage({
   return (
     <section className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold">Marketing</h1>
-          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Acompanhe sessões, buscas, produtos visualizados, carrinho,
-            WhatsApp e origem por UTM.
-          </p>
+        <div className="flex items-center justify-between gap-3 lg:min-w-[220px]">
+          <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+            Marketing
+          </h1>
           <AdminDashboardLink />
         </div>
         <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[460px]">

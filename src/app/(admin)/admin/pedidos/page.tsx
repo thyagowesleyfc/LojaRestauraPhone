@@ -115,14 +115,10 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">Pedidos</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Acompanhe os pedidos enviados pelo WhatsApp e consulte os itens de
-            cada código.
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Pedidos
+        </h1>
         <AdminDashboardLink />
       </div>
 

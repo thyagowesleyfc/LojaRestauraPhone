@@ -2,6 +2,7 @@
 import { PromotionType } from "@prisma/client";
 import Link from "next/link";
 
+import { AdminCreateLink } from "@/components/admin/admin-create-link";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { PromotionDeleteDialog } from "@/components/admin/promotion-delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -43,18 +44,18 @@ export default async function PromotionsPage({
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">Promoções</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Gerencie descontos por categoria e combos de produtos.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Promoções
+        </h1>
+        <div className="flex shrink-0 items-center gap-2">
           <AdminDashboardLink />
-          <Button asChild>
-            <Link href="/admin/promocoes/nova">Nova promoção</Link>
-          </Button>
+          <AdminCreateLink
+            href="/admin/promocoes/nova"
+            label="Nova promoção"
+          >
+            Nova promoção
+          </AdminCreateLink>
         </div>
       </div>
       {erro ? (

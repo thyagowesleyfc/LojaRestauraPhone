@@ -4,8 +4,13 @@ import { Button } from "@/components/ui/button";
 
 export function AdminDashboardLink() {
   return (
-    <Button asChild variant="outline">
-      <Link href="/admin">
+    <Button
+      asChild
+      className="size-9 px-0 sm:h-9 sm:w-auto sm:px-3"
+      size="sm"
+      variant="outline"
+    >
+      <Link aria-label="Voltar ao painel" href="/admin">
         <svg
           aria-hidden="true"
           className="size-4"
@@ -20,7 +25,7 @@ export function AdminDashboardLink() {
             strokeWidth="2"
           />
         </svg>
-        Voltar ao painel
+        <span className="hidden sm:inline">Voltar ao painel</span>
       </Link>
     </Button>
   );

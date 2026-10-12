@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
+import { AdminCreateLink } from "@/components/admin/admin-create-link";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { BannerDeleteDialog } from "@/components/admin/banner-delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -20,19 +21,15 @@ export default async function BannersPage({ searchParams }: BannersPageProps) {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">Banners</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre imagens desktop/mobile, headline, links, ordem e
-            disponibilidade pública.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Banners
+        </h1>
+        <div className="flex shrink-0 items-center gap-2">
           <AdminDashboardLink />
-          <Button asChild>
-            <Link href="/admin/banners/novo">Novo banner</Link>
-          </Button>
+          <AdminCreateLink href="/admin/banners/novo" label="Novo banner">
+            Novo banner
+          </AdminCreateLink>
         </div>
       </div>
       {erro ? (

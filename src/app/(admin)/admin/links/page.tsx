@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
+import { AdminCreateLink } from "@/components/admin/admin-create-link";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { StoreLinkDeleteDialog } from "@/components/admin/store-link-delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -20,19 +21,15 @@ export default async function LinksPage({ searchParams }: LinksPageProps) {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">Meus Links</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre botões da página /links com imagem, descrição, ordem e
-            redirecionamento.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
+          Meus Links
+        </h1>
+        <div className="flex shrink-0 items-center gap-2">
           <AdminDashboardLink />
-          <Button asChild>
-            <Link href="/admin/links/novo">Novo link</Link>
-          </Button>
+          <AdminCreateLink href="/admin/links/novo" label="Novo link">
+            Novo link
+          </AdminCreateLink>
         </div>
       </div>
       {erro ? (
