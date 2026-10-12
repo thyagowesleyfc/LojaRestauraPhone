@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 import { centsToInputValue } from "@/lib/formatters";
 
@@ -176,7 +177,17 @@ export function ProductForm({
         />
         Ativo
       </label>
-      <Button type="submit">{submitLabel}</Button>
+      {product ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição do produto ${product.description}?`}
+          title="Confirmar edição de produto?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }

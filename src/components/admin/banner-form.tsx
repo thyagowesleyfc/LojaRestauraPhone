@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 
 type BannerFormProps = {
@@ -138,7 +139,17 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
         />
         Ativo
       </label>
-      <Button type="submit">{submitLabel}</Button>
+      {banner ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição do banner ${banner.altText ?? banner.redirectUrl}?`}
+          title="Confirmar edição de banner?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }

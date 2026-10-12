@@ -1,3 +1,4 @@
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 
 const newOptionRows = [0, 1, 2];
@@ -217,7 +218,17 @@ export function CharacteristicForm({
         </div>
       </section>
 
-      <Button type="submit">{submitLabel}</Button>
+      {characteristic ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição da característica ${characteristic.name}?`}
+          title="Confirmar edição de característica?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }

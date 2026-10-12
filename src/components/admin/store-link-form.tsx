@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 
 type StoreLinkFormProps = {
@@ -119,7 +120,17 @@ export function StoreLinkForm({ action, link, submitLabel }: StoreLinkFormProps)
         Ativo
       </label>
 
-      <Button type="submit">{submitLabel}</Button>
+      {link ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição do link ${link.title}?`}
+          title="Confirmar edição de link?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }

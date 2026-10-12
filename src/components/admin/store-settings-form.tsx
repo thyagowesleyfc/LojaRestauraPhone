@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
-import { Button } from "@/components/ui/button";
 
 type StoreSettingsFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -259,7 +259,13 @@ export function StoreSettingsForm({
           />
         </div>
       </section>
-      <Button type="submit">Salvar configurações</Button>
+      <ConfirmSubmitButton
+        confirmLabel="Confirmar atualização"
+        description="Deseja confirmar a atualização das configurações da loja?"
+        title="Confirmar atualização das configurações?"
+      >
+        Salvar configurações
+      </ConfirmSubmitButton>
     </form>
   );
 }

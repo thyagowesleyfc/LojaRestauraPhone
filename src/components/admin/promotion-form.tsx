@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { PromotionType } from "@prisma/client";
 
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 import { centsToInputValue } from "@/lib/formatters";
 
@@ -261,7 +262,17 @@ export function PromotionForm({
         />
         Ativa
       </label>
-      <Button type="submit">{submitLabel}</Button>
+      {promotion ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição da promoção ${promotion.description}?`}
+          title="Confirmar edição de promoção?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }

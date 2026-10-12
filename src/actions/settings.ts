@@ -356,5 +356,5 @@ export async function updateStoreSettingsAction(formData: FormData) {
   revalidatePath("/categorias");
   revalidatePath("/carrinho");
   revalidatePath("/admin/configuracoes");
-  redirect("/admin/configuracoes");
+  redirect("/admin");
 }

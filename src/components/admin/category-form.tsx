@@ -1,3 +1,4 @@
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { Button } from "@/components/ui/button";
 
 type CategoryFormProps = {
@@ -57,7 +58,17 @@ export function CategoryForm({
         />
         Ativa
       </label>
-      <Button type="submit">{submitLabel}</Button>
+      {category ? (
+        <ConfirmSubmitButton
+          confirmLabel="Confirmar edição"
+          description={`Deseja confirmar a edição da categoria ${category.name}?`}
+          title="Confirmar edição de categoria?"
+        >
+          {submitLabel}
+        </ConfirmSubmitButton>
+      ) : (
+        <Button type="submit">{submitLabel}</Button>
+      )}
     </form>
   );
 }
