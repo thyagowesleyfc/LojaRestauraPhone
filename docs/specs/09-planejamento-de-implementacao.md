@@ -27,7 +27,8 @@ Cada fase deve ser executada e validada separadamente. O Codex nao deve avancar 
 - [x] criar layout administrativo protegido;
 - [x] testar autenticacao;
 - [x] validar migration e seed em PostgreSQL real;
-- [x] recuperacao de senha administrativa.
+- [x] recuperacao de senha administrativa;
+- [x] alteracao de senha administrativa em configuracoes.
 
 ## Fase 2 - Categorias e produtos
 

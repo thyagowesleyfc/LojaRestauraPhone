@@ -31,6 +31,24 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"]
   });
 
+export const changeAdminPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Informe a senha atual."),
+    newPassword: newPasswordSchema,
+    confirmPassword: z.string().min(1, "Confirme a nova senha.")
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "A confirmação deve ser igual à nova senha.",
+    path: ["confirmPassword"]
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: "A nova senha deve ser diferente da senha atual.",
+    path: ["newPassword"]
+  });
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type ChangeAdminPasswordInput = z.infer<
+  typeof changeAdminPasswordSchema
+>;

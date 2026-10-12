@@ -38,7 +38,8 @@ Seed idempotente:
 - token aleatório armazenado em cookie;
 - somente hash do token salvo no banco;
 - logout revoga a sessão;
-- sessões expiradas devem ser rejeitadas.
+- sessões expiradas devem ser rejeitadas;
+- alteracao de senha no painel exige a senha atual.
 
 ## Imagens
 

@@ -1,17 +1,24 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
+  ADMIN_SESSION_COOKIE,
   authenticateAdmin,
   clearAdminSession,
-  createAdminSession
+  createAdminSession,
+  hashSessionToken,
+  requireAdminUser
 } from "@/lib/auth";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import {
   requestAdminPasswordReset,
   resetAdminPassword
 } from "@/lib/password-reset";
+import { prisma } from "@/lib/prisma";
 import {
+  changeAdminPasswordSchema,
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema
@@ -29,6 +36,10 @@ export type ForgotPasswordActionState = {
 export type ResetPasswordActionState = {
   error?: string;
 };
+
+function redirectWithPasswordError(message: string): never {
+  redirect(`/admin/configuracoes?erroSenha=${encodeURIComponent(message)}`);
+}
 
 export async function loginAction(
   _previousState: LoginActionState,
@@ -75,7 +86,9 @@ export async function requestPasswordResetAction(
     const result = await requestAdminPasswordReset(parsed.data);
 
     if (!result.ok) {
-      return { error: result.message ?? "Link de redefinição inválido ou expirado." };
+      return {
+        error: result.message ?? "Link de redefinição inválido ou expirado."
+      };
     }
 
     return { success: result.message };
@@ -106,10 +119,65 @@ export async function resetPasswordAction(
   const result = await resetAdminPassword(parsed.data);
 
   if (!result.ok) {
-    return { error: result.message ?? "Link de redefinição inválido ou expirado." };
+    return {
+      error: result.message ?? "Link de redefinição inválido ou expirado."
+    };
   }
 
   redirect("/admin/login?senha=redefinida");
+}
+
+export async function changeAdminPasswordAction(formData: FormData) {
+  const user = await requireAdminUser();
+  const parsed = changeAdminPasswordSchema.safeParse({
+    currentPassword: formData.get("currentPassword"),
+    newPassword: formData.get("newPassword"),
+    confirmPassword: formData.get("confirmPassword")
+  });
+
+  if (!parsed.success) {
+    redirectWithPasswordError(
+      parsed.error.issues[0]?.message ?? "Dados inválidos."
+    );
+  }
+
+  const admin = await prisma.adminUser.findUnique({
+    where: { id: user.id },
+    select: { id: true, passwordHash: true }
+  });
+
+  if (!admin) {
+    redirectWithPasswordError("Administrador não encontrado.");
+  }
+
+  const passwordMatches = await verifyPassword(
+    parsed.data.currentPassword,
+    admin.passwordHash
+  );
+
+  if (!passwordMatches) {
+    redirectWithPasswordError("Senha atual incorreta.");
+  }
+
+  const cookieStore = await cookies();
+  const currentToken = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  const currentTokenHash = currentToken ? hashSessionToken(currentToken) : null;
+  const passwordHash = await hashPassword(parsed.data.newPassword);
+
+  await prisma.$transaction([
+    prisma.adminUser.update({
+      where: { id: admin.id },
+      data: { passwordHash }
+    }),
+    prisma.adminSession.deleteMany({
+      where: {
+        adminUserId: admin.id,
+        ...(currentTokenHash ? { tokenHash: { not: currentTokenHash } } : {})
+      }
+    })
+  ]);
+
+  redirect("/admin/configuracoes?sucesso=senha");
 }
 
 export async function logoutAction() {

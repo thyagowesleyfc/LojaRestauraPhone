@@ -114,7 +114,8 @@ Exibir:
 - sessao protegida;
 - nenhuma rota administrativa acessivel sem autenticacao;
 - recuperacao de senha administrativa por e-mail com link de redefinicao;
-- limite de solicitacoes de recuperacao por sessao anonima com penalidade crescente.
+- limite de solicitacoes de recuperacao por sessao anonima com penalidade crescente;
+- alteracao de senha dentro de configuracoes administrativas mediante senha atual.
 
 ### Cadastros
 
@@ -155,4 +156,5 @@ Permitir editar:
 - informacoes do rodape;
 - numero e mensagem do WhatsApp;
 - cores dos temas claro e escuro;
-- mapa incorporado.
+- mapa incorporado;
+- senha do administrador.
