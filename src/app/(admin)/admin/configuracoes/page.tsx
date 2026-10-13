@@ -1,6 +1,5 @@
 import { updateStoreSettingsAction } from "@/actions/settings";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
-import { AdminPasswordForm } from "@/components/admin/admin-password-form";
 import { FormError } from "@/components/admin/form-error";
 import { StoreSettingsForm } from "@/components/admin/store-settings-form";
 import { DEFAULT_PRIVACY_PAGE_CONTENT } from "@/lib/privacy-content";
@@ -57,9 +56,10 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         <AdminDashboardLink />
       </div>
       <FormError message={erro} />
-      <AdminPasswordForm error={erroSenha} success={passwordSuccess} />
       <StoreSettingsForm
         action={updateStoreSettingsAction}
+        passwordError={erroSenha}
+        passwordSuccess={passwordSuccess}
         settings={settings ?? fallbackSettings}
       />
     </section>

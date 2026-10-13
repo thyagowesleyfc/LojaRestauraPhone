@@ -49,6 +49,14 @@
 - detalhe do pedido deve exibir o snapshot dos itens de forma escaneavel e responsiva;
 - pedido e historico operacional, sem acoes de edicao nesta fase.
 
+## Configuracoes no admin
+
+- configuracoes devem ser organizadas em abas horizontais responsivas;
+- abas devem separar Senha, Dados Institucionais, Privacidade, WhatsApp, Tema e Outros;
+- Dados Institucionais agrupa nome fantasia, CNPJ, telefone, e-mail, endereco, quem somos e URL do mapa;
+- Tema agrupa logos e cores dos temas claro e escuro;
+- Outros agrupa gatilho de oferta e tempo de exibicao da hero.
+
 ## Modais de confirmacao
 
 Usar confirmacao para:
