@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 
 import { getAnalyticsEventDedupeKey } from "@/lib/analytics-events";
 import { prisma } from "@/lib/prisma";
-import { analyticsEventSchema } from "@/schemas/analytics";
+import {
+  analyticsEventBatchSchema,
+  analyticsEventSchema,
+  type AnalyticsEventInput
+} from "@/schemas/analytics";
 
 function normalizeSearchTerm(searchTerm: string | undefined) {
   return searchTerm
@@ -12,23 +16,11 @@ function normalizeSearchTerm(searchTerm: string | undefined) {
     .replace(/[\u0300-\u036f]/g, "") || null;
 }
 
-export async function POST(request: Request) {
-  const body = await request.json().catch(() => null);
-  const parsed = analyticsEventSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Evento de analytics inválido." },
-      { status: 400 }
-    );
-  }
-
-  const event = parsed.data;
-  const dedupeKey = getAnalyticsEventDedupeKey(event);
-  const data = {
+function toAnalyticsEventData(event: AnalyticsEventInput) {
+  return {
     type: event.type,
     sessionId: event.sessionId,
-    dedupeKey,
+    dedupeKey: getAnalyticsEventDedupeKey(event),
     productId: event.productId ?? null,
     productVariantId: event.productVariantId ?? null,
     promotionId: event.promotionId ?? null,
@@ -44,15 +36,29 @@ export async function POST(request: Request) {
     utmTerm: event.utm?.term ?? null,
     utmContent: event.utm?.content ?? null
   };
+}
 
-  if (dedupeKey) {
-    await prisma.analyticsEvent.createMany({
-      data,
-      skipDuplicates: true
-    });
-  } else {
-    await prisma.analyticsEvent.create({ data });
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => null);
+  const parsedBatch = analyticsEventBatchSchema.safeParse(body);
+  const parsedEvent = analyticsEventSchema.safeParse(body);
+  const events = parsedBatch.success
+    ? parsedBatch.data.events
+    : parsedEvent.success
+      ? [parsedEvent.data]
+      : null;
+
+  if (!events) {
+    return NextResponse.json(
+      { error: "Evento de analytics inválido." },
+      { status: 400 }
+    );
   }
 
-  return NextResponse.json({ ok: true });
+  await prisma.analyticsEvent.createMany({
+    data: events.map(toAnalyticsEventData),
+    skipDuplicates: true
+  });
+
+  return NextResponse.json({ ok: true, received: events.length });
 }

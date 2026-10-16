@@ -43,5 +43,9 @@ export const analyticsEventSchema = z.object({
   utm: analyticsUtmSchema.optional()
 });
 
+export const analyticsEventBatchSchema = z.object({
+  events: z.array(analyticsEventSchema).min(1).max(10)
+});
+
 export type AnalyticsEventType = (typeof analyticsEventTypes)[number];
 export type AnalyticsEventInput = z.infer<typeof analyticsEventSchema>;

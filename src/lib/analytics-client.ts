@@ -7,7 +7,12 @@ const ANALYTICS_SESSION_KEY = "rp_analytics_session_id";
 const ANALYTICS_UTM_KEY = "rp_analytics_utm";
 const ANALYTICS_DEDUPE_KEY = "rp_analytics_dedupe_keys";
 const MAX_ANALYTICS_DEDUPE_KEYS = 500;
+const ANALYTICS_BATCH_SIZE = 10;
+const ANALYTICS_BATCH_DELAY_MS = 1000;
 const inMemoryDedupeKeys = new Set<string>();
+const pendingAnalyticsEvents: AnalyticsEventInput[] = [];
+let analyticsFlushTimer: number | null = null;
+let analyticsFlushListenersRegistered = false;
 const UTM_KEYS = [
   "utm_source",
   "utm_medium",
@@ -220,6 +225,70 @@ function trackExternalProviders(event: AnalyticsEventInput) {
   }
 }
 
+function sendAnalyticsBatch(events: AnalyticsEventInput[]) {
+  const body = JSON.stringify({ events });
+
+  if (navigator.sendBeacon) {
+    const blob = new Blob([body], { type: "application/json" });
+
+    if (navigator.sendBeacon("/api/analytics/events", blob)) {
+      return;
+    }
+  }
+
+  void fetch("/api/analytics/events", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body,
+    keepalive: true
+  }).catch(() => undefined);
+}
+
+function scheduleAnalyticsFlush() {
+  if (analyticsFlushTimer !== null) {
+    return;
+  }
+
+  analyticsFlushTimer = window.setTimeout(() => {
+    analyticsFlushTimer = null;
+    flushAnalyticsEvents();
+  }, ANALYTICS_BATCH_DELAY_MS);
+}
+
+function flushAnalyticsEvents() {
+  if (analyticsFlushTimer !== null) {
+    window.clearTimeout(analyticsFlushTimer);
+    analyticsFlushTimer = null;
+  }
+
+  if (pendingAnalyticsEvents.length === 0) {
+    return;
+  }
+
+  const events = pendingAnalyticsEvents.splice(0, ANALYTICS_BATCH_SIZE);
+  sendAnalyticsBatch(events);
+
+  if (pendingAnalyticsEvents.length > 0) {
+    scheduleAnalyticsFlush();
+  }
+}
+
+function registerAnalyticsFlushListeners() {
+  if (analyticsFlushListenersRegistered) {
+    return;
+  }
+
+  window.addEventListener("pagehide", flushAnalyticsEvents);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      flushAnalyticsEvents();
+    }
+  });
+  analyticsFlushListenersRegistered = true;
+}
+
 export function trackAnalyticsEvent(event: TrackAnalyticsEventInput) {
   if (typeof window === "undefined") {
     return;
@@ -239,21 +308,13 @@ export function trackAnalyticsEvent(event: TrackAnalyticsEventInput) {
   }
 
   trackExternalProviders(payload);
+  pendingAnalyticsEvents.push(payload);
+  registerAnalyticsFlushListeners();
 
-  const body = JSON.stringify(payload);
-
-  if (navigator.sendBeacon) {
-    const blob = new Blob([body], { type: "application/json" });
-    navigator.sendBeacon("/api/analytics/events", blob);
+  if (pendingAnalyticsEvents.length >= ANALYTICS_BATCH_SIZE) {
+    flushAnalyticsEvents();
     return;
   }
 
-  void fetch("/api/analytics/events", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body,
-    keepalive: true
-  }).catch(() => undefined);
+  scheduleAnalyticsFlush();
 }
