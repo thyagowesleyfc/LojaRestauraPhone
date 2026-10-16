@@ -1,9 +1,13 @@
 "use client";
 
 import type { AnalyticsEventInput, AnalyticsEventType } from "@/schemas/analytics";
+import { getClientAnalyticsDedupeKey } from "@/lib/analytics-dedupe";
 
 const ANALYTICS_SESSION_KEY = "rp_analytics_session_id";
 const ANALYTICS_UTM_KEY = "rp_analytics_utm";
+const ANALYTICS_DEDUPE_KEY = "rp_analytics_dedupe_keys";
+const MAX_ANALYTICS_DEDUPE_KEYS = 500;
+const inMemoryDedupeKeys = new Set<string>();
 const UTM_KEYS = [
   "utm_source",
   "utm_medium",
@@ -112,6 +116,35 @@ function getCurrentPagePath() {
   return `${window.location.pathname}${window.location.search}`;
 }
 
+function hasAlreadyTrackedInThisTab(key: string) {
+  if (inMemoryDedupeKeys.has(key)) {
+    return true;
+  }
+
+  inMemoryDedupeKeys.add(key);
+
+  try {
+    const rawKeys = window.sessionStorage.getItem(ANALYTICS_DEDUPE_KEY);
+    const storedKeys = rawKeys ? (JSON.parse(rawKeys) as unknown) : [];
+    const dedupeKeys = Array.isArray(storedKeys)
+      ? storedKeys.filter((value): value is string => typeof value === "string")
+      : [];
+
+    if (dedupeKeys.includes(key)) {
+      return true;
+    }
+
+    window.sessionStorage.setItem(
+      ANALYTICS_DEDUPE_KEY,
+      JSON.stringify([...dedupeKeys, key].slice(-MAX_ANALYTICS_DEDUPE_KEYS))
+    );
+  } catch {
+    // O rastreamento continua funcionando mesmo quando o storage está indisponível.
+  }
+
+  return false;
+}
+
 function toGtmEventName(type: AnalyticsEventType) {
   return type.toLowerCase();
 }
@@ -198,6 +231,12 @@ export function trackAnalyticsEvent(event: TrackAnalyticsEventInput) {
     sessionId: event.sessionId ?? getAnalyticsSessionId(),
     utm: event.utm ?? captureUtmFromLocation()
   };
+
+  const dedupeKey = getClientAnalyticsDedupeKey(payload);
+
+  if (dedupeKey && hasAlreadyTrackedInThisTab(dedupeKey)) {
+    return;
+  }
 
   trackExternalProviders(payload);
 
