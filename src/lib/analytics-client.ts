@@ -308,6 +308,11 @@ export function trackAnalyticsEvent(event: TrackAnalyticsEventInput) {
   }
 
   trackExternalProviders(payload);
+
+  if (payload.type === "REMOVE_FROM_CART") {
+    return;
+  }
+
   pendingAnalyticsEvents.push(payload);
   registerAnalyticsFlushListeners();
 

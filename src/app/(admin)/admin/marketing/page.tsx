@@ -163,7 +163,6 @@ export default async function MarketingPage({
   const [
     productViewSessionGroups,
     addToCart,
-    removeFromCart,
     ordersCreated,
     convertedOrders,
     linkClicks,
@@ -189,9 +188,6 @@ export default async function MarketingPage({
     }),
     prisma.analyticsEvent.count({
       where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART)
-    }),
-    prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.REMOVE_FROM_CART)
     }),
     prisma.customerOrder.count({
       where: {
@@ -476,9 +472,6 @@ export default async function MarketingPage({
             </article>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Remoções do carrinho no período: {formatNumber(removeFromCart)}.
-        </p>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">

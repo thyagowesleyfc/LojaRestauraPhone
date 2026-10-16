@@ -55,10 +55,20 @@ export async function POST(request: Request) {
     );
   }
 
-  await prisma.analyticsEvent.createMany({
-    data: events.map(toAnalyticsEventData),
-    skipDuplicates: true
-  });
+  const persistedEvents = events.filter(
+    (event) => event.type !== "REMOVE_FROM_CART"
+  );
 
-  return NextResponse.json({ ok: true, received: events.length });
+  if (persistedEvents.length > 0) {
+    await prisma.analyticsEvent.createMany({
+      data: persistedEvents.map(toAnalyticsEventData),
+      skipDuplicates: true
+    });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    received: events.length,
+    persisted: persistedEvents.length
+  });
 }
