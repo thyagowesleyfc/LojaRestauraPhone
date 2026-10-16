@@ -46,10 +46,9 @@ export async function POST(request: Request) {
   };
 
   if (dedupeKey) {
-    await prisma.analyticsEvent.upsert({
-      create: data,
-      update: {},
-      where: { dedupeKey }
+    await prisma.analyticsEvent.createMany({
+      data,
+      skipDuplicates: true
     });
   } else {
     await prisma.analyticsEvent.create({ data });
