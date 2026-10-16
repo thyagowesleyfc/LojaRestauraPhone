@@ -3,6 +3,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 
 import { env } from "@/lib/env";
+import { convertImageToWebp } from "@/lib/image-processor";
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -60,13 +61,18 @@ export async function uploadCatalogImage(file: File): Promise<UploadedImage> {
     throw new Error("Imagem inválida. Use JPG, PNG, WEBP ou AVIF até 5 MB.");
   }
 
+  const webpBuffer = await convertImageToWebp(file);
   const { cloudName, apiKey, apiSecret } = assertCloudinaryConfig();
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = "restauraphone/catalog";
   const signature = signCloudinaryParams({ folder, timestamp }, apiSecret);
   const body = new FormData();
 
-  body.set("file", file);
+  body.set(
+    "file",
+    new Blob([new Uint8Array(webpBuffer)], { type: "image/webp" }),
+    "image.webp"
+  );
   body.set("api_key", apiKey);
   body.set("timestamp", String(timestamp));
   body.set("folder", folder);
