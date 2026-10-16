@@ -371,6 +371,8 @@ model AnalyticsEvent {
   createdAt            DateTime           @default(now())
 
   @@index([type, createdAt])
+  @@index([type, createdAt, sessionId])
+  @@index([type, createdAt, productId, sessionId])
   @@index([sessionId, createdAt])
   @@index([productId, createdAt])
   @@index([productVariantId, createdAt])
