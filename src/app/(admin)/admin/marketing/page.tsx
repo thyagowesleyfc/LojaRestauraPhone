@@ -1,4 +1,5 @@
 import { AnalyticsEventType, type Prisma } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
@@ -177,7 +178,8 @@ export default async function MarketingPage({
     searchGroups,
     searchNoResultGroups,
     campaignGroups
-  ] = await Promise.all([
+  ] = await unstable_cache(
+    () => Promise.all([
     prisma.analyticsEvent.groupBy({
       by: ["productId", "sessionId"],
       where: {
@@ -282,7 +284,14 @@ export default async function MarketingPage({
       },
       _count: { _all: true }
     })
-  ]);
+    ]),
+    [
+      "admin-marketing-analytics",
+      formatDateInput(startDate),
+      formatDateInput(endDate)
+    ],
+    { revalidate: 120 }
+  )();
 
   const productViewCounts = new Map<string, number>();
 
