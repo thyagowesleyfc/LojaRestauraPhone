@@ -1,7 +1,8 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma, type Prisma as PrismaTypes } from "@prisma/client";
 import Link from "next/link";
 
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
+import { OrdersComparisonChart } from "@/components/admin/orders-comparison-chart";
 import { Button } from "@/components/ui/button";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import { prisma } from "@/lib/prisma";
@@ -70,8 +71,20 @@ function formatOrderDate(date: Date) {
   }).format(date);
 }
 
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("pt-BR").format(value);
+type OrderChartRow = {
+  converted: number;
+  month: Date;
+  orders: number;
+};
+
+function formatChartMonth(date: Date) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    month: "short",
+    timeZone: "UTC",
+    year: "2-digit"
+  })
+    .format(date)
+    .replace(" de ", "/");
 }
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
@@ -81,7 +94,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const startDate = parseDateParam(resolvedSearchParams.inicio);
   const orderDirection = normalizeOrderDirection(resolvedSearchParams.ordem);
   const hasDateFilter = Boolean(startDate || endDate);
-  const where: Prisma.CustomerOrderWhereInput = {
+  const where: PrismaTypes.CustomerOrderWhereInput = {
     ...(search ? { code: { contains: search } } : {}),
     ...(hasDateFilter
       ? {
@@ -93,15 +106,14 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       : {})
   };
   const hasFilters = Boolean(search || hasDateFilter);
-  const indicatorWhere: Prisma.CustomerOrderWhereInput = hasDateFilter
-    ? {
-        createdAt: {
-          ...(startDate ? { gte: startDate } : {}),
-          ...(endDate ? { lte: endDate } : {})
-        }
-      }
-    : {};
-  const [orders, orderCount, convertedOrderCount] = await Promise.all([
+  const chartDateFilters = [
+    ...(startDate ? [Prisma.sql`"createdAt" >= ${startDate}`] : []),
+    ...(endDate ? [Prisma.sql`"createdAt" <= ${endDate}`] : [])
+  ];
+  const chartWhere = chartDateFilters.length
+    ? Prisma.sql`WHERE ${Prisma.join(chartDateFilters, " AND ")}`
+    : Prisma.empty;
+  const [orders, chartRows] = await Promise.all([
     prisma.customerOrder.findMany({
       where,
       orderBy: [{ createdAt: orderDirection }],
@@ -112,14 +124,22 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       },
       take: 100
     }),
-    prisma.customerOrder.count({ where: indicatorWhere }),
-    prisma.customerOrder.count({
-      where: {
-        ...indicatorWhere,
-        converted: true
-      }
-    })
+    prisma.$queryRaw<OrderChartRow[]>(Prisma.sql`
+      SELECT
+        date_trunc('month', "createdAt") AS month,
+        COUNT(*)::integer AS orders,
+        COUNT(*) FILTER (WHERE converted = true)::integer AS converted
+      FROM "CustomerOrder"
+      ${chartWhere}
+      GROUP BY 1
+      ORDER BY 1 ASC
+    `)
   ]);
+  const chartData = chartRows.map((row) => ({
+    converted: Number(row.converted),
+    label: formatChartMonth(row.month),
+    orders: Number(row.orders)
+  }));
 
   return (
     <section className="space-y-6">
@@ -130,24 +150,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         <AdminDashboardLink />
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-4">
-        <article className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-4">
-          <p className="text-xs leading-tight text-muted-foreground sm:text-sm">
-            Quantidade de pedidos
-          </p>
-          <strong className="mt-1 block text-2xl font-semibold sm:mt-2 sm:text-3xl">
-            {formatNumber(orderCount)}
-          </strong>
-        </article>
-        <article className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-4">
-          <p className="text-xs leading-tight text-muted-foreground sm:text-sm">
-            Quantidade de convertidos
-          </p>
-          <strong className="mt-1 block text-2xl font-semibold sm:mt-2 sm:text-3xl">
-            {formatNumber(convertedOrderCount)}
-          </strong>
-        </article>
-      </div>
+      <OrdersComparisonChart data={chartData} />
 
       <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_170px_170px_220px_auto] lg:items-end">
         <label className="space-y-2 text-sm">
