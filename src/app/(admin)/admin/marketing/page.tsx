@@ -2,10 +2,7 @@ import { AnalyticsEventType, type Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
-import {
-  MarketingFunnelChart,
-  type FunnelMetric
-} from "@/components/admin/marketing-funnel-chart";
+import { MarketingFunnelChart } from "@/components/admin/marketing-funnel-chart";
 import { MarketingIntegrationsForm } from "@/components/admin/marketing-integrations-form";
 import {
   MarketingRankingsTabs,
@@ -108,21 +105,6 @@ function parseDateParam(value: string | string[] | undefined, endOfDay = false) 
 
 function formatDateInput(date: Date) {
   return date.toISOString().slice(0, 10);
-}
-
-function formatPercent(value: number) {
-  return `${new Intl.NumberFormat("pt-BR", {
-    maximumFractionDigits: 1,
-    minimumFractionDigits: 0
-  }).format(value)}%`;
-}
-
-function getStepRate(current: number, previous: number) {
-  if (previous <= 0) {
-    return "0%";
-  }
-
-  return formatPercent((current / previous) * 100);
 }
 
 function normalizeDateRange({
@@ -489,10 +471,6 @@ export default async function MarketingPage({
     getSessionSet(searchNoResultSessionGroups as SessionGroup[]),
     entrySessionIds
   );
-  const productViewSessionIds = restrictToSessions(
-    getSessionSet(productViewSessionGroups as SessionGroup[]),
-    entrySessionIds
-  );
   const addToCartSessionIds = restrictToSessions(
     getSessionSet(addToCartSessionGroups as SessionGroup[]),
     entrySessionIds
@@ -515,7 +493,6 @@ export default async function MarketingPage({
   const orderSessionIds = getSessionSet(
     orderRowsForEntrySessions.map((order) => ({ sessionId: order.sessionId }))
   );
-  const ordersCreated = orderRowsForEntrySessions.length;
   const convertedOrders = orderRowsForEntrySessions.filter(
     (order) => order.converted
   ).length;
@@ -648,72 +625,31 @@ export default async function MarketingPage({
       source: group.utmSource ?? "-"
     })
   );
-  const funnel: FunnelMetric[] = [
+  const funnels = [
     {
-      description: "Base do período",
-      label: "Sessões",
-      kind: "session",
-      value: entrySessionIds.size
+      description: "Da sessão de entrada ao pedido convertido.",
+      metrics: [
+        { label: "Sessões", value: entrySessionIds.size },
+        { label: "Sessões com carrinho", value: addToCartSessionIds.size },
+        { label: "Sessões com pedido registrado", value: orderSessionIds.size },
+        { label: "Pedidos convertidos", value: convertedOrders }
+      ],
+      title: "Funil de Pedidos"
     },
     {
-      description: `${getStepRate(searchSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com buscas",
-      kind: "session",
-      value: searchSessionIds.size
-    },
-    {
-      description: `${getStepRate(searchNoResultSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com busca sem resultado",
-      kind: "session",
-      value: searchNoResultSessionIds.size
-    },
-    {
-      description: `${getStepRate(productViewSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com produto visto",
-      kind: "session",
-      value: productViewSessionIds.size
-    },
-    {
-      description: `${getStepRate(addToCartSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com carrinho",
-      kind: "session",
-      value: addToCartSessionIds.size
-    },
-    {
-      description: "Soma de adições no período",
-      label: "Total de itens adicionados aos carrinhos",
-      kind: "action",
-      value: addToCart
-    },
-    {
-      description: `${getStepRate(whatsappClickSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com clique no WhatsApp",
-      kind: "session",
-      value: whatsappClickSessionIds.size
-    },
-    {
-      description: `${getStepRate(orderSentSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com pedido no WhatsApp",
-      kind: "session",
-      value: orderSentSessionIds.size
-    },
-    {
-      description: `${getStepRate(orderSessionIds.size, entrySessionIds.size)} das sessões`,
-      label: "Sessões com pedido registrado",
-      kind: "session",
-      value: orderSessionIds.size
-    },
-    {
-      description: `${getStepRate(convertedOrders, ordersCreated)} dos pedidos registrados`,
-      label: "Pedidos convertidos",
-      kind: "conversion",
-      value: convertedOrders
-    },
-    {
-      description: "Cliques em links no período",
-      label: "Total de links acessados",
-      kind: "action",
-      value: filteredLinkClicks
+      description: "Da sessão de entrada ao clique que direciona para o atendimento.",
+      metrics: [
+        { label: "Sessões", value: entrySessionIds.size },
+        {
+          label: "Sessões com clique no WhatsApp",
+          value: whatsappClickSessionIds.size
+        }
+      ],
+      supportingMetric: {
+        label: "Sessões com pedido no WhatsApp",
+        value: orderSentSessionIds.size
+      },
+      title: "Funil de Direcionamento para WhatsApp"
     }
   ];
 
@@ -736,14 +672,16 @@ export default async function MarketingPage({
       ) : null}
       <MarketingFunnelChart
         endDate={formatDateInput(endDate)}
-        metrics={funnel}
+        funnels={funnels}
         startDate={formatDateInput(startDate)}
       />
 
       <MarketingRankingsTabs
         campaigns={campaignRankingRows}
+        cartAdditions={addToCart}
         categories={categoryViewRankingRows}
         integrations={<MarketingIntegrationsForm integrations={marketingIntegrations} />}
+        linkClicks={filteredLinkClicks}
         links={linkRankingRows}
         products={{
           converted: convertedProductOrderRankingRows,
@@ -758,6 +696,10 @@ export default async function MarketingPage({
         searches={{
           noResults: searchNoResultRankingRows,
           top: searchRankingRows
+        }}
+        searchMetrics={{
+          noResults: searchNoResultSessionIds.size,
+          searched: searchSessionIds.size
         }}
       />
     </section>
