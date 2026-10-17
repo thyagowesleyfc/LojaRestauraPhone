@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   countSessionEvents,
+  getCategoryOrderRanking,
   getEntrySessionIds,
   getOrderRanking,
   getUniqueEntityViewCounts,
@@ -143,5 +144,65 @@ test("classifica pedidos de produtos e promoções por pedidos e unidades", () =
       true
     ),
     [{ entityId: "product-1", orders: 1, units: 3 }]
+  );
+});
+
+test("classifica pedidos por categoria de produto ou promoção", () => {
+  const items = [
+    {
+      converted: true,
+      orderId: "order-1",
+      quantity: 2,
+      sessionId: "session-home",
+      sourceProductId: "product-1",
+      sourcePromotionId: null
+    },
+    {
+      converted: false,
+      orderId: "order-2",
+      quantity: 3,
+      sessionId: "session-links",
+      sourceProductId: null,
+      sourcePromotionId: "promotion-1"
+    },
+    {
+      converted: true,
+      orderId: "order-3",
+      quantity: 1,
+      sessionId: "session-direct",
+      sourceProductId: "product-2",
+      sourcePromotionId: null
+    }
+  ];
+
+  assert.deepEqual(
+    getCategoryOrderRanking(
+      items,
+      new Map([
+        ["product-1", "category-a"],
+        ["product-2", "category-b"]
+      ]),
+      new Map([["promotion-1", "category-a"]]),
+      new Set(["session-home", "session-links"])
+    ),
+    [
+      { entityId: "category-a", orders: 2, units: 5 }
+    ]
+  );
+
+  assert.deepEqual(
+    getCategoryOrderRanking(
+      items,
+      new Map([
+        ["product-1", "category-a"],
+        ["product-2", "category-b"]
+      ]),
+      new Map([["promotion-1", "category-a"]]),
+      new Set(["session-home", "session-links"]),
+      true
+    ),
+    [
+      { entityId: "category-a", orders: 1, units: 2 }
+    ]
   );
 });

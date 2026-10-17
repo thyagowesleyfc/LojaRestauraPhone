@@ -184,3 +184,48 @@ export function getOrderRanking(
     units: unitsByEntity.get(entityId) ?? 0
   } satisfies MarketingOrderRanking));
 }
+
+export function getCategoryOrderRanking(
+  items: MarketingOrderItem[],
+  productCategoryIds: ReadonlyMap<string, string>,
+  promotionCategoryIds: ReadonlyMap<string, string>,
+  allowedSessionIds: Set<string>,
+  convertedOnly = false
+) {
+  const orderKeysByCategory = new Map<string, Set<string>>();
+  const unitsByCategory = new Map<string, number>();
+
+  for (const item of items) {
+    if (
+      !item.sessionId ||
+      !allowedSessionIds.has(item.sessionId) ||
+      (convertedOnly && !item.converted)
+    ) {
+      continue;
+    }
+
+    const categoryId = item.sourceProductId
+      ? productCategoryIds.get(item.sourceProductId)
+      : item.sourcePromotionId
+        ? promotionCategoryIds.get(item.sourcePromotionId)
+        : undefined;
+
+    if (!categoryId) {
+      continue;
+    }
+
+    const orderKeys = orderKeysByCategory.get(categoryId) ?? new Set<string>();
+    orderKeys.add(item.orderId);
+    orderKeysByCategory.set(categoryId, orderKeys);
+    unitsByCategory.set(
+      categoryId,
+      (unitsByCategory.get(categoryId) ?? 0) + item.quantity
+    );
+  }
+
+  return Array.from(orderKeysByCategory, ([entityId, orderKeys]) => ({
+    entityId,
+    orders: orderKeys.size,
+    units: unitsByCategory.get(entityId) ?? 0
+  } satisfies MarketingOrderRanking));
+}

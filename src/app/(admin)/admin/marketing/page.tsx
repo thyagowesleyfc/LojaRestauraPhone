@@ -13,6 +13,7 @@ import {
 import { getMarketingIntegrations } from "@/lib/marketing-integrations";
 import {
   countSessionEvents,
+  getCategoryOrderRanking,
   getEntityEventCounts,
   getEntrySessionIds,
   getOrderRanking,
@@ -156,6 +157,20 @@ function toCountGroups(counts: Map<string, number>) {
 
 function sortByOrders<T extends { orders: number }>(items: T[]) {
   return [...items].sort((left, right) => right.orders - left.orders);
+}
+
+function sumValues(values: Iterable<number>) {
+  let total = 0;
+
+  for (const value of values) {
+    total += value;
+  }
+
+  return total;
+}
+
+function sumOrders<T extends { orders: number }>(items: T[]) {
+  return items.reduce((total, item) => total + item.orders, 0);
 }
 
 export default async function MarketingPage({
@@ -364,55 +379,122 @@ export default async function MarketingPage({
     sourceProductId: item.sourceProductId,
     sourcePromotionId: item.sourcePromotionId
   }));
-  const topProductOrderGroups = sortByOrders(
-    getOrderRanking(orderItems, "product", entrySessionIds)
-  ).slice(0, 10);
-  const topPromotionOrderGroups = sortByOrders(
-    getOrderRanking(orderItems, "promotion", entrySessionIds)
-  ).slice(0, 10);
+  const productOrderGroups = getOrderRanking(
+    orderItems,
+    "product",
+    entrySessionIds
+  );
+  const promotionOrderGroups = getOrderRanking(
+    orderItems,
+    "promotion",
+    entrySessionIds
+  );
+  const convertedProductOrderGroups = getOrderRanking(
+    orderItems,
+    "product",
+    entrySessionIds,
+    true
+  );
+  const convertedPromotionOrderGroups = getOrderRanking(
+    orderItems,
+    "promotion",
+    entrySessionIds,
+    true
+  );
+  const topProductOrderGroups = sortByOrders(productOrderGroups).slice(0, 10);
+  const topPromotionOrderGroups = sortByOrders(promotionOrderGroups).slice(0, 10);
   const topConvertedProductOrderGroups = sortByOrders(
-    getOrderRanking(orderItems, "product", entrySessionIds, true)
+    convertedProductOrderGroups
   ).slice(0, 10);
   const topConvertedPromotionOrderGroups = sortByOrders(
-    getOrderRanking(orderItems, "promotion", entrySessionIds, true)
+    convertedPromotionOrderGroups
   ).slice(0, 10);
   const productIds = Array.from(
     new Set([
       ...topProductGroups.map((group) => group.productId),
-      ...topProductOrderGroups.map((group) => group.entityId),
-      ...topConvertedProductOrderGroups.map((group) => group.entityId)
+      ...orderItems
+        .map((item) => item.sourceProductId)
+        .filter((id): id is string => Boolean(id)),
+      ...productOrderGroups.map((group) => group.entityId),
+      ...convertedProductOrderGroups.map((group) => group.entityId)
     ])
   );
-  const categoryIds = topCategoryGroups.map((group) => group.categoryId);
   const promotionIds = Array.from(
     new Set([
       ...topPromotionGroups.map((group) => group.promotionId),
-      ...topPromotionOrderGroups.map((group) => group.entityId),
-      ...topConvertedPromotionOrderGroups.map((group) => group.entityId)
+      ...orderItems
+        .map((item) => item.sourcePromotionId)
+        .filter((id): id is string => Boolean(id)),
+      ...promotionOrderGroups.map((group) => group.entityId),
+      ...convertedPromotionOrderGroups.map((group) => group.entityId)
     ])
   );
-  const [products, categories, promotions] = await Promise.all([
+  const [products, promotions] = await Promise.all([
     productIds.length
       ? prisma.product.findMany({
           where: { id: { in: productIds } },
-          select: { description: true, id: true, slug: true }
-        })
-      : Promise.resolve([]),
-    categoryIds.length
-      ? prisma.category.findMany({
-          where: { id: { in: categoryIds } },
-          select: { id: true, name: true, slug: true }
+          select: { categoryId: true, description: true, id: true, slug: true }
         })
       : Promise.resolve([]),
     promotionIds.length
       ? prisma.promotion.findMany({
           where: { id: { in: promotionIds } },
-          select: { description: true, id: true, slug: true }
+          select: { categoryId: true, description: true, id: true, slug: true }
         })
       : Promise.resolve([])
   ]);
   const productsById = new Map(products.map((product) => [product.id, product]));
+  const productCategoryIds = new Map(
+    products.map((product) => [product.id, product.categoryId])
+  );
+  const promotionCategoryIds = new Map(
+    promotions
+      .filter((promotion) => promotion.categoryId !== null)
+      .map((promotion) => [promotion.id, promotion.categoryId as string])
+  );
+  const categoryIds = Array.from(
+    new Set([
+      ...topCategoryGroups.map((group) => group.categoryId),
+      ...products.map((product) => product.categoryId),
+      ...promotions
+        .map((promotion) => promotion.categoryId)
+        .filter((id): id is string => Boolean(id))
+    ])
+  );
+  const categories = categoryIds.length
+    ? await prisma.category.findMany({
+        where: { id: { in: categoryIds } },
+        select: { id: true, name: true, slug: true }
+      })
+    : [];
   const categoriesById = new Map(categories.map((category) => [category.id, category]));
+  const categoryOrderGroups = sortByOrders(
+    getCategoryOrderRanking(
+      orderItems,
+      productCategoryIds,
+      promotionCategoryIds,
+      entrySessionIds
+    )
+  ).slice(0, 10);
+  const convertedCategoryOrderGroups = sortByOrders(
+    getCategoryOrderRanking(
+      orderItems,
+      productCategoryIds,
+      promotionCategoryIds,
+      entrySessionIds,
+      true
+    )
+  ).slice(0, 10);
+  const productTotals = {
+    converted: sumOrders(convertedProductOrderGroups),
+    ordered: sumOrders(productOrderGroups),
+    viewed: sumValues(productViewCounts.values())
+  };
+  const promotionTotals = {
+    converted: sumOrders(convertedPromotionOrderGroups),
+    ordered: sumOrders(promotionOrderGroups),
+    viewed: sumValues(promotionViewCounts.values())
+  };
   const promotionsById = new Map(promotions.map((promotion) => [promotion.id, promotion]));
   const topSearches = toCountGroups(
     getEntityEventCounts(
@@ -496,13 +578,6 @@ export default async function MarketingPage({
   const convertedOrders = orderRowsForEntrySessions.filter(
     (order) => order.converted
   ).length;
-  const addToCart = countSessionEvents(
-    (addToCartSessionGroups as SessionCountGroup[]).map((group) => ({
-      count: group._count._all,
-      sessionId: group.sessionId
-    })),
-    entrySessionIds
-  );
   const filteredLinkClicks = countSessionEvents(
     (linkClickSessionGroups as SessionCountGroup[]).map((group) => ({
       count: group._count._all,
@@ -522,6 +597,30 @@ export default async function MarketingPage({
       };
     }
   );
+  const categoryOrderRankingRows: MarketingOrderRankingRow[] =
+    categoryOrderGroups.map((group) => {
+      const category = categoriesById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: category ? `/categorias/${category.slug}` : undefined,
+        id: group.entityId,
+        label: category?.name ?? "Categoria removida",
+        units: group.units
+      };
+    });
+  const convertedCategoryOrderRankingRows: MarketingOrderRankingRow[] =
+    convertedCategoryOrderGroups.map((group) => {
+      const category = categoriesById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: category ? `/categorias/${category.slug}` : undefined,
+        id: group.entityId,
+        label: category?.name ?? "Categoria removida",
+        units: group.units
+      };
+    });
   const promotionViewRankingRows: MarketingRankingRow[] = topPromotionGroups.map(
     (group) => {
       const promotion = promotionsById.get(group.promotionId);
@@ -678,19 +777,24 @@ export default async function MarketingPage({
 
       <MarketingRankingsTabs
         campaigns={campaignRankingRows}
-        cartAdditions={addToCart}
-        categories={categoryViewRankingRows}
+        categories={{
+          converted: convertedCategoryOrderRankingRows,
+          ordered: categoryOrderRankingRows,
+          viewed: categoryViewRankingRows
+        }}
         integrations={<MarketingIntegrationsForm integrations={marketingIntegrations} />}
         linkClicks={filteredLinkClicks}
         links={linkRankingRows}
         products={{
           converted: convertedProductOrderRankingRows,
           ordered: productOrderRankingRows,
+          totals: productTotals,
           viewed: productViewRankingRows
         }}
         promotions={{
           converted: convertedPromotionOrderRankingRows,
           ordered: promotionOrderRankingRows,
+          totals: promotionTotals,
           viewed: promotionViewRankingRows
         }}
         searches={{

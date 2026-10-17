@@ -24,19 +24,32 @@ export type MarketingCampaignRankingRow = {
 
 type MarketingRankingsTabsProps = {
   campaigns: MarketingCampaignRankingRow[];
-  cartAdditions: number;
-  categories: MarketingRankingRow[];
+  categories: {
+    converted: MarketingOrderRankingRow[];
+    ordered: MarketingOrderRankingRow[];
+    viewed: MarketingRankingRow[];
+  };
   integrations: ReactNode;
   linkClicks: number;
   links: MarketingRankingRow[];
   products: {
     converted: MarketingOrderRankingRow[];
     ordered: MarketingOrderRankingRow[];
+    totals: {
+      converted: number;
+      ordered: number;
+      viewed: number;
+    };
     viewed: MarketingRankingRow[];
   };
   promotions: {
     converted: MarketingOrderRankingRow[];
     ordered: MarketingOrderRankingRow[];
+    totals: {
+      converted: number;
+      ordered: number;
+      viewed: number;
+    };
     viewed: MarketingRankingRow[];
   };
   searches: {
@@ -72,11 +85,17 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat("pt-BR").format(value);
 }
 
-function MetricSummary({ label, value }: { label: string; value: number }) {
+function MetricSummary({
+  label,
+  value
+}: {
+  label: string;
+  value: number;
+}) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <strong className="mt-2 block font-mono text-2xl font-semibold">
+    <div className="min-w-0 rounded-xl border border-border bg-card p-3 sm:p-4">
+      <p className="text-xs leading-4 text-muted-foreground sm:text-sm">{label}</p>
+      <strong className="mt-2 block font-mono text-xl font-semibold sm:text-2xl">
         {formatNumber(value)}
       </strong>
     </div>
@@ -220,7 +239,6 @@ function CampaignTable({ rows }: { rows: MarketingCampaignRankingRow[] }) {
 
 export function MarketingRankingsTabs({
   campaigns,
-  cartAdditions,
   categories,
   integrations,
   linkClicks,
@@ -269,10 +287,18 @@ export function MarketingRankingsTabs({
       >
         {activeTab === "products" ? (
           <div className="space-y-6">
-            <div className="max-w-sm">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <MetricSummary
-                label="Total de itens adicionados aos carrinhos"
-                value={cartAdditions}
+                label="Total de produtos vistos"
+                value={products.totals.viewed}
+              />
+              <MetricSummary
+                label="Total de pedidos"
+                value={products.totals.ordered}
+              />
+              <MetricSummary
+                label="Total de convertidos"
+                value={products.totals.converted}
               />
             </div>
             <div className="grid gap-6 xl:grid-cols-3">
@@ -303,41 +329,73 @@ export function MarketingRankingsTabs({
         ) : null}
 
         {activeTab === "promotions" ? (
+          <div className="space-y-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              <MetricSummary
+                label="Total de promoções vistas"
+                value={promotions.totals.viewed}
+              />
+              <MetricSummary
+                label="Total de promoções pedidas"
+                value={promotions.totals.ordered}
+              />
+              <MetricSummary
+                label="Total de promoções convertidas"
+                value={promotions.totals.converted}
+              />
+            </div>
+            <div className="grid gap-6 xl:grid-cols-3">
+              <section className="space-y-3">
+                <h3 className="text-lg font-semibold">Mais vistas</h3>
+                <RankingTable
+                  emptyMessage="Nenhuma visualização de promoção no período."
+                  rows={promotions.viewed}
+                  valueLabel="Sessões"
+                />
+              </section>
+              <section className="space-y-3">
+                <h3 className="text-lg font-semibold">Mais pedidas</h3>
+                <OrderRankingTable
+                  emptyMessage="Nenhum pedido de promoção no período."
+                  rows={promotions.ordered}
+                />
+              </section>
+              <section className="space-y-3">
+                <h3 className="text-lg font-semibold">Mais convertidas</h3>
+                <OrderRankingTable
+                  emptyMessage="Nenhuma promoção convertida no período."
+                  rows={promotions.converted}
+                />
+              </section>
+            </div>
+          </div>
+        ) : null}
+
+        {activeTab === "categories" ? (
           <div className="grid gap-6 xl:grid-cols-3">
             <section className="space-y-3">
               <h3 className="text-lg font-semibold">Mais vistas</h3>
               <RankingTable
-                emptyMessage="Nenhuma visualização de promoção no período."
-                rows={promotions.viewed}
+                emptyMessage="Nenhuma visualização de categoria no período."
+                rows={categories.viewed}
                 valueLabel="Sessões"
               />
             </section>
             <section className="space-y-3">
               <h3 className="text-lg font-semibold">Mais pedidas</h3>
               <OrderRankingTable
-                emptyMessage="Nenhum pedido de promoção no período."
-                rows={promotions.ordered}
+                emptyMessage="Nenhum pedido de categoria no período."
+                rows={categories.ordered}
               />
             </section>
             <section className="space-y-3">
               <h3 className="text-lg font-semibold">Mais convertidas</h3>
               <OrderRankingTable
-                emptyMessage="Nenhuma promoção convertida no período."
-                rows={promotions.converted}
+                emptyMessage="Nenhuma categoria convertida no período."
+                rows={categories.converted}
               />
             </section>
           </div>
-        ) : null}
-
-        {activeTab === "categories" ? (
-          <section className="max-w-3xl space-y-3">
-            <h3 className="text-lg font-semibold">Categorias mais vistas</h3>
-            <RankingTable
-              emptyMessage="Nenhuma visualização de categoria no período."
-              rows={categories}
-              valueLabel="Sessões"
-            />
-          </section>
         ) : null}
 
         {activeTab === "links" ? (
@@ -358,7 +416,7 @@ export function MarketingRankingsTabs({
 
         {activeTab === "searches" ? (
           <div className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               <MetricSummary
                 label="Sessões com buscas"
                 value={searchMetrics.searched}
