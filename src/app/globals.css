@@ -81,3 +81,58 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.magnetic-glow-card {
+  --magnetic-glow-x: 50%;
+  --magnetic-glow-y: 50%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.magnetic-glow-card--body {
+  border-radius: 0;
+}
+
+.magnetic-glow-card__effect {
+  position: absolute;
+  inset: -12%;
+  z-index: 20;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 9rem at var(--magnetic-glow-x) var(--magnetic-glow-y),
+    color-mix(in oklab, var(--foreground) 18%, transparent),
+    transparent 70%
+  );
+  filter: blur(24px);
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+.magnetic-glow-card:hover .magnetic-glow-card__effect,
+.magnetic-glow-card:focus-within .magnetic-glow-card__effect {
+  opacity: 0.9;
+}
+
+.card-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.375rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--foreground) 18%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magnetic-glow-card__effect {
+    display: none;
+  }
+}
