@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { MagneticGlowCard } from "@/components/catalog/magnetic-glow-card";
 import { Button } from "@/components/ui/button";
 import { getAnalyticsSessionId, trackAnalyticsEvent } from "@/lib/analytics-client";
 import {
@@ -276,28 +277,22 @@ export function CartPageClient() {
 
               return (
                 <article
-                  className="grid grid-cols-[80px_1fr] gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-[96px_1fr] sm:gap-4 sm:p-4"
+                  className="grid grid-cols-[112px_1fr] gap-3 overflow-hidden rounded-lg border border-border bg-card p-0 sm:grid-cols-[136px_1fr] sm:gap-4"
                   key={key}
                 >
-                  {previewItem?.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      alt={previewItem.description}
-                      className="size-20 rounded-md object-cover sm:size-24"
-                      src={previewItem.imageUrl}
-                    />
-                  ) : (
-                    <div className="size-20 rounded-md bg-muted sm:size-24" />
-                  )}
-                  <div className="min-w-0 space-y-3 sm:space-y-4">
-                    <div className="min-w-0 space-y-1">
-                      <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                        {item.type === "combo"
-                          ? "Combo"
-                          : item.type === "variant"
-                            ? "SKU"
-                            : "Produto"}
-                      </p>
+                  <div className="relative min-h-20 overflow-hidden bg-muted sm:min-h-24">
+                    {previewItem?.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        alt={previewItem.description}
+                        className="h-full w-full object-cover"
+                        src={previewItem.imageUrl}
+                      />
+                    ) : null}
+                  </div>
+                  <MagneticGlowCard className="cart-item-glow magnetic-glow-card--body min-w-0">
+                    <div className="flex h-full min-w-0 flex-col justify-between gap-4 p-3 sm:gap-5 sm:p-4">
+                    <div className="min-w-0 space-y-1.5">
                       <h2 className="line-clamp-2 text-sm font-semibold leading-snug sm:text-base">
                         {previewItem?.description ?? "Item indisponível"}
                       </h2>
@@ -314,8 +309,22 @@ export function CartPageClient() {
                         </p>
                       ) : null}
                     </div>
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-4 sm:grid-cols-[auto_1fr_auto] sm:gap-3">
+                      {previewItem ? (
+                        <div className="col-span-2 space-y-1 sm:order-2 sm:col-span-1">
+                          {previewItem.originalPriceInCents ? (
+                            <p className="text-xs text-muted-foreground line-through">
+                              {formatMoneyFromCents(
+                                previewItem.originalPriceInCents
+                              )}
+                            </p>
+                          ) : null}
+                          <p className="text-base font-bold leading-none text-primary sm:text-sm sm:font-semibold">
+                            {formatMoneyFromCents(previewItem.subtotalInCents)}
+                          </p>
+                        </div>
+                      ) : null}
+                      <div className="flex items-center gap-2 sm:order-1">
                         <Button
                           aria-label="Diminuir quantidade"
                           onClick={() =>
@@ -342,33 +351,34 @@ export function CartPageClient() {
                           +
                         </Button>
                       </div>
-                      <div className="flex items-center justify-between gap-3 sm:justify-start">
-                        {previewItem ? (
-                          <div className="text-left sm:text-right">
-                            {previewItem.originalPriceInCents ? (
-                              <p className="text-xs text-muted-foreground line-through">
-                                {formatMoneyFromCents(
-                                  previewItem.originalPriceInCents
-                                )}
-                              </p>
-                            ) : null}
-                            <p className="text-sm font-semibold text-primary">
-                              {formatMoneyFromCents(
-                                previewItem.subtotalInCents
-                              )}
-                            </p>
-                          </div>
-                        ) : null}
-                        <Button
-                          onClick={() => handleRemove(item)}
-                          type="button"
-                          variant="destructive"
+                      <Button
+                        aria-label="Remover item do carrinho"
+                        className="size-9 justify-self-end px-0 sm:order-3 sm:h-9 sm:w-auto sm:px-4"
+                        onClick={() => handleRemove(item)}
+                        type="button"
+                        variant="destructive"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className="size-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          Remover
-                        </Button>
-                      </div>
+                          <path d="M3 6h18" />
+                          <path d="M8 6V4h8v2" />
+                          <path d="M19 6l-1 14H6L5 6" />
+                          <path d="M10 11v5" />
+                          <path d="M14 11v5" />
+                        </svg>
+                        <span className="hidden sm:inline">Remover</span>
+                      </Button>
                     </div>
-                  </div>
+                    </div>
+                  </MagneticGlowCard>
                 </article>
               );
             })}

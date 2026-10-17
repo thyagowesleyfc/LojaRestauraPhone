@@ -95,6 +95,20 @@ body {
   border-radius: 0;
 }
 
+.cart-item-glow {
+  overflow: visible;
+}
+
+.cart-item-glow .magnetic-glow-card__effect {
+  left: -0.75rem;
+}
+
+@media (min-width: 640px) {
+  .cart-item-glow .magnetic-glow-card__effect {
+    left: -1rem;
+  }
+}
+
 .magnetic-glow-card__effect {
   position: absolute;
   inset: -12%;
