@@ -40,15 +40,15 @@ export function CategoryProductSortSelect({
   }
 
   return (
-    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+    <div className="flex w-full flex-row items-center gap-2 sm:w-auto">
       <label
-        className="text-sm font-medium text-muted-foreground"
+        className="shrink-0 whitespace-nowrap text-sm font-medium text-muted-foreground"
         htmlFor="category-product-sort"
       >
         Ordenar por
       </label>
       <select
-        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:w-44"
+        className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:w-44 sm:flex-none"
         id="category-product-sort"
         onChange={handleSortChange}
         value={value}

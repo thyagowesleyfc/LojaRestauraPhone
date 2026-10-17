@@ -83,9 +83,6 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
               src={mainImage.url}
             />
           ) : null}
-          {showDiscountBadge ? (
-            <span className="card-badge">-{discountPercentage}%</span>
-          ) : null}
         </div>
         <MagneticGlowCard className="magnetic-glow-card--body flex-1">
           <div className="min-w-0 flex flex-1 flex-col justify-between gap-2.5 p-3">
@@ -97,6 +94,11 @@ export function ProductCard({ product, variant = "default" }: ProductCardProps) 
               currentPriceInCents={currentPriceInCents}
               originalPriceInCents={product.priceInCents}
             />
+            {showDiscountBadge ? (
+              <span className="w-fit rounded-md bg-primary px-2 py-1 text-xs font-semibold leading-none text-primary-foreground">
+                -{discountPercentage}%
+              </span>
+            ) : null}
           </div>
         </MagneticGlowCard>
       </Link>
