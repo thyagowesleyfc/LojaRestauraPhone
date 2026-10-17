@@ -6,6 +6,17 @@ import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { MarketingIntegrationsForm } from "@/components/admin/marketing-integrations-form";
 import { Button } from "@/components/ui/button";
 import { getMarketingIntegrations } from "@/lib/marketing-integrations";
+import {
+  countSessionEvents,
+  getEntityEventCounts,
+  getEntrySessionIds,
+  getOrderRanking,
+  getSessionSet,
+  getUniqueEntityViewCounts,
+  restrictToSessions,
+  type MarketingOrderItem,
+  type MarketingSessionGroup
+} from "@/lib/marketing-analytics";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -25,17 +36,27 @@ type CountGroup = {
   };
 };
 
-type ProductViewGroup = CountGroup & {
-  productId: string | null;
-};
-
 type ProductViewSessionGroup = {
   productId: string | null;
   sessionId: string;
 };
 
-type SearchTermGroup = CountGroup & {
+type CategoryViewSessionGroup = {
+  categoryId: string | null;
+  sessionId: string;
+};
+
+type PromotionViewSessionGroup = {
+  promotionId: string | null;
+  sessionId: string;
+};
+
+type SearchTermSessionGroup = {
   searchTermNormalized: string | null;
+  sessionId: string | null;
+  _count: {
+    _all: number;
+  };
 };
 
 type CampaignGroup = CountGroup & {
@@ -44,12 +65,32 @@ type CampaignGroup = CountGroup & {
   utmSource: string | null;
 };
 
-type LinkClickGroup = CountGroup & {
+type LinkClickSessionGroup = {
   linkId: string | null;
+  sessionId: string | null;
+  _count: {
+    _all: number;
+  };
 };
 
-type SessionGroup = {
+type SessionCountGroup = {
   sessionId: string | null;
+  _count: {
+    _all: number;
+  };
+};
+
+type SessionGroup = MarketingSessionGroup;
+
+type NamedCountRanking = {
+  count: number;
+  href?: string;
+  id: string;
+  label: string;
+};
+
+type NamedOrderRanking = NamedCountRanking & {
+  units: number;
 };
 
 function getSingleParam(value: string | string[] | undefined) {
@@ -91,14 +132,6 @@ function getStepRate(current: number, previous: number) {
   return formatPercent((current / previous) * 100);
 }
 
-function getSessionSet(groups: SessionGroup[]) {
-  return new Set(
-    groups
-      .map((group) => group.sessionId)
-      .filter((sessionId): sessionId is string => Boolean(sessionId))
-  );
-}
-
 function normalizeDateRange({
   fim,
   inicio
@@ -137,6 +170,105 @@ function sortByCount<T extends CountGroup>(items: T[]) {
   return [...items].sort((a, b) => b._count._all - a._count._all);
 }
 
+function toCountGroups(counts: Map<string, number>) {
+  return sortByCount(
+    Array.from(counts, ([id, count]) => ({
+      _count: { _all: count },
+      id
+    }))
+  );
+}
+
+function sortByOrders<T extends { orders: number }>(items: T[]) {
+  return [...items].sort((left, right) => right.orders - left.orders);
+}
+
+function CountRankingTable({
+  emptyMessage,
+  rows,
+  valueLabel
+}: {
+  emptyMessage: string;
+  rows: NamedCountRanking[];
+  valueLabel: string;
+}) {
+  if (rows.length === 0) {
+    return <EmptyState>{emptyMessage}</EmptyState>;
+  }
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-border">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-muted text-muted-foreground">
+          <tr>
+            <th className="px-4 py-3 font-medium">Item</th>
+            <th className="px-4 py-3 font-medium">{valueLabel}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr className="border-t border-border" key={row.id}>
+              <td className="px-4 py-3">
+                {row.href ? (
+                  <Link className="font-medium text-primary hover:underline" href={row.href}>
+                    {row.label}
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">{row.label}</span>
+                )}
+              </td>
+              <td className="px-4 py-3">{formatNumber(row.count)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function OrderRankingTable({
+  emptyMessage,
+  rows
+}: {
+  emptyMessage: string;
+  rows: NamedOrderRanking[];
+}) {
+  if (rows.length === 0) {
+    return <EmptyState>{emptyMessage}</EmptyState>;
+  }
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-border">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-muted text-muted-foreground">
+          <tr>
+            <th className="px-4 py-3 font-medium">Item</th>
+            <th className="px-4 py-3 font-medium">Pedidos</th>
+            <th className="px-4 py-3 font-medium">Unidades</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr className="border-t border-border" key={row.id}>
+              <td className="px-4 py-3">
+                {row.href ? (
+                  <Link className="font-medium text-primary hover:underline" href={row.href}>
+                    {row.label}
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">{row.label}</span>
+                )}
+              </td>
+              <td className="px-4 py-3">{formatNumber(row.count)}</td>
+              <td className="px-4 py-3">{formatNumber(row.units)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
     <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
@@ -162,18 +294,18 @@ export default async function MarketingPage({
 
   const [
     productViewSessionGroups,
-    addToCart,
-    ordersCreated,
-    convertedOrders,
-    linkClicks,
+    categoryViewSessionGroups,
+    promotionViewSessionGroups,
+    pageViewEvents,
+    addToCartSessionGroups,
+    linkClickSessionGroups,
     linkClickGroups,
     searchSessionGroups,
     searchNoResultSessionGroups,
-    addToCartSessionGroups,
     whatsappClickSessionGroups,
     orderSentSessionGroups,
-    orderSessionGroups,
-    sessionGroups,
+    orderRows,
+    orderItemRows,
     searchGroups,
     searchNoResultGroups,
     campaignGroups
@@ -186,31 +318,37 @@ export default async function MarketingPage({
         productId: { not: null }
       }
     }),
-    prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART)
-    }),
-    prisma.customerOrder.count({
+    prisma.analyticsEvent.groupBy({
+      by: ["categoryId", "sessionId"],
       where: {
-        createdAt: {
-          gte: startDate,
-          lte: endDate
-        }
+        ...metricWhere(baseWhere, AnalyticsEventType.CATEGORY_VIEW),
+        categoryId: { not: null }
       }
-    }),
-    prisma.customerOrder.count({
-      where: {
-        converted: true,
-        createdAt: {
-          gte: startDate,
-          lte: endDate
-        }
-      }
-    }),
-    prisma.analyticsEvent.count({
-      where: metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK)
     }),
     prisma.analyticsEvent.groupBy({
-      by: ["linkId"],
+      by: ["promotionId", "sessionId"],
+      where: {
+        ...metricWhere(baseWhere, AnalyticsEventType.PROMOTION_VIEW),
+        promotionId: { not: null }
+      }
+    }),
+    prisma.analyticsEvent.findMany({
+      where: metricWhere(baseWhere, AnalyticsEventType.PAGE_VIEW),
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      select: { createdAt: true, id: true, pagePath: true, sessionId: true }
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART),
+      _count: { _all: true }
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK),
+      _count: { _all: true }
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["linkId", "sessionId"],
       where: {
         ...metricWhere(baseWhere, AnalyticsEventType.LINK_CLICK),
         linkId: { not: null }
@@ -227,33 +365,45 @@ export default async function MarketingPage({
     }),
     prisma.analyticsEvent.groupBy({
       by: ["sessionId"],
-      where: metricWhere(baseWhere, AnalyticsEventType.ADD_TO_CART)
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["sessionId"],
       where: metricWhere(baseWhere, AnalyticsEventType.WHATSAPP_CLICK)
     }),
     prisma.analyticsEvent.groupBy({
       by: ["sessionId"],
       where: metricWhere(baseWhere, AnalyticsEventType.ORDER_SENT_TO_WHATSAPP)
     }),
-    prisma.customerOrder.groupBy({
-      by: ["sessionId"],
+    prisma.customerOrder.findMany({
       where: {
         createdAt: {
           gte: startDate,
           lte: endDate
         },
         sessionId: { not: null }
+      },
+      select: { converted: true, id: true, sessionId: true }
+    }),
+    prisma.customerOrderItem.findMany({
+      where: {
+        order: {
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          },
+          sessionId: { not: null }
+        },
+        OR: [
+          { sourceProductId: { not: null } },
+          { sourcePromotionId: { not: null } }
+        ]
+      },
+      select: {
+        order: { select: { id: true, sessionId: true } },
+        quantity: true,
+        sourceProductId: true,
+        sourcePromotionId: true
       }
     }),
     prisma.analyticsEvent.groupBy({
-      by: ["sessionId"],
-      where: baseWhere
-    }),
-    
-    prisma.analyticsEvent.groupBy({
-      by: ["searchTermNormalized"],
+      by: ["searchTermNormalized", "sessionId"],
       where: {
         ...metricWhere(baseWhere, AnalyticsEventType.SEARCH),
         searchTermNormalized: { not: null }
@@ -261,7 +411,7 @@ export default async function MarketingPage({
       _count: { _all: true }
     }),
     prisma.analyticsEvent.groupBy({
-      by: ["searchTermNormalized"],
+      by: ["searchTermNormalized", "sessionId"],
       where: {
         ...metricWhere(baseWhere, AnalyticsEventType.SEARCH_NO_RESULTS),
         searchTermNormalized: { not: null }
@@ -289,39 +439,127 @@ export default async function MarketingPage({
     { revalidate: 120 }
   )();
 
-  const productViewCounts = new Map<string, number>();
-
-  for (const group of productViewSessionGroups as ProductViewSessionGroup[]) {
-    if (group.productId) {
-      productViewCounts.set(
-        group.productId,
-        (productViewCounts.get(group.productId) ?? 0) + 1
-      );
-    }
-  }
-
-  const topProductGroups = sortByCount(
-    Array.from(productViewCounts, ([productId, count]) => ({
-      _count: { _all: count },
-      productId
-    })) as ProductViewGroup[]
+  const entrySessionIds = getEntrySessionIds(pageViewEvents);
+  const productViewCounts = getUniqueEntityViewCounts(
+    (productViewSessionGroups as ProductViewSessionGroup[]).map((group) => ({
+      entityId: group.productId,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const categoryViewCounts = getUniqueEntityViewCounts(
+    (categoryViewSessionGroups as CategoryViewSessionGroup[]).map((group) => ({
+      entityId: group.categoryId,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const promotionViewCounts = getUniqueEntityViewCounts(
+    (promotionViewSessionGroups as PromotionViewSessionGroup[]).map((group) => ({
+      entityId: group.promotionId,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const topProductGroups = toCountGroups(productViewCounts)
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, productId: group.id }));
+  const topCategoryGroups = toCountGroups(categoryViewCounts)
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, categoryId: group.id }));
+  const topPromotionGroups = toCountGroups(promotionViewCounts)
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, promotionId: group.id }));
+  const orderItems = (orderItemRows as Array<{
+    order: { id: string; sessionId: string | null };
+    quantity: number;
+    sourceProductId: string | null;
+    sourcePromotionId: string | null;
+  }>).map<MarketingOrderItem>((item) => ({
+    orderId: item.order.id,
+    quantity: item.quantity,
+    sessionId: item.order.sessionId,
+    sourceProductId: item.sourceProductId,
+    sourcePromotionId: item.sourcePromotionId
+  }));
+  const topProductOrderGroups = sortByOrders(
+    getOrderRanking(orderItems, "product", entrySessionIds)
   ).slice(0, 10);
-  const productIds = topProductGroups
-    .map((group) => group.productId)
-    .filter((productId): productId is string => Boolean(productId));
-  const products = productIds.length
-    ? await prisma.product.findMany({
-        where: { id: { in: productIds } },
-        select: { description: true, id: true, slug: true }
-      })
-    : [];
+  const topPromotionOrderGroups = sortByOrders(
+    getOrderRanking(orderItems, "promotion", entrySessionIds)
+  ).slice(0, 10);
+  const productIds = Array.from(
+    new Set([
+      ...topProductGroups.map((group) => group.productId),
+      ...topProductOrderGroups.map((group) => group.entityId)
+    ])
+  );
+  const categoryIds = topCategoryGroups.map((group) => group.categoryId);
+  const promotionIds = Array.from(
+    new Set([
+      ...topPromotionGroups.map((group) => group.promotionId),
+      ...topPromotionOrderGroups.map((group) => group.entityId)
+    ])
+  );
+  const [products, categories, promotions] = await Promise.all([
+    productIds.length
+      ? prisma.product.findMany({
+          where: { id: { in: productIds } },
+          select: { description: true, id: true, slug: true }
+        })
+      : Promise.resolve([]),
+    categoryIds.length
+      ? prisma.category.findMany({
+          where: { id: { in: categoryIds } },
+          select: { id: true, name: true, slug: true }
+        })
+      : Promise.resolve([]),
+    promotionIds.length
+      ? prisma.promotion.findMany({
+          where: { id: { in: promotionIds } },
+          select: { description: true, id: true, slug: true }
+        })
+      : Promise.resolve([])
+  ]);
   const productsById = new Map(products.map((product) => [product.id, product]));
-  const topSearches = sortByCount(searchGroups as SearchTermGroup[]).slice(0, 10);
-  const topSearchesWithoutResults = sortByCount(
-    searchNoResultGroups as SearchTermGroup[]
-  ).slice(0, 10);
+  const categoriesById = new Map(categories.map((category) => [category.id, category]));
+  const promotionsById = new Map(promotions.map((promotion) => [promotion.id, promotion]));
+  const topSearches = toCountGroups(
+    getEntityEventCounts(
+      (searchGroups as SearchTermSessionGroup[]).map((group) => ({
+        count: group._count._all,
+        entityId: group.searchTermNormalized,
+        sessionId: group.sessionId
+      })),
+      entrySessionIds
+    )
+  )
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, searchTermNormalized: group.id }));
+  const topSearchesWithoutResults = toCountGroups(
+    getEntityEventCounts(
+      (searchNoResultGroups as SearchTermSessionGroup[]).map((group) => ({
+        count: group._count._all,
+        entityId: group.searchTermNormalized,
+        sessionId: group.sessionId
+      })),
+      entrySessionIds
+    )
+  )
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, searchTermNormalized: group.id }));
   const topCampaigns = sortByCount(campaignGroups as CampaignGroup[]).slice(0, 10);
-  const topLinkGroups = sortByCount(linkClickGroups as LinkClickGroup[]).slice(0, 10);
+  const linkClickCounts = getEntityEventCounts(
+    (linkClickGroups as LinkClickSessionGroup[]).map((group) => ({
+      count: group._count._all,
+      entityId: group.linkId,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const topLinkGroups = toCountGroups(linkClickCounts)
+    .slice(0, 10)
+    .map((group) => ({ _count: group._count, linkId: group.id }));
   const linkIds = topLinkGroups
     .map((group) => group.linkId)
     .filter((linkId): linkId is string => Boolean(linkId));
@@ -335,46 +573,131 @@ export default async function MarketingPage({
     storeLinks.map((storeLink) => [storeLink.id, storeLink])
   );
   const marketingIntegrations = await getMarketingIntegrations();
-  const searchSessionIds = getSessionSet(searchSessionGroups as SessionGroup[]);
-  const searchNoResultSessionIds = getSessionSet(
-    searchNoResultSessionGroups as SessionGroup[]
+  const searchSessionIds = restrictToSessions(
+    getSessionSet(searchSessionGroups as SessionGroup[]),
+    entrySessionIds
   );
-  const productViewSessionIds = getSessionSet(
-    productViewSessionGroups as SessionGroup[]
+  const searchNoResultSessionIds = restrictToSessions(
+    getSessionSet(searchNoResultSessionGroups as SessionGroup[]),
+    entrySessionIds
   );
-  const addToCartSessionIds = getSessionSet(
-    addToCartSessionGroups as SessionGroup[]
+  const productViewSessionIds = restrictToSessions(
+    getSessionSet(productViewSessionGroups as SessionGroup[]),
+    entrySessionIds
   );
-  const whatsappClickSessionIds = getSessionSet(
-    whatsappClickSessionGroups as SessionGroup[]
+  const addToCartSessionIds = restrictToSessions(
+    getSessionSet(addToCartSessionGroups as SessionGroup[]),
+    entrySessionIds
   );
-  const orderSentSessionIds = getSessionSet(
-    orderSentSessionGroups as SessionGroup[]
+  const whatsappClickSessionIds = restrictToSessions(
+    getSessionSet(whatsappClickSessionGroups as SessionGroup[]),
+    entrySessionIds
   );
-  const orderSessionIds = getSessionSet(orderSessionGroups as SessionGroup[]);
+  const orderSentSessionIds = restrictToSessions(
+    getSessionSet(orderSentSessionGroups as SessionGroup[]),
+    entrySessionIds
+  );
+  const orderRowsForEntrySessions = (orderRows as Array<{
+    converted: boolean;
+    id: string;
+    sessionId: string | null;
+  }>).filter(
+    (order) => order.sessionId !== null && entrySessionIds.has(order.sessionId)
+  );
+  const orderSessionIds = getSessionSet(
+    orderRowsForEntrySessions.map((order) => ({ sessionId: order.sessionId }))
+  );
+  const ordersCreated = orderRowsForEntrySessions.length;
+  const convertedOrders = orderRowsForEntrySessions.filter(
+    (order) => order.converted
+  ).length;
+  const addToCart = countSessionEvents(
+    (addToCartSessionGroups as SessionCountGroup[]).map((group) => ({
+      count: group._count._all,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const filteredLinkClicks = countSessionEvents(
+    (linkClickSessionGroups as SessionCountGroup[]).map((group) => ({
+      count: group._count._all,
+      sessionId: group.sessionId
+    })),
+    entrySessionIds
+  );
+  const categoryViewRankingRows: NamedCountRanking[] = topCategoryGroups.map(
+    (group) => {
+      const category = categoriesById.get(group.categoryId);
+
+      return {
+        count: group._count._all,
+        href: category ? `/categorias/${category.slug}` : undefined,
+        id: group.categoryId,
+        label: category?.name ?? "Categoria removida"
+      };
+    }
+  );
+  const promotionViewRankingRows: NamedCountRanking[] = topPromotionGroups.map(
+    (group) => {
+      const promotion = promotionsById.get(group.promotionId);
+
+      return {
+        count: group._count._all,
+        href: promotion ? `/promocoes/${promotion.slug}` : undefined,
+        id: group.promotionId,
+        label: promotion?.description ?? "Promoção removida"
+      };
+    }
+  );
+  const productOrderRankingRows: NamedOrderRanking[] = topProductOrderGroups.map(
+    (group) => {
+      const product = productsById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: product ? `/produtos/${product.slug}` : undefined,
+        id: group.entityId,
+        label: product?.description ?? "Produto removido",
+        units: group.units
+      };
+    }
+  );
+  const promotionOrderRankingRows: NamedOrderRanking[] = topPromotionOrderGroups.map(
+    (group) => {
+      const promotion = promotionsById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: promotion ? `/promocoes/${promotion.slug}` : undefined,
+        id: group.entityId,
+        label: promotion?.description ?? "Promoção removida",
+        units: group.units
+      };
+    }
+  );
   const funnel = [
     {
       description: "Base do período",
       label: "Sessões",
-      value: sessionGroups.length
+      value: entrySessionIds.size
     },
     {
-      description: `${getStepRate(searchSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(searchSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com buscas",
       value: searchSessionIds.size
     },
     {
-      description: `${getStepRate(searchNoResultSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(searchNoResultSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com busca sem resultado",
       value: searchNoResultSessionIds.size
     },
     {
-      description: `${getStepRate(productViewSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(productViewSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com produto visto",
       value: productViewSessionIds.size
     },
     {
-      description: `${getStepRate(addToCartSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(addToCartSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com carrinho",
       value: addToCartSessionIds.size
     },
@@ -384,17 +707,17 @@ export default async function MarketingPage({
       value: addToCart
     },
     {
-      description: `${getStepRate(whatsappClickSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(whatsappClickSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com clique no WhatsApp",
       value: whatsappClickSessionIds.size
     },
     {
-      description: `${getStepRate(orderSentSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(orderSentSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com pedido no WhatsApp",
       value: orderSentSessionIds.size
     },
     {
-      description: `${getStepRate(orderSessionIds.size, sessionGroups.length)} das sessões`,
+      description: `${getStepRate(orderSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com pedido registrado",
       value: orderSessionIds.size
     },
@@ -406,7 +729,7 @@ export default async function MarketingPage({
     {
       description: "Cliques em links no período",
       label: "Total de links acessados",
-      value: linkClicks
+      value: filteredLinkClicks
     }
   ];
 
@@ -553,6 +876,42 @@ export default async function MarketingPage({
           ) : (
             <EmptyState>Nenhuma busca registrada no período.</EmptyState>
           )}
+        </section>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Categorias mais vistas</h2>
+          <CountRankingTable
+            emptyMessage="Nenhuma visualização de categoria no período."
+            rows={categoryViewRankingRows}
+            valueLabel="Sessões"
+          />
+        </section>
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Promoções mais vistas</h2>
+          <CountRankingTable
+            emptyMessage="Nenhuma visualização de promoção no período."
+            rows={promotionViewRankingRows}
+            valueLabel="Sessões"
+          />
+        </section>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Produtos mais pedidos</h2>
+          <OrderRankingTable
+            emptyMessage="Nenhum pedido de produto no período."
+            rows={productOrderRankingRows}
+          />
+        </section>
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Promoções mais pedidas</h2>
+          <OrderRankingTable
+            emptyMessage="Nenhum pedido de promoção no período."
+            rows={promotionOrderRankingRows}
+          />
         </section>
       </div>
 

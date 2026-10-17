@@ -195,7 +195,8 @@ export async function getCartPreview(inputItems: StoredCartItem[]) {
           pricing.originalPriceInCents !== pricing.currentPriceInCents
             ? pricing.originalPriceInCents
             : null,
-        sourceProductId: product.id
+        sourceProductId: product.id,
+        sourcePromotionId: pricing.appliedPromotion?.id ?? null
       });
       continue;
     }
@@ -234,7 +235,8 @@ export async function getCartPreview(inputItems: StoredCartItem[]) {
         sku: variant.sku,
         variantDescription,
         sourceProductId: variant.product.id,
-        sourceProductVariantId: variant.id
+        sourceProductVariantId: variant.id,
+        sourcePromotionId: pricing.appliedPromotion?.id ?? null
       });
       continue;
     }

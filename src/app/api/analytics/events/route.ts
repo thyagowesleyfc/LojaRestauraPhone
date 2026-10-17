@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { getAnalyticsEventDedupeKey } from "@/lib/analytics-events";
+import {
+  getAnalyticsEventDedupeKey,
+  normalizeAnalyticsSearchTerm
+} from "@/lib/analytics-events";
 import { prisma } from "@/lib/prisma";
 import {
   analyticsEventBatchSchema,
   analyticsEventSchema,
   type AnalyticsEventInput
 } from "@/schemas/analytics";
-
-function normalizeSearchTerm(searchTerm: string | undefined) {
-  return searchTerm
-    ?.trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") || null;
-}
 
 function toAnalyticsEventData(event: AnalyticsEventInput) {
   return {
@@ -27,7 +22,7 @@ function toAnalyticsEventData(event: AnalyticsEventInput) {
     categoryId: event.categoryId ?? null,
     linkId: event.linkId ?? null,
     searchTerm: event.searchTerm ?? null,
-    searchTermNormalized: normalizeSearchTerm(event.searchTerm),
+    searchTermNormalized: normalizeAnalyticsSearchTerm(event.searchTerm),
     resultsCount: event.resultsCount ?? null,
     pagePath: event.pagePath,
     utmSource: event.utm?.source ?? null,

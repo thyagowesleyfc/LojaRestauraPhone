@@ -1,6 +1,10 @@
 "use client";
 
 import type { AnalyticsEventInput, AnalyticsEventType } from "@/schemas/analytics";
+import {
+  parseAnalyticsSession,
+  serializeAnalyticsSession
+} from "@/lib/analytics-session";
 import { getClientAnalyticsDedupeKey } from "@/lib/analytics-dedupe";
 
 const ANALYTICS_SESSION_KEY = "rp_analytics_session_id";
@@ -63,14 +67,22 @@ function createSessionId() {
 }
 
 export function getAnalyticsSessionId() {
-  const storedSessionId = window.localStorage.getItem(ANALYTICS_SESSION_KEY);
+  const now = Date.now();
+  const storedSession = parseAnalyticsSession(
+    window.localStorage.getItem(ANALYTICS_SESSION_KEY),
+    now
+  );
 
-  if (storedSessionId) {
-    return storedSessionId;
+  if (storedSession) {
+    return storedSession.id;
   }
 
   const sessionId = createSessionId();
-  window.localStorage.setItem(ANALYTICS_SESSION_KEY, sessionId);
+  window.localStorage.removeItem(ANALYTICS_UTM_KEY);
+  window.localStorage.setItem(
+    ANALYTICS_SESSION_KEY,
+    serializeAnalyticsSession({ createdAt: now, id: sessionId })
+  );
 
   return sessionId;
 }

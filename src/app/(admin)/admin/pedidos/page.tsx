@@ -93,6 +93,14 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       : {})
   };
   const hasFilters = Boolean(search || hasDateFilter);
+  const indicatorWhere: Prisma.CustomerOrderWhereInput = hasDateFilter
+    ? {
+        createdAt: {
+          ...(startDate ? { gte: startDate } : {}),
+          ...(endDate ? { lte: endDate } : {})
+        }
+      }
+    : {};
   const [orders, orderCount, convertedOrderCount] = await Promise.all([
     prisma.customerOrder.findMany({
       where,
@@ -104,10 +112,10 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       },
       take: 100
     }),
-    prisma.customerOrder.count({ where }),
+    prisma.customerOrder.count({ where: indicatorWhere }),
     prisma.customerOrder.count({
       where: {
-        ...where,
+        ...indicatorWhere,
         converted: true
       }
     })

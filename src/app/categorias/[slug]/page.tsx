@@ -5,6 +5,7 @@ import {
   CategoryProductSortSelect,
   type CategoryProductSort
 } from "@/components/catalog/category-product-sort-select";
+import { AnalyticsEventTracker } from "@/components/analytics/analytics-event-tracker";
 import { ProductCard } from "@/components/catalog/product-card";
 import { getPromotionalPriceInCents } from "@/lib/promotions";
 import { prisma } from "@/lib/prisma";
@@ -82,6 +83,7 @@ export default async function CategoryPage({
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-6 py-10">
+      <AnalyticsEventTracker categoryId={category.id} type="CATEGORY_VIEW" />
       <header className="space-y-3">
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           Categoria

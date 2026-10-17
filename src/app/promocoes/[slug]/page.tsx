@@ -2,6 +2,7 @@ import { PromotionType } from "@prisma/client";
 import { notFound } from "next/navigation";
 
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { AnalyticsEventTracker } from "@/components/analytics/analytics-event-tracker";
 import { ProductCard } from "@/components/catalog/product-card";
 import { formatMoneyFromCents } from "@/lib/formatters";
 import {
@@ -67,6 +68,7 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-6 py-10">
+      <AnalyticsEventTracker promotionId={promotion.id} type="PROMOTION_VIEW" />
       <header className="max-w-3xl space-y-4">
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           {promotion.type === PromotionType.CATEGORY_PERCENTAGE
