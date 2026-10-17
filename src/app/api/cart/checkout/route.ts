@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { buildWhatsAppCheckoutMessage, type CartItemType } from "@/lib/cart";
 import { getCartPreview, type CartPreviewItem } from "@/lib/cart-preview";
+import { getOrderItemSourceFields } from "@/lib/order-item-sources";
 import { prisma } from "@/lib/prisma";
 import { getStoreSettings } from "@/lib/store-settings";
 import { cartCheckoutSchema } from "@/schemas/cart";
@@ -66,9 +67,7 @@ async function createOrderWithUniqueCode({
               imageUrl: item.imageUrl,
               quantity: item.quantity,
               sku: item.sku,
-              sourceProductId: item.sourceProductId,
-              sourceProductVariantId: item.sourceProductVariantId,
-              sourcePromotionId: item.sourcePromotionId,
+              ...getOrderItemSourceFields(item),
               subtotalInCents: item.subtotalInCents,
               type: toOrderItemType(item.type),
               unitPriceInCents: item.unitPriceInCents

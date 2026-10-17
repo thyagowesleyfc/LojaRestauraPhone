@@ -10,6 +10,7 @@ import {
   removeCartItem,
   updateCartItemQuantity
 } from "./cart";
+import { getOrderItemSourceFields } from "./order-item-sources";
 
 describe("cart helpers", () => {
   it("merges duplicated items and limits quantities", () => {
@@ -115,6 +116,45 @@ describe("cart helpers", () => {
     assert.equal(
       message,
       "Olá, gostaria de finalizar meu pedido de código XYZABC0000."
+    );
+  });
+
+  it("mantém as fontes dos itens compatíveis com o snapshot do pedido", () => {
+    assert.deepEqual(
+      getOrderItemSourceFields({
+        sourceProductId: "product-1",
+        sourcePromotionId: "promotion-category-1",
+        type: "product"
+      }),
+      {
+        sourceProductId: "product-1",
+        sourceProductVariantId: null,
+        sourcePromotionId: null
+      }
+    );
+    assert.deepEqual(
+      getOrderItemSourceFields({
+        sourceProductId: "product-1",
+        sourceProductVariantId: "variant-1",
+        sourcePromotionId: "promotion-category-1",
+        type: "variant"
+      }),
+      {
+        sourceProductId: "product-1",
+        sourceProductVariantId: "variant-1",
+        sourcePromotionId: null
+      }
+    );
+    assert.deepEqual(
+      getOrderItemSourceFields({
+        sourcePromotionId: "promotion-combo-1",
+        type: "combo"
+      }),
+      {
+        sourceProductId: null,
+        sourceProductVariantId: null,
+        sourcePromotionId: "promotion-combo-1"
+      }
     );
   });
 });
