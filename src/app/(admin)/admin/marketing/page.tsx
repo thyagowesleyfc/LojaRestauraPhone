@@ -1,10 +1,18 @@
 import { AnalyticsEventType, type Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
-import Link from "next/link";
 
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
+import {
+  MarketingFunnelChart,
+  type FunnelMetric
+} from "@/components/admin/marketing-funnel-chart";
 import { MarketingIntegrationsForm } from "@/components/admin/marketing-integrations-form";
-import { Button } from "@/components/ui/button";
+import {
+  MarketingRankingsTabs,
+  type MarketingCampaignRankingRow,
+  type MarketingOrderRankingRow,
+  type MarketingRankingRow
+} from "@/components/admin/marketing-rankings-tabs";
 import { getMarketingIntegrations } from "@/lib/marketing-integrations";
 import {
   countSessionEvents,
@@ -82,17 +90,6 @@ type SessionCountGroup = {
 
 type SessionGroup = MarketingSessionGroup;
 
-type NamedCountRanking = {
-  count: number;
-  href?: string;
-  id: string;
-  label: string;
-};
-
-type NamedOrderRanking = NamedCountRanking & {
-  units: number;
-};
-
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -111,10 +108,6 @@ function parseDateParam(value: string | string[] | undefined, endOfDay = false) 
 
 function formatDateInput(date: Date) {
   return date.toISOString().slice(0, 10);
-}
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("pt-BR").format(value);
 }
 
 function formatPercent(value: number) {
@@ -181,100 +174,6 @@ function toCountGroups(counts: Map<string, number>) {
 
 function sortByOrders<T extends { orders: number }>(items: T[]) {
   return [...items].sort((left, right) => right.orders - left.orders);
-}
-
-function CountRankingTable({
-  emptyMessage,
-  rows,
-  valueLabel
-}: {
-  emptyMessage: string;
-  rows: NamedCountRanking[];
-  valueLabel: string;
-}) {
-  if (rows.length === 0) {
-    return <EmptyState>{emptyMessage}</EmptyState>;
-  }
-
-  return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-muted text-muted-foreground">
-          <tr>
-            <th className="px-4 py-3 font-medium">Item</th>
-            <th className="px-4 py-3 font-medium">{valueLabel}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr className="border-t border-border" key={row.id}>
-              <td className="px-4 py-3">
-                {row.href ? (
-                  <Link className="font-medium text-primary hover:underline" href={row.href}>
-                    {row.label}
-                  </Link>
-                ) : (
-                  <span className="text-muted-foreground">{row.label}</span>
-                )}
-              </td>
-              <td className="px-4 py-3">{formatNumber(row.count)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function OrderRankingTable({
-  emptyMessage,
-  rows
-}: {
-  emptyMessage: string;
-  rows: NamedOrderRanking[];
-}) {
-  if (rows.length === 0) {
-    return <EmptyState>{emptyMessage}</EmptyState>;
-  }
-
-  return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-muted text-muted-foreground">
-          <tr>
-            <th className="px-4 py-3 font-medium">Item</th>
-            <th className="px-4 py-3 font-medium">Pedidos</th>
-            <th className="px-4 py-3 font-medium">Unidades</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr className="border-t border-border" key={row.id}>
-              <td className="px-4 py-3">
-                {row.href ? (
-                  <Link className="font-medium text-primary hover:underline" href={row.href}>
-                    {row.label}
-                  </Link>
-                ) : (
-                  <span className="text-muted-foreground">{row.label}</span>
-                )}
-              </td>
-              <td className="px-4 py-3">{formatNumber(row.count)}</td>
-              <td className="px-4 py-3">{formatNumber(row.units)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function EmptyState({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
-      {children}
-    </p>
-  );
 }
 
 export default async function MarketingPage({
@@ -575,7 +474,7 @@ export default async function MarketingPage({
   const storeLinks = linkIds.length
     ? await prisma.storeLink.findMany({
         where: { id: { in: linkIds } },
-        select: { id: true, redirectUrl: true, title: true }
+        select: { id: true, title: true }
       })
     : [];
   const storeLinksById = new Map(
@@ -634,7 +533,7 @@ export default async function MarketingPage({
     })),
     entrySessionIds
   );
-  const categoryViewRankingRows: NamedCountRanking[] = topCategoryGroups.map(
+  const categoryViewRankingRows: MarketingRankingRow[] = topCategoryGroups.map(
     (group) => {
       const category = categoriesById.get(group.categoryId);
 
@@ -646,7 +545,7 @@ export default async function MarketingPage({
       };
     }
   );
-  const promotionViewRankingRows: NamedCountRanking[] = topPromotionGroups.map(
+  const promotionViewRankingRows: MarketingRankingRow[] = topPromotionGroups.map(
     (group) => {
       const promotion = promotionsById.get(group.promotionId);
 
@@ -658,7 +557,7 @@ export default async function MarketingPage({
       };
     }
   );
-  const productOrderRankingRows: NamedOrderRanking[] = topProductOrderGroups.map(
+  const productOrderRankingRows: MarketingOrderRankingRow[] = topProductOrderGroups.map(
     (group) => {
       const product = productsById.get(group.entityId);
 
@@ -671,7 +570,7 @@ export default async function MarketingPage({
       };
     }
   );
-  const promotionOrderRankingRows: NamedOrderRanking[] = topPromotionOrderGroups.map(
+  const promotionOrderRankingRows: MarketingOrderRankingRow[] = topPromotionOrderGroups.map(
     (group) => {
       const promotion = promotionsById.get(group.entityId);
 
@@ -684,7 +583,7 @@ export default async function MarketingPage({
       };
     }
   );
-  const convertedProductOrderRankingRows: NamedOrderRanking[] =
+  const convertedProductOrderRankingRows: MarketingOrderRankingRow[] =
     topConvertedProductOrderGroups.map((group) => {
       const product = productsById.get(group.entityId);
 
@@ -696,7 +595,7 @@ export default async function MarketingPage({
         units: group.units
       };
     });
-  const convertedPromotionOrderRankingRows: NamedOrderRanking[] =
+  const convertedPromotionOrderRankingRows: MarketingOrderRankingRow[] =
     topConvertedPromotionOrderGroups.map((group) => {
       const promotion = promotionsById.get(group.entityId);
 
@@ -708,96 +607,121 @@ export default async function MarketingPage({
         units: group.units
       };
     });
-  const funnel = [
+  const productViewRankingRows: MarketingRankingRow[] = topProductGroups.map(
+    (group) => {
+      const product = productsById.get(group.productId);
+
+      return {
+        count: group._count._all,
+        href: product ? `/produtos/${product.slug}` : undefined,
+        id: group.productId,
+        label: product?.description ?? "Produto removido"
+      };
+    }
+  );
+  const linkRankingRows: MarketingRankingRow[] = topLinkGroups.map((group) => {
+    const link = storeLinksById.get(group.linkId);
+
+    return {
+      count: group._count._all,
+      id: group.linkId,
+      label: link?.title ?? "Link removido"
+    };
+  });
+  const searchRankingRows: MarketingRankingRow[] = topSearches.map((group) => ({
+    count: group._count._all,
+    id: group.searchTermNormalized ?? "-",
+    label: group.searchTermNormalized ?? "-"
+  }));
+  const searchNoResultRankingRows: MarketingRankingRow[] =
+    topSearchesWithoutResults.map((group) => ({
+      count: group._count._all,
+      id: group.searchTermNormalized ?? "-",
+      label: group.searchTermNormalized ?? "-"
+    }));
+  const campaignRankingRows: MarketingCampaignRankingRow[] = topCampaigns.map(
+    (group) => ({
+      campaign: group.utmCampaign ?? "-",
+      count: group._count._all,
+      id: `${group.utmSource}-${group.utmMedium}-${group.utmCampaign}`,
+      medium: group.utmMedium ?? "-",
+      source: group.utmSource ?? "-"
+    })
+  );
+  const funnel: FunnelMetric[] = [
     {
       description: "Base do período",
       label: "Sessões",
+      kind: "session",
       value: entrySessionIds.size
     },
     {
       description: `${getStepRate(searchSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com buscas",
+      kind: "session",
       value: searchSessionIds.size
     },
     {
       description: `${getStepRate(searchNoResultSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com busca sem resultado",
+      kind: "session",
       value: searchNoResultSessionIds.size
     },
     {
       description: `${getStepRate(productViewSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com produto visto",
+      kind: "session",
       value: productViewSessionIds.size
     },
     {
       description: `${getStepRate(addToCartSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com carrinho",
+      kind: "session",
       value: addToCartSessionIds.size
     },
     {
       description: "Soma de adições no período",
       label: "Total de itens adicionados aos carrinhos",
+      kind: "action",
       value: addToCart
     },
     {
       description: `${getStepRate(whatsappClickSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com clique no WhatsApp",
+      kind: "session",
       value: whatsappClickSessionIds.size
     },
     {
       description: `${getStepRate(orderSentSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com pedido no WhatsApp",
+      kind: "session",
       value: orderSentSessionIds.size
     },
     {
       description: `${getStepRate(orderSessionIds.size, entrySessionIds.size)} das sessões`,
       label: "Sessões com pedido registrado",
+      kind: "session",
       value: orderSessionIds.size
     },
     {
       description: `${getStepRate(convertedOrders, ordersCreated)} dos pedidos registrados`,
       label: "Pedidos convertidos",
+      kind: "conversion",
       value: convertedOrders
     },
     {
       description: "Cliques em links no período",
       label: "Total de links acessados",
+      kind: "action",
       value: filteredLinkClicks
     }
   ];
 
   return (
     <section className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex items-center justify-between gap-3 lg:min-w-[220px]">
-          <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">
-            Marketing
-          </h1>
-          <AdminDashboardLink />
-        </div>
-        <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[460px]">
-          <label className="space-y-2 text-sm">
-            <span className="font-medium">Início</span>
-            <input
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              name="inicio"
-              type="date"
-              defaultValue={formatDateInput(startDate)}
-            />
-          </label>
-          <label className="space-y-2 text-sm">
-            <span className="font-medium">Fim</span>
-            <input
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              name="fim"
-              type="date"
-              defaultValue={formatDateInput(endDate)}
-            />
-          </label>
-          <Button className="self-end" type="submit">
-            Filtrar
-          </Button>
-        </form>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 text-2xl font-semibold sm:text-3xl">Marketing</h1>
+        <AdminDashboardLink />
       </div>
 
       {errorMessage ? (
@@ -810,291 +734,32 @@ export default async function MarketingPage({
           Integrações atualizadas.
         </p>
       ) : null}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Funil</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {funnel.map((step) => (
-            <article
-              className="rounded-lg border border-border bg-card p-4"
-              key={step.label}
-            >
-              <p className="text-sm text-muted-foreground">{step.label}</p>
-              <strong className="mt-2 block text-2xl font-semibold">
-                {formatNumber(step.value)}
-              </strong>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {step.description}
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <MarketingFunnelChart
+        endDate={formatDateInput(endDate)}
+        metrics={funnel}
+        startDate={formatDateInput(startDate)}
+      />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Produtos mais vistos</h2>
-          {topProductGroups.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border border-border">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Produto</th>
-                    <th className="px-4 py-3 font-medium">Visualizações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topProductGroups.map((group) => {
-                    const product = group.productId
-                      ? productsById.get(group.productId)
-                      : null;
-
-                    return (
-                      <tr className="border-t border-border" key={group.productId}>
-                        <td className="px-4 py-3">
-                          {product ? (
-                            <Link
-                              className="font-medium text-primary hover:underline"
-                              href={`/produtos/${product.slug}`}
-                            >
-                              {product.description}
-                            </Link>
-                          ) : (
-                            <span className="text-muted-foreground">
-                              Produto removido
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          {formatNumber(group._count._all)}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>Nenhuma visualização de produto no período.</EmptyState>
-          )}
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Pesquisas mais realizadas</h2>
-          {topSearches.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border border-border">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Termo</th>
-                    <th className="px-4 py-3 font-medium">Buscas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topSearches.map((group) => (
-                    <tr
-                      className="border-t border-border"
-                      key={group.searchTermNormalized}
-                    >
-                      <td className="px-4 py-3 font-medium">
-                        {group.searchTermNormalized}
-                      </td>
-                      <td className="px-4 py-3">
-                        {formatNumber(group._count._all)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>Nenhuma busca registrada no período.</EmptyState>
-          )}
-        </section>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Categorias mais vistas</h2>
-          <CountRankingTable
-            emptyMessage="Nenhuma visualização de categoria no período."
-            rows={categoryViewRankingRows}
-            valueLabel="Sessões"
-          />
-        </section>
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Promoções mais vistas</h2>
-          <CountRankingTable
-            emptyMessage="Nenhuma visualização de promoção no período."
-            rows={promotionViewRankingRows}
-            valueLabel="Sessões"
-          />
-        </section>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Produtos mais pedidos</h2>
-          <OrderRankingTable
-            emptyMessage="Nenhum pedido de produto no período."
-            rows={productOrderRankingRows}
-          />
-        </section>
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Promoções mais pedidas</h2>
-          <OrderRankingTable
-            emptyMessage="Nenhum pedido de promoção no período."
-            rows={promotionOrderRankingRows}
-          />
-        </section>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Produtos mais convertidos</h2>
-          <OrderRankingTable
-            emptyMessage="Nenhum produto convertido no período."
-            rows={convertedProductOrderRankingRows}
-          />
-        </section>
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Promoções mais convertidas</h2>
-          <OrderRankingTable
-            emptyMessage="Nenhuma promoção convertida no período."
-            rows={convertedPromotionOrderRankingRows}
-          />
-        </section>
-      </div>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Links mais acessados</h2>
-        {topLinkGroups.length > 0 ? (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Link</th>
-                  <th className="px-4 py-3 font-medium">Acessos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topLinkGroups.map((group) => {
-                  const storeLink = group.linkId
-                    ? storeLinksById.get(group.linkId)
-                    : null;
-
-                  return (
-                    <tr className="border-t border-border" key={group.linkId}>
-                      <td className="px-4 py-3">
-                        {storeLink ? (
-                          <div className="space-y-1">
-                            <a
-                              className="font-medium text-primary hover:underline"
-                              href={storeLink.redirectUrl}
-                            >
-                              {storeLink.title}
-                            </a>
-                            <p className="break-all text-xs text-muted-foreground">
-                              {storeLink.redirectUrl}
-                            </p>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            Link removido
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {formatNumber(group._count._all)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <EmptyState>Nenhum acesso a link no período.</EmptyState>
-        )}
-      </section>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Pesquisas sem resultado</h2>
-          {topSearchesWithoutResults.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border border-border">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Termo</th>
-                    <th className="px-4 py-3 font-medium">Ocorrências</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topSearchesWithoutResults.map((group) => (
-                    <tr
-                      className="border-t border-border"
-                      key={group.searchTermNormalized}
-                    >
-                      <td className="px-4 py-3 font-medium">
-                        {group.searchTermNormalized}
-                      </td>
-                      <td className="px-4 py-3">
-                        {formatNumber(group._count._all)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>Nenhuma busca sem resultado no período.</EmptyState>
-          )}
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Campanhas UTM</h2>
-          {topCampaigns.length > 0 ? (
-            <div className="overflow-x-auto rounded-lg border border-border">
-              <table className="w-full min-w-[560px] text-left text-sm">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Origem</th>
-                    <th className="px-4 py-3 font-medium">Mídia</th>
-                    <th className="px-4 py-3 font-medium">Campanha</th>
-                    <th className="px-4 py-3 font-medium">Eventos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topCampaigns.map((group) => (
-                    <tr
-                      className="border-t border-border"
-                      key={`${group.utmSource}-${group.utmMedium}-${group.utmCampaign}`}
-                    >
-                      <td className="px-4 py-3">{group.utmSource ?? "-"}</td>
-                      <td className="px-4 py-3">{group.utmMedium ?? "-"}</td>
-                      <td className="px-4 py-3">{group.utmCampaign ?? "-"}</td>
-                      <td className="px-4 py-3">
-                        {formatNumber(group._count._all)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>Nenhum evento com UTM no período.</EmptyState>
-          )}
-        </section>
-      </div>
-      <section className="space-y-4">
-        <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Integrações</h2>
-          <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-            Configure marcadores externos de marketing. Os eventos continuam
-            sendo registrados internamente e também são encaminhados aos
-            providers ativos.
-          </p>
-        </div>
-        <MarketingIntegrationsForm integrations={marketingIntegrations} />
-      </section>    </section>
+      <MarketingRankingsTabs
+        campaigns={campaignRankingRows}
+        categories={categoryViewRankingRows}
+        integrations={<MarketingIntegrationsForm integrations={marketingIntegrations} />}
+        links={linkRankingRows}
+        products={{
+          converted: convertedProductOrderRankingRows,
+          ordered: productOrderRankingRows,
+          viewed: productViewRankingRows
+        }}
+        promotions={{
+          converted: convertedPromotionOrderRankingRows,
+          ordered: promotionOrderRankingRows,
+          viewed: promotionViewRankingRows
+        }}
+        searches={{
+          noResults: searchNoResultRankingRows,
+          top: searchRankingRows
+        }}
+      />
+    </section>
   );
 }
