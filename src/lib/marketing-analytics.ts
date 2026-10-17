@@ -27,6 +27,7 @@ export type MarketingEntitySessionCountGroup = MarketingEntitySessionGroup & {
 };
 
 export type MarketingOrderItem = {
+  converted: boolean;
   orderId: string;
   quantity: number;
   sessionId: string | null;
@@ -146,13 +147,18 @@ export function getEntityEventCounts(
 export function getOrderRanking(
   items: MarketingOrderItem[],
   field: "product" | "promotion",
-  allowedSessionIds: Set<string>
+  allowedSessionIds: Set<string>,
+  convertedOnly = false
 ) {
   const orderKeysByEntity = new Map<string, Set<string>>();
   const unitsByEntity = new Map<string, number>();
 
   for (const item of items) {
-    if (!item.sessionId || !allowedSessionIds.has(item.sessionId)) {
+    if (
+      !item.sessionId ||
+      !allowedSessionIds.has(item.sessionId) ||
+      (convertedOnly && !item.converted)
+    ) {
       continue;
     }
 

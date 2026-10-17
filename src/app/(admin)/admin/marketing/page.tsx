@@ -396,7 +396,7 @@ export default async function MarketingPage({
         ]
       },
       select: {
-        order: { select: { id: true, sessionId: true } },
+        order: { select: { converted: true, id: true, sessionId: true } },
         quantity: true,
         sourceProductId: true,
         sourcePromotionId: true
@@ -471,11 +471,12 @@ export default async function MarketingPage({
     .slice(0, 10)
     .map((group) => ({ _count: group._count, promotionId: group.id }));
   const orderItems = (orderItemRows as Array<{
-    order: { id: string; sessionId: string | null };
+    order: { converted: boolean; id: string; sessionId: string | null };
     quantity: number;
     sourceProductId: string | null;
     sourcePromotionId: string | null;
   }>).map<MarketingOrderItem>((item) => ({
+    converted: item.order.converted,
     orderId: item.order.id,
     quantity: item.quantity,
     sessionId: item.order.sessionId,
@@ -488,17 +489,25 @@ export default async function MarketingPage({
   const topPromotionOrderGroups = sortByOrders(
     getOrderRanking(orderItems, "promotion", entrySessionIds)
   ).slice(0, 10);
+  const topConvertedProductOrderGroups = sortByOrders(
+    getOrderRanking(orderItems, "product", entrySessionIds, true)
+  ).slice(0, 10);
+  const topConvertedPromotionOrderGroups = sortByOrders(
+    getOrderRanking(orderItems, "promotion", entrySessionIds, true)
+  ).slice(0, 10);
   const productIds = Array.from(
     new Set([
       ...topProductGroups.map((group) => group.productId),
-      ...topProductOrderGroups.map((group) => group.entityId)
+      ...topProductOrderGroups.map((group) => group.entityId),
+      ...topConvertedProductOrderGroups.map((group) => group.entityId)
     ])
   );
   const categoryIds = topCategoryGroups.map((group) => group.categoryId);
   const promotionIds = Array.from(
     new Set([
       ...topPromotionGroups.map((group) => group.promotionId),
-      ...topPromotionOrderGroups.map((group) => group.entityId)
+      ...topPromotionOrderGroups.map((group) => group.entityId),
+      ...topConvertedPromotionOrderGroups.map((group) => group.entityId)
     ])
   );
   const [products, categories, promotions] = await Promise.all([
@@ -675,6 +684,30 @@ export default async function MarketingPage({
       };
     }
   );
+  const convertedProductOrderRankingRows: NamedOrderRanking[] =
+    topConvertedProductOrderGroups.map((group) => {
+      const product = productsById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: product ? `/produtos/${product.slug}` : undefined,
+        id: group.entityId,
+        label: product?.description ?? "Produto removido",
+        units: group.units
+      };
+    });
+  const convertedPromotionOrderRankingRows: NamedOrderRanking[] =
+    topConvertedPromotionOrderGroups.map((group) => {
+      const promotion = promotionsById.get(group.entityId);
+
+      return {
+        count: group.orders,
+        href: promotion ? `/promocoes/${promotion.slug}` : undefined,
+        id: group.entityId,
+        label: promotion?.description ?? "Promoção removida",
+        units: group.units
+      };
+    });
   const funnel = [
     {
       description: "Base do período",
@@ -911,6 +944,23 @@ export default async function MarketingPage({
           <OrderRankingTable
             emptyMessage="Nenhum pedido de promoção no período."
             rows={promotionOrderRankingRows}
+          />
+        </section>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Produtos mais convertidos</h2>
+          <OrderRankingTable
+            emptyMessage="Nenhum produto convertido no período."
+            rows={convertedProductOrderRankingRows}
+          />
+        </section>
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Promoções mais convertidas</h2>
+          <OrderRankingTable
+            emptyMessage="Nenhuma promoção convertida no período."
+            rows={convertedPromotionOrderRankingRows}
           />
         </section>
       </div>

@@ -80,6 +80,7 @@ test("soma eventos de interação apenas das sessões de entrada", () => {
 test("classifica pedidos de produtos e promoções por pedidos e unidades", () => {
   const items = [
     {
+      converted: true,
       orderId: "order-1",
       quantity: 2,
       sessionId: "session-home",
@@ -87,6 +88,7 @@ test("classifica pedidos de produtos e promoções por pedidos e unidades", () =
       sourcePromotionId: null
     },
     {
+      converted: true,
       orderId: "order-1",
       quantity: 1,
       sessionId: "session-home",
@@ -94,6 +96,7 @@ test("classifica pedidos de produtos e promoções por pedidos e unidades", () =
       sourcePromotionId: null
     },
     {
+      converted: true,
       orderId: "order-2",
       quantity: 1,
       sessionId: "session-links",
@@ -101,6 +104,7 @@ test("classifica pedidos de produtos e promoções por pedidos e unidades", () =
       sourcePromotionId: "promotion-1"
     },
     {
+      converted: false,
       orderId: "order-3",
       quantity: 4,
       sessionId: "session-direct-product",
@@ -116,5 +120,28 @@ test("classifica pedidos de produtos e promoções por pedidos e unidades", () =
   assert.deepEqual(
     getOrderRanking(items, "promotion", new Set(["session-home", "session-links"])),
     [{ entityId: "promotion-1", orders: 1, units: 1 }]
+  );
+  assert.deepEqual(
+    getOrderRanking(items, "product", new Set(["session-home", "session-links"]), true),
+    [{ entityId: "product-1", orders: 1, units: 3 }]
+  );
+
+  const unconvertedProduct = {
+    converted: false,
+    orderId: "order-4",
+    quantity: 5,
+    sessionId: "session-home",
+    sourceProductId: "product-2",
+    sourcePromotionId: null
+  };
+
+  assert.deepEqual(
+    getOrderRanking(
+      [...items, unconvertedProduct],
+      "product",
+      new Set(["session-home", "session-links"]),
+      true
+    ),
+    [{ entityId: "product-1", orders: 1, units: 3 }]
   );
 });
