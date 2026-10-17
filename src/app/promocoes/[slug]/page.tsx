@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { PromotionType } from "@prisma/client";
 import { notFound } from "next/navigation";
 
@@ -39,9 +38,6 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
           }
         }
       },
-      images: {
-        orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }]
-      },
       products: {
         include: {
           product: {
@@ -71,59 +67,49 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-6 py-10">
-      <header className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="grid gap-4 sm:grid-cols-2">
-          {promotion.images.map((image) => (
-            <img
-              key={image.id}
-              alt={image.altText ?? promotion.description}
-              className="aspect-video w-full rounded-lg border border-border object-cover"
-              src={image.url}
-            />
-          ))}
-        </section>
-        <section className="space-y-4">
-          <p className="text-sm font-medium uppercase tracking-wide text-primary">
-            {promotion.type === PromotionType.CATEGORY_PERCENTAGE
-              ? "Percentual por categoria"
-              : "Combo"}
+      <header className="max-w-3xl space-y-4">
+        <p className="text-sm font-medium uppercase tracking-wide text-primary">
+          {promotion.type === PromotionType.CATEGORY_PERCENTAGE
+            ? "Percentual por categoria"
+            : "Combo"}
+        </p>
+        <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">
+          {promotion.description}
+        </h1>
+        {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
+          <p className="text-xl font-semibold text-primary">
+            {promotion.percentage}% OFF
           </p>
-          <h1 className="text-4xl font-semibold">{promotion.description}</h1>
-          {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
-            <p className="text-xl font-semibold text-primary">
-              {promotion.percentage}% OFF
-            </p>
-          ) : (
-            <div className="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-border bg-card p-3 sm:block sm:border-0 sm:bg-transparent sm:p-0">
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground sm:text-sm">
-                  De {" "}
-                  <span className="line-through">
-                    {formatMoneyFromCents(comboOriginalPriceInCents)}
-                  </span>
-                </p>
-                <p className="text-2xl font-semibold leading-none text-primary">
-                  Por {formatMoneyFromCents(comboPriceInCents)}
-                </p>
-              </div>
+        ) : (
+          <div className="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-border bg-card p-3 sm:block sm:border-0 sm:bg-transparent sm:p-0">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground sm:text-sm">
+                De {" "}
+                <span className="line-through">
+                  {formatMoneyFromCents(comboOriginalPriceInCents)}
+                </span>
+              </p>
+              <p className="text-2xl font-semibold leading-none text-primary">
+                Por {formatMoneyFromCents(comboPriceInCents)}
+              </p>
             </div>
-          )}
-          {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
-            <p className="text-sm text-muted-foreground">
-              Categoria: {promotion.category?.name}
-            </p>
-          ) : (
-            <AddToCartButton
-              item={{
-                type: "combo",
-                id: promotion.id,
-                description: promotion.description
-              }}
-            >
-              Adicionar combo ao carrinho
-            </AddToCartButton>
-          )}
-        </section>
+          </div>
+        )}
+        {promotion.type === PromotionType.CATEGORY_PERCENTAGE ? (
+          <p className="text-sm text-muted-foreground">
+            Categoria: {promotion.category?.name}
+          </p>
+        ) : (
+          <AddToCartButton
+            item={{
+              type: "combo",
+              id: promotion.id,
+              description: promotion.description
+            }}
+          >
+            Adicionar combo ao carrinho
+          </AddToCartButton>
+        )}
       </header>
       {promotion.type === PromotionType.CATEGORY_PERCENTAGE &&
       promotion.category ? (
