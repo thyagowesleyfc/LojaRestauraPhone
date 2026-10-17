@@ -48,6 +48,40 @@ describe("cart helpers", () => {
     assert.deepEqual(removed, []);
   });
 
+  it("preserves item order when updating quantity", () => {
+    const items = [
+      { type: "product" as const, id: "first", quantity: 1 },
+      { type: "product" as const, id: "middle", quantity: 1 },
+      { type: "combo" as const, id: "last", quantity: 1 }
+    ];
+
+    const updated = updateCartItemQuantity(
+      items,
+      { type: "product", id: "middle" },
+      3
+    );
+
+    assert.deepEqual(updated, [
+      { type: "product", id: "first", quantity: 1 },
+      { type: "product", id: "middle", quantity: 3 },
+      { type: "combo", id: "last", quantity: 1 }
+    ]);
+  });
+
+  it("keeps quantity at one when an update tries to go below one", () => {
+    const items = [{ type: "product" as const, id: "phone-case", quantity: 1 }];
+
+    const updated = updateCartItemQuantity(
+      items,
+      { type: "product", id: "phone-case" },
+      0
+    );
+
+    assert.deepEqual(updated, [
+      { type: "product", id: "phone-case", quantity: 1 }
+    ]);
+  });
+
   it("calculates totals and builds the WhatsApp message", () => {
     const items = [
       {

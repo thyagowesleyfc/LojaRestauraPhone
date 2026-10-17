@@ -66,18 +66,13 @@ export function updateCartItemQuantity(
   quantity: number
 ) {
   return normalizeCartItems(
-    items
-      .filter((item) => createCartItemKey(item) !== createCartItemKey(target))
-      .concat(
-        quantity > 0
-          ? [
-              {
-                ...target,
-                quantity
-              }
-            ]
-          : []
-      )
+    items.flatMap((item) => {
+      if (createCartItemKey(item) !== createCartItemKey(target)) {
+        return [item];
+      }
+
+      return [{ ...item, quantity }];
+    })
   );
 }
 

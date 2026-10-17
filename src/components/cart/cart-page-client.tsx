@@ -327,6 +327,7 @@ export function CartPageClient() {
                       <div className="flex items-center gap-2 sm:order-1">
                         <Button
                           aria-label="Diminuir quantidade"
+                          disabled={item.quantity <= 1}
                           onClick={() =>
                             handleQuantityChange(item, item.quantity - 1)
                           }
