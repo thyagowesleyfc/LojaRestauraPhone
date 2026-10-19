@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/slug";
+import { getNextDisplayOrder, getUniqueSlug, slugify } from "@/lib/slug";
 import {
   categoryCharacteristicInputSchema,
   characteristicInputSchema,
@@ -48,7 +48,8 @@ function parseExistingOptions(formData: FormData) {
     const parsed = characteristicOptionInputSchema.safeParse({
       id,
       name: value,
-      slug: getStringValue(formData, `optionSlug:${id}`),
+      slug:
+        getStringValue(formData, `optionSlug:${id}`) || slugify(value),
       displayOrder: getStringValue(formData, `optionOrder:${id}`) || "0",
       active: getCheckboxValue(formData, `optionActive:${id}`)
     });
@@ -139,6 +140,34 @@ function parseCategoryCharacteristicInputs(formData: FormData) {
   return categoryCharacteristicInputSchema.array().safeParse(inputs);
 }
 
+async function getUniqueCharacteristicSlug(name: string, currentId?: string) {
+  const baseSlug = slugify(name) || "caracteristica";
+  let slug = baseSlug;
+  let suffix = 2;
+
+  while (true) {
+    const existing = await prisma.characteristic.findUnique({
+      where: { slug }
+    });
+
+    if (!existing || existing.id === currentId) {
+      return slug;
+    }
+
+    slug = `${baseSlug}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+async function getNextCharacteristicDisplayOrder() {
+  const lastCharacteristic = await prisma.characteristic.findFirst({
+    orderBy: { displayOrder: "desc" },
+    select: { displayOrder: true }
+  });
+
+  return getNextDisplayOrder(lastCharacteristic?.displayOrder);
+}
+
 export async function createCharacteristicAction(formData: FormData) {
   const parsed = parseCharacteristicFormData(formData);
   const newOptions = parseNewOptions(formData);
@@ -157,17 +186,34 @@ export async function createCharacteristicAction(formData: FormData) {
     );
   }
 
+  const slug = await getUniqueCharacteristicSlug(parsed.data.name);
+  const displayOrder = await getNextCharacteristicDisplayOrder();
+  const usedOptionSlugs = new Set<string>();
+  const options = newOptions.data.map((option, index) => {
+    const optionSlug = getUniqueSlug(
+      option.name,
+      usedOptionSlugs,
+      "opcao"
+    );
+    usedOptionSlugs.add(optionSlug);
+
+    return {
+      active: option.active,
+      displayOrder: index,
+      name: option.name,
+      slug: optionSlug
+    };
+  });
+
   try {
     await prisma.characteristic.create({
       data: {
-        ...parsed.data,
+        name: parsed.data.name,
+        slug,
+        displayOrder,
+        active: parsed.data.active,
         options: {
-          create: newOptions.data.map((option) => ({
-            name: option.name,
-            slug: option.slug,
-            displayOrder: option.displayOrder,
-            active: option.active
-          }))
+          create: options
         }
       }
     });
@@ -210,6 +256,82 @@ export async function updateCharacteristicAction(formData: FormData) {
     );
   }
 
+  const characteristic = await prisma.characteristic.findUnique({
+    where: { id },
+    select: {
+      name: true,
+      slug: true,
+      options: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          displayOrder: true
+        }
+      }
+    }
+  });
+
+  if (!characteristic) {
+    redirectWithError("/admin/caracteristicas", "CaracterÃ­stica nÃ£o encontrada.");
+  }
+
+  const characteristicSlug =
+    characteristic.name === parsed.data.name
+      ? characteristic.slug
+      : await getUniqueCharacteristicSlug(parsed.data.name, id);
+  const removedOptionIdSet = new Set(removedOptionIds);
+  const usedOptionSlugs = new Set(
+    characteristic.options
+      .filter((option) => !removedOptionIdSet.has(option.id))
+      .map((option) => option.slug)
+  );
+  const optionData = existingOptions.data
+    .filter((option) => option.id && !removedOptionIdSet.has(option.id))
+    .map((option) => {
+      const currentOption = characteristic.options.find(
+        (item) => item.id === option.id
+      );
+      const nameChanged = currentOption?.name !== option.name;
+
+      if (nameChanged && currentOption) {
+        usedOptionSlugs.delete(currentOption.slug);
+      }
+
+      const optionSlug = nameChanged
+        ? getUniqueSlug(option.name, usedOptionSlugs, "opcao")
+        : currentOption?.slug ?? getUniqueSlug(option.name, usedOptionSlugs, "opcao");
+      usedOptionSlugs.add(optionSlug);
+
+      return {
+        active: option.active,
+        id: option.id as string,
+        name: option.name,
+        slug: optionSlug
+      };
+    });
+  let nextOptionOrder = getNextDisplayOrder(
+    Math.max(
+      -1,
+      ...characteristic.options
+        .filter((option) => !removedOptionIdSet.has(option.id))
+        .map((option) => option.displayOrder)
+    )
+  );
+  const newOptionData = newOptions.data.map((option) => {
+    const optionSlug = getUniqueSlug(option.name, usedOptionSlugs, "opcao");
+    usedOptionSlugs.add(optionSlug);
+
+    const data = {
+      active: option.active,
+      displayOrder: nextOptionOrder,
+      name: option.name,
+      slug: optionSlug
+    };
+    nextOptionOrder += 1;
+    return data;
+  });
+
   if (removedOptionIds.length > 0) {
     const usedOptions = await prisma.productVariantValue.count({
       where: { characteristicOptionId: { in: removedOptionIds } }
@@ -227,7 +349,11 @@ export async function updateCharacteristicAction(formData: FormData) {
     await prisma.$transaction(async (tx) => {
       await tx.characteristic.update({
         where: { id },
-        data: parsed.data
+        data: {
+          name: parsed.data.name,
+          slug: characteristicSlug,
+          active: parsed.data.active
+        }
       });
 
       if (removedOptionIds.length > 0) {
@@ -239,17 +365,12 @@ export async function updateCharacteristicAction(formData: FormData) {
         });
       }
 
-      for (const option of existingOptions.data) {
-        if (!option.id || removedOptionIds.includes(option.id)) {
-          continue;
-        }
-
+      for (const option of optionData) {
         await tx.characteristicOption.updateMany({
           where: { id: option.id, characteristicId: id },
           data: {
             name: option.name,
             slug: option.slug,
-            displayOrder: option.displayOrder,
             active: option.active
           }
         });
@@ -257,7 +378,7 @@ export async function updateCharacteristicAction(formData: FormData) {
 
       if (newOptions.data.length > 0) {
         await tx.characteristicOption.createMany({
-          data: newOptions.data.map((option) => ({
+          data: newOptionData.map((option) => ({
             characteristicId: id,
             name: option.name,
             slug: option.slug,
@@ -340,7 +461,7 @@ export async function updateCategoryCharacteristicsAction(formData: FormData) {
 
   const current = await prisma.categoryCharacteristic.findMany({
     where: { categoryId },
-    select: { characteristicId: true }
+    select: { characteristicId: true, displayOrder: true }
   });
   const nextIds = new Set(parsed.data.map((item) => item.characteristicId));
   const removedIds = current
@@ -371,7 +492,15 @@ export async function updateCategoryCharacteristicsAction(formData: FormData) {
       }
     });
 
+    let nextDisplayOrder = getNextDisplayOrder(
+      Math.max(-1, ...current.map((item) => item.displayOrder))
+    );
+
     for (const item of parsed.data) {
+      const existing = current.find(
+        (currentItem) => currentItem.characteristicId === item.characteristicId
+      );
+
       await tx.categoryCharacteristic.upsert({
         where: {
           categoryId_characteristicId: {
@@ -382,11 +511,10 @@ export async function updateCategoryCharacteristicsAction(formData: FormData) {
         create: {
           categoryId,
           characteristicId: item.characteristicId,
-          displayOrder: item.displayOrder,
+          displayOrder: existing?.displayOrder ?? nextDisplayOrder++,
           required: item.required
         },
         update: {
-          displayOrder: item.displayOrder,
           required: item.required
         }
       });

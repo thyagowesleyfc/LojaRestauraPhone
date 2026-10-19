@@ -54,7 +54,7 @@ export function CategoryCharacteristicsForm({
               return (
                 <div
                   key={characteristic.id}
-                  className="grid gap-3 rounded-lg border border-border p-4 lg:grid-cols-[1fr_120px_auto] lg:items-end"
+                  className="grid gap-3 rounded-lg border border-border p-4 lg:grid-cols-[1fr_auto] lg:items-end"
                 >
                   <label className="flex items-start gap-3 text-sm">
                     <input
@@ -71,17 +71,6 @@ export function CategoryCharacteristicsForm({
                         {characteristic.active ? "ativa" : "inativa"}
                       </span>
                     </span>
-                  </label>
-                  <label className="space-y-1 text-sm">
-                    <span className="font-medium">Ordem</span>
-                    <input
-                      name={`categoryCharacteristicOrder:${characteristic.id}`}
-                      type="number"
-                      min={0}
-                      step={1}
-                      defaultValue={selected?.displayOrder ?? characteristic.displayOrder}
-                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                    />
                   </label>
                   <label className="flex items-center gap-2 text-sm font-medium lg:pb-2">
                     <input

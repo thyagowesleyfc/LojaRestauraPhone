@@ -9,6 +9,7 @@ import {
   type UploadedImage
 } from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
+import { getNextDisplayOrder } from "@/lib/slug";
 import { storeLinkInputSchema } from "@/schemas/links";
 
 function redirectWithError(path: string, message: string): never {
@@ -72,11 +73,16 @@ export async function createStoreLinkAction(formData: FormData) {
   const uploadedImage = image
     ? await uploadImageOrRedirect(image, "/admin/links/novo")
     : null;
+  const lastLink = await prisma.storeLink.findFirst({
+    orderBy: { displayOrder: "desc" },
+    select: { displayOrder: true }
+  });
 
   try {
     await prisma.storeLink.create({
       data: {
         ...parsed.data,
+        displayOrder: getNextDisplayOrder(lastLink?.displayOrder),
         imageUrl: uploadedImage?.url,
         imagePublicId: uploadedImage?.publicId
       }
@@ -119,7 +125,10 @@ export async function updateStoreLinkAction(formData: FormData) {
     await prisma.storeLink.update({
       where: { id },
       data: {
-        ...parsed.data,
+        title: parsed.data.title,
+        description: parsed.data.description,
+        redirectUrl: parsed.data.redirectUrl,
+        active: parsed.data.active,
         imageUrl: uploadedImage?.url ?? link.imageUrl,
         imagePublicId: uploadedImage?.publicId ?? link.imagePublicId
       }

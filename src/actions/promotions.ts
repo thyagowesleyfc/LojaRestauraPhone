@@ -302,7 +302,10 @@ export async function updatePromotionAction(formData: FormData) {
     );
   }
 
-  const slug = await getUniquePromotionSlug(parsed.data.description, id);
+  const slug =
+    promotion.description === parsed.data.description
+      ? promotion.slug
+      : await getUniquePromotionSlug(parsed.data.description, id);
   const uploadedImages = await uploadPromotionImagesOrRedirect(
     files,
     getImageAltValues(formData),

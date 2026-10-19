@@ -10,6 +10,7 @@ import {
   type UploadedImage
 } from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
+import { getNextDisplayOrder } from "@/lib/slug";
 import { bannerInputSchema, storeSettingsInputSchema } from "@/schemas/settings";
 
 function redirectWithError(path: string, message: string): never {
@@ -135,6 +136,10 @@ export async function createBannerAction(formData: FormData) {
     formData,
     "/admin/banners/novo"
   );
+  const lastBanner = await prisma.banner.findFirst({
+    orderBy: { displayOrder: "desc" },
+    select: { displayOrder: true }
+  });
 
   try {
     await prisma.banner.create({
@@ -145,7 +150,7 @@ export async function createBannerAction(formData: FormData) {
         mobileImagePublicId: uploadedImages.mobile.publicId,
         redirectUrl: parsed.data.redirectUrl,
         altText: parsed.data.altText,
-        displayOrder: parsed.data.displayOrder,
+        displayOrder: getNextDisplayOrder(lastBanner?.displayOrder),
         active: parsed.data.active
       }
     });
@@ -201,7 +206,6 @@ export async function updateBannerAction(formData: FormData) {
           uploadedMobile?.publicId ?? banner.mobileImagePublicId,
         redirectUrl: parsed.data.redirectUrl,
         altText: parsed.data.altText,
-        displayOrder: parsed.data.displayOrder,
         active: parsed.data.active
       }
     });

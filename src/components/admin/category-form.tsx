@@ -34,21 +34,6 @@ export function CategoryForm({
           className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="displayOrder">
-          Ordem
-        </label>
-        <input
-          id="displayOrder"
-          name="displayOrder"
-          type="number"
-          min={0}
-          step={1}
-          required
-          defaultValue={category?.displayOrder ?? 0}
-          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        />
-      </div>
       <label className="flex items-center gap-2 text-sm font-medium">
         <input
           name="active"

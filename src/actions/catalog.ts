@@ -10,7 +10,7 @@ import {
   type UploadedImage
 } from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/slug";
+import { getNextDisplayOrder, slugify } from "@/lib/slug";
 import {
   categoryInputSchema,
   productImageAltSchema,
@@ -100,6 +100,15 @@ async function getUniqueCategorySlug(name: string, currentId?: string) {
   }
 }
 
+async function getNextCategoryDisplayOrder() {
+  const lastCategory = await prisma.category.findFirst({
+    orderBy: { displayOrder: "desc" },
+    select: { displayOrder: true }
+  });
+
+  return getNextDisplayOrder(lastCategory?.displayOrder);
+}
+
 async function getUniqueProductSlug(description: string, currentId?: string) {
   const baseSlug = slugify(description) || "produto";
   let slug = baseSlug;
@@ -187,12 +196,14 @@ export async function createCategoryAction(formData: FormData) {
   }
 
   const slug = await getUniqueCategorySlug(parsed.data.name);
+  const displayOrder = await getNextCategoryDisplayOrder();
 
   try {
     await prisma.category.create({
       data: {
         ...parsed.data,
-        slug
+        slug,
+        displayOrder
       }
     });
   } catch (error) {
@@ -225,13 +236,26 @@ export async function updateCategoryAction(formData: FormData) {
     );
   }
 
-  const slug = await getUniqueCategorySlug(parsed.data.name, id);
+  const category = await prisma.category.findUnique({
+    where: { id },
+    select: { name: true, slug: true }
+  });
+
+  if (!category) {
+    redirectWithError("/admin/categorias", "Categoria nÃ£o encontrada.");
+  }
+
+  const slug =
+    category.name === parsed.data.name
+      ? category.slug
+      : await getUniqueCategorySlug(parsed.data.name, id);
 
   try {
     await prisma.category.update({
       where: { id },
       data: {
-        ...parsed.data,
+        name: parsed.data.name,
+        active: parsed.data.active,
         slug
       }
     });
@@ -397,7 +421,10 @@ export async function updateProductAction(formData: FormData) {
     );
   }
 
-  const slug = await getUniqueProductSlug(parsed.data.description, id);
+  const slug =
+    product.description === parsed.data.description
+      ? product.slug
+      : await getUniqueProductSlug(parsed.data.description, id);
   const uploadedImages = await uploadProductImagesOrRedirect(
     files,
     getImageAltValues(formData),

@@ -96,7 +96,7 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
           className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="altText">
             Texto alternativo
@@ -113,21 +113,6 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
           <p className="text-xs leading-5 text-muted-foreground">
             Descreve a imagem para acessibilidade e identificação interna.
           </p>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="displayOrder">
-            Ordem
-          </label>
-          <input
-            id="displayOrder"
-            name="displayOrder"
-            type="number"
-            min={0}
-            step={1}
-            required
-            defaultValue={banner?.displayOrder ?? 0}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-          />
         </div>
       </div>
       <label className="flex items-center gap-2 text-sm font-medium">

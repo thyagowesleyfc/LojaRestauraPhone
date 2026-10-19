@@ -32,7 +32,7 @@ export function StoreLinkForm({ action, link, submitLabel }: StoreLinkFormProps)
         </div>
       ) : null}
 
-      <div className="grid gap-5 sm:grid-cols-[1fr_140px]">
+      <div>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="title">
             Título
@@ -45,21 +45,6 @@ export function StoreLinkForm({ action, link, submitLabel }: StoreLinkFormProps)
             name="title"
             required
             type="text"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="displayOrder">
-            Ordem
-          </label>
-          <input
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            defaultValue={link?.displayOrder ?? 0}
-            id="displayOrder"
-            min={0}
-            name="displayOrder"
-            required
-            step={1}
-            type="number"
           />
         </div>
       </div>
