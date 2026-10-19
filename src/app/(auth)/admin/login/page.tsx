@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getCurrentAdminUser } from "@/lib/auth";
+import { getStoreSettings } from "@/lib/store-settings";
 import { LoginForm } from "./login-form";
 
 type LoginPageProps = {
@@ -10,8 +11,9 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const [user, resolvedSearchParams] = await Promise.all([
+  const [user, settings, resolvedSearchParams] = await Promise.all([
     getCurrentAdminUser(),
+    getStoreSettings(),
     searchParams
   ]);
 
@@ -29,7 +31,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <section className="w-full max-w-sm space-y-6">
         <div className="space-y-2">
           <p className="text-sm font-medium uppercase tracking-wide text-primary">
-            RestauraPhone
+            {settings.tradeName}
           </p>
           <h1 className="text-3xl font-semibold">Painel administrativo</h1>
           <p className="text-sm leading-6 text-muted-foreground">
