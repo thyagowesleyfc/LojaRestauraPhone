@@ -9,6 +9,7 @@ type ProductFormProps = {
     id: string;
     name: string;
   }>;
+  tabbed?: boolean;
   product?: {
     id: string;
     description: string;
@@ -30,11 +31,22 @@ export function ProductForm({
   action,
   categories,
   product,
-  submitLabel
+  submitLabel,
+  tabbed = false
 }: ProductFormProps) {
   return (
     <form action={action} className="space-y-6">
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
+      <section
+        aria-labelledby={tabbed ? "product-edit-tab-info" : undefined}
+        className={
+          tabbed
+            ? "hidden space-y-5 group-data-[active-tab=info]:block"
+            : "space-y-5"
+        }
+        id={tabbed ? "product-edit-panel-info" : undefined}
+        role={tabbed ? "tabpanel" : undefined}
+      >
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="description">
@@ -103,6 +115,17 @@ export function ProductForm({
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
+      </section>
+      <section
+        aria-labelledby={tabbed ? "product-edit-tab-images" : undefined}
+        className={
+          tabbed
+            ? "hidden space-y-5 group-data-[active-tab=images]:block"
+            : "space-y-5"
+        }
+        id={tabbed ? "product-edit-panel-images" : undefined}
+        role={tabbed ? "tabpanel" : undefined}
+      >
       {product?.images.length ? (
         <section className="space-y-3">
           <h2 className="text-sm font-semibold">Imagens atuais</h2>
@@ -168,6 +191,14 @@ export function ProductForm({
           Use JPG, PNG, WEBP ou AVIF. O produto deve ter de 1 a 6 imagens.
         </p>
       </div>
+      </section>
+      <div
+        className={
+          tabbed
+            ? "hidden items-center justify-between gap-4 border-t border-border pt-5 group-data-[active-tab=info]:flex group-data-[active-tab=images]:flex"
+            : "flex items-center justify-between gap-4"
+        }
+      >
       <label className="flex items-center gap-2 text-sm font-medium">
         <input
           name="active"
@@ -188,6 +219,7 @@ export function ProductForm({
       ) : (
         <Button type="submit">{submitLabel}</Button>
       )}
+      </div>
     </form>
   );
 }

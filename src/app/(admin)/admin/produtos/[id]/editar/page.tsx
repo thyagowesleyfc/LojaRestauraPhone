@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { updateProductAction } from "@/actions/catalog";
 import { FormError } from "@/components/admin/form-error";
+import { ProductEditTabs } from "@/components/admin/product-edit-tabs";
 import { ProductForm } from "@/components/admin/product-form";
 import { ProductVariantsPanel } from "@/components/admin/product-variants-panel";
 import { Button } from "@/components/ui/button";
@@ -79,17 +80,29 @@ export default async function EditProductPage({
         </Button>
       </div>
       <FormError message={erro} />
-      <ProductForm
-        action={updateProductAction}
-        categories={categories}
-        product={product}
-        submitLabel="Atualizar"
-      />
-      <ProductVariantsPanel
-        product={product}
-        categoryCharacteristics={product.category.characteristics}
-        variants={product.variants}
-      />
+      <ProductEditTabs hasSkus={product.variants.length > 0}>
+        <ProductForm
+          action={updateProductAction}
+          categories={categories}
+          product={product}
+          submitLabel="Atualizar"
+          tabbed
+        />
+        {product.variants.length > 0 ? (
+          <div
+            aria-labelledby="product-edit-tab-skus"
+            className="hidden group-data-[active-tab=skus]:block"
+            id="product-edit-panel-skus"
+            role="tabpanel"
+          >
+            <ProductVariantsPanel
+              product={product}
+              categoryCharacteristics={product.category.characteristics}
+              variants={product.variants}
+            />
+          </div>
+        ) : null}
+      </ProductEditTabs>
     </section>
   );
 }
