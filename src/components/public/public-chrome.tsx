@@ -25,6 +25,7 @@ type ActiveMarketingIntegration = {
 type PublicChromeProps = {
   children: ReactNode;
   marketingIntegrations: ActiveMarketingIntegration[];
+  platformSignatureUrl?: string;
   settings: {
     tradeName: string;
     cnpj: string;
@@ -331,6 +332,7 @@ function BrandLogo({
 export function PublicChrome({
   children,
   marketingIntegrations,
+  platformSignatureUrl,
   settings
 }: PublicChromeProps) {
   const pathname = usePathname();
@@ -639,9 +641,9 @@ export function PublicChrome({
         </div>
       </nav>
       <footer className="border-t border-border bg-muted/40 pb-24 md:pb-0">
-        <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
+        <div className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 text-center md:grid-cols-2">
           <div className="space-y-3">
-            <Link className="flex items-center gap-3" href="/">
+            <Link className="flex items-center justify-center gap-3" href="/">
               <BrandLogo
                 darkLogoUrl={settings.darkLogoUrl}
                 imageClassName="h-16 w-40 shrink-0 border-0 bg-transparent object-contain p-0 shadow-none ring-0 sm:h-[72px] sm:w-64"
@@ -668,6 +670,20 @@ export function PublicChrome({
             ) : null}
           </div>
         </div>
+        {platformSignatureUrl ? (
+          <p className="mx-auto mt-6 max-w-6xl border-t border-border/60 px-6 pt-4 text-center text-[0.6875rem] text-muted-foreground">
+            App feito por{" "}
+            <a
+              className="text-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              href={platformSignatureUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              TW33
+            </a>
+            .
+          </p>
+        ) : null}
       </footer>
       <CookieConsentModal />
       {whatsappHref ? (

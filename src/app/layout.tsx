@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PublicChrome } from "@/components/public/public-chrome";
+import { env } from "@/lib/env";
 import { getActiveMarketingIntegrations } from "@/lib/marketing-integrations";
 import { getStoreSettings } from "@/lib/store-settings";
 import { getStoreThemeStyle } from "@/lib/theme";
@@ -26,6 +27,7 @@ export default async function RootLayout({
       <body>
         <PublicChrome
           marketingIntegrations={marketingIntegrations}
+          platformSignatureUrl={env.NEXT_PUBLIC_PLATFORM_SIGNATURE_URL}
           settings={settings}
         >
           {children}
