@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { getStoreSettings } from "@/lib/store-settings";
+
 const cards = [
   {
     href: "/admin/categorias",
@@ -48,12 +50,14 @@ const cards = [
   }
 ];
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const settings = await getStoreSettings();
+
   return (
     <section className="space-y-4">
       <h1 className="text-3xl font-semibold">Painel administrativo</h1>
       <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-        Gerencie o catálogo público e as configurações da RestauraPhone.
+        Gerencie o catálogo público e as configurações da {settings.tradeName}.
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (

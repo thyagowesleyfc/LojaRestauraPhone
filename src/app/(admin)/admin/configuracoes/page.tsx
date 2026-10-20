@@ -2,8 +2,8 @@ import { updateStoreSettingsAction } from "@/actions/settings";
 import { AdminDashboardLink } from "@/components/admin/admin-dashboard-link";
 import { FormError } from "@/components/admin/form-error";
 import { StoreSettingsForm } from "@/components/admin/store-settings-form";
-import { DEFAULT_PRIVACY_PAGE_CONTENT } from "@/lib/privacy-content";
-import { prisma } from "@/lib/prisma";
+import { replaceLegacyStoreName } from "@/lib/privacy-content";
+import { getStoreSettings } from "@/lib/store-settings";
 
 type SettingsPageProps = {
   searchParams: Promise<{
@@ -13,36 +13,10 @@ type SettingsPageProps = {
   }>;
 };
 
-const fallbackSettings = {
-  tradeName: "RestauraPhone",
-  cnpj: "",
-  phone: "",
-  email: "admin@example.com",
-  address: "",
-  mapEmbedUrl: "",
-  aboutText: "",
-  privacyPageContent: DEFAULT_PRIVACY_PAGE_CONTENT,
-  whatsappNumber: "",
-  whatsappInitialMessage: "Olá, tenho interesse em um pedido.",
-  bannerTransitionSeconds: 5,
-  offerCountdownHeadline: "",
-  offerCountdownLink: "",
-  offerCountdownDurationSeconds: 0,
-  offerCountdownBackgroundColor: "#16a34a",
-  logoUrl: null,
-  darkLogoUrl: null,
-  lightPrimaryColor: "#16a34a",
-  lightBackgroundColor: "#ffffff",
-  lightTextColor: "#171717",
-  darkPrimaryColor: "#22c55e",
-  darkBackgroundColor: "#171717",
-  darkTextColor: "#fafafa"
-};
-
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const [{ erro, erroSenha, sucesso }, settings] = await Promise.all([
     searchParams,
-    prisma.storeSettings.findUnique({ where: { id: 1 } })
+    getStoreSettings()
   ]);
   const passwordSuccess =
     sucesso === "senha" ? "Senha administrativa alterada com sucesso." : undefined;
@@ -60,7 +34,13 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         action={updateStoreSettingsAction}
         passwordError={erroSenha}
         passwordSuccess={passwordSuccess}
-        settings={settings ?? fallbackSettings}
+        settings={{
+          ...settings,
+          privacyPageContent: replaceLegacyStoreName(
+            settings.privacyPageContent,
+            settings.tradeName
+          )
+        }}
       />
     </section>
   );

@@ -3,6 +3,7 @@ import "server-only";
 import nodemailer from "nodemailer";
 
 import { env } from "@/lib/env";
+import { getStoreSettings } from "@/lib/store-settings";
 
 type PasswordResetEmailInput = {
   email: string;
@@ -28,6 +29,8 @@ export async function sendPasswordResetEmail({
     return;
   }
 
+  const settings = await getStoreSettings();
+
   const transporter = nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT ?? 587,
@@ -44,7 +47,7 @@ export async function sendPasswordResetEmail({
   await transporter.sendMail({
     from: env.SMTP_FROM,
     to: email,
-    subject: "Redefinição de senha do painel RestauraPhone",
+    subject: `Redefinição de senha do painel ${settings.tradeName}`,
     text: `Recebemos uma solicitação para redefinir a senha do painel administrativo. Acesse ${resetUrl} para criar uma nova senha. O link expira em 30 minutos.`,
     html: `<p>Recebemos uma solicitação para redefinir a senha do painel administrativo.</p><p><a href="${resetUrl}">Redefinir senha</a></p><p>O link expira em 30 minutos.</p>`
   });

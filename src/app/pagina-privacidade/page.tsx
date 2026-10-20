@@ -16,7 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PrivacyPage() {
   const settings = await getStoreSettings();
-  const content = getPrivacyPageContent(settings.privacyPageContent);
+  const content = getPrivacyPageContent(
+    settings.privacyPageContent,
+    settings.tradeName
+  );
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">

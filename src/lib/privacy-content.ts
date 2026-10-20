@@ -1,5 +1,5 @@
 export const DEFAULT_PRIVACY_PAGE_CONTENT = `
-<p>A RestauraPhone utiliza cookies e tecnologias semelhantes para melhorar sua experiência, entender a navegação no site e manter recursos como carrinho e preferências de uso.</p>
+<p>A loja utiliza cookies e tecnologias semelhantes para melhorar sua experiência, entender a navegação no site e manter recursos como carrinho e preferências de uso.</p>
 <p>As informações podem incluir identificadores anônimos de sessão, páginas acessadas, termos pesquisados e interações com produtos, carrinho e WhatsApp.</p>
 <ul>
   <li>Melhorar a navegação e o desempenho do catálogo.</li>
@@ -99,6 +99,12 @@ export function sanitizeRichTextHtml(value: string) {
     .trim();
 }
 
-export function getPrivacyPageContent(value: string) {
-  return sanitizeRichTextHtml(value);
+export function replaceLegacyStoreName(value: string, tradeName: string) {
+  return value.replace(/RestauraPhone/gi, tradeName);
+}
+
+export function getPrivacyPageContent(value: string, tradeName?: string) {
+  const content = tradeName ? replaceLegacyStoreName(value, tradeName) : value;
+
+  return sanitizeRichTextHtml(content);
 }

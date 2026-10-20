@@ -7,10 +7,14 @@ import { getStoreSettings } from "@/lib/store-settings";
 import { getStoreThemeStyle } from "@/lib/theme";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "RestauraPhone",
-  description: "Catálogo público e painel administrativo da RestauraPhone."
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getStoreSettings();
+
+  return {
+    title: settings.tradeName,
+    description: `Catálogo público e painel administrativo da ${settings.tradeName}.`
+  };
+}
 
 export default async function RootLayout({
   children

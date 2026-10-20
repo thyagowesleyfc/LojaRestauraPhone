@@ -67,7 +67,7 @@ async function main() {
       update: {},
       create: {
         id: 1,
-        tradeName: "RestauraPhone",
+        tradeName: "Plataforma TW33",
         cnpj: "",
         phone: "",
         email: adminEmail,

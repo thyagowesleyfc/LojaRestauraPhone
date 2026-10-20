@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 
 export const fallbackStoreSettings = {
   id: 1,
-  tradeName: "RestauraPhone",
+  tradeName: "Plataforma TW33",
   cnpj: "",
   phone: "",
   email: "admin@example.com",
@@ -44,11 +44,18 @@ function isMissingSchemaError(error: unknown) {
 
 export async function getStoreSettings() {
   try {
-    return (
-      (await prisma.storeSettings.findUnique({
-        where: { id: 1 }
-      })) ?? fallbackStoreSettings
-    );
+    const settings = await prisma.storeSettings.findUnique({
+      where: { id: 1 }
+    });
+
+    if (!settings) {
+      return fallbackStoreSettings;
+    }
+
+    return {
+      ...settings,
+      tradeName: settings.tradeName.trim() || fallbackStoreSettings.tradeName
+    };
   } catch (error) {
     if (isMissingSchemaError(error)) {
       return fallbackStoreSettings;
