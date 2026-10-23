@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { Button } from "@/components/ui/button";
 
 type StoreLinkFormProps = {
@@ -83,12 +84,10 @@ export function StoreLinkForm({ action, link, submitLabel }: StoreLinkFormProps)
         <label className="text-sm font-medium" htmlFor="image">
           Imagem Link
         </label>
-        <input
+        <ImageUploadInput
           accept="image/jpeg,image/png,image/webp,image/avif"
-          className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           id="image"
           name="image"
-          type="file"
         />
         <p className="text-xs leading-5 text-muted-foreground">
           PNG, WEBP, JPG ou AVIF até 5 MB. Use imagens quadradas para ícones.

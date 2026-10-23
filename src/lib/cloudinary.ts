@@ -3,9 +3,9 @@ import "server-only";
 import { createHash } from "node:crypto";
 
 import { env } from "@/lib/env";
+import { MAX_IMAGE_SIZE_BYTES } from "@/lib/image-upload";
 import { convertImageToWebp } from "@/lib/image-processor";
 
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/jpeg",
   "image/png",

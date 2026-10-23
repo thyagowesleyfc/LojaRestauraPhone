@@ -4,6 +4,7 @@ import {
   deleteProductVariantAction,
   updateProductVariantAction
 } from "@/actions/variants";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { Button } from "@/components/ui/button";
 import { suggestSku } from "@/lib/sku";
 
@@ -136,13 +137,12 @@ export function ProductVariantsPanel({
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2 text-sm">
               <span className="font-medium">Imagens do SKU</span>
-              <input
+              <ImageUploadInput
+                id="variantImages-create"
                 name="variantImages"
-                type="file"
                 multiple
                 required
                 accept="image/jpeg,image/png,image/webp,image/avif"
-                className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               />
             </label>
             <label className="space-y-2 text-sm">
@@ -249,12 +249,11 @@ export function ProductVariantsPanel({
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium">Novas imagens</span>
-                  <input
+                  <ImageUploadInput
+                    id={`variantImages-update-${variant.id}`}
                     name="variantImages"
-                    type="file"
                     multiple
                     accept="image/jpeg,image/png,image/webp,image/avif"
-                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   />
                 </label>
                 <label className="space-y-2 text-sm">

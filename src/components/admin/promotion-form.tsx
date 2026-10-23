@@ -2,6 +2,7 @@
 import { PromotionType } from "@prisma/client";
 
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { Button } from "@/components/ui/button";
 import { centsToInputValue } from "@/lib/formatters";
 
@@ -243,15 +244,16 @@ export function PromotionForm({
         <label className="text-sm font-medium" htmlFor="images">
           {promotion ? "Novas imagens" : "Imagens"}
         </label>
-        <input
+        <ImageUploadInput
           id="images"
           name="images"
-          type="file"
           multiple
           accept="image/jpeg,image/png,image/webp,image/avif"
           required={!promotion}
-          className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
+        <p className="text-xs text-muted-foreground">
+          Use JPG, PNG, WEBP ou AVIF, com até 5 MB por imagem. A promoção deve ter de 1 a 6 imagens.
+        </p>
       </div>
       <label className="flex items-center gap-2 text-sm font-medium">
         <input

@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 
 import { changeAdminPasswordAction } from "@/actions/auth";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { Button } from "@/components/ui/button";
 
@@ -443,13 +444,11 @@ function LogoUploadField({
           src={imageUrl}
         />
       ) : null}
-      <input
+      <ImageUploadInput
         id={name}
         name={name}
-        type="file"
         accept="image/jpeg,image/png,image/webp,image/avif"
         aria-describedby={hintId}
-        className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       />
       <p className="text-xs leading-5 text-muted-foreground" id={hintId}>
         Tamanho ideal: 512 x 160 px, horizontal e com fundo transparente.

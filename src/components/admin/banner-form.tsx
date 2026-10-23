@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { Button } from "@/components/ui/button";
 
 type BannerFormProps = {
@@ -52,13 +53,11 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
           <label className="text-sm font-medium" htmlFor="desktopImage">
             {banner ? "Nova imagem desktop" : "Imagem desktop"}
           </label>
-          <input
+          <ImageUploadInput
             id="desktopImage"
             name="desktopImage"
-            type="file"
             accept="image/jpeg,image/png,image/webp,image/avif"
             required={!banner}
-            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
             Recomendado: 1920x520px, horizontal panorâmico para o novo hero.
@@ -68,13 +67,11 @@ export function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
           <label className="text-sm font-medium" htmlFor="mobileImage">
             {banner ? "Nova imagem mobile" : "Imagem mobile"}
           </label>
-          <input
+          <ImageUploadInput
             id="mobileImage"
             name="mobileImage"
-            type="file"
             accept="image/jpeg,image/png,image/webp,image/avif"
             required={!banner}
-            className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
           <p className="text-xs leading-5 text-muted-foreground">
             Recomendado: 900x520px, horizontal curto para o hero mobile.
