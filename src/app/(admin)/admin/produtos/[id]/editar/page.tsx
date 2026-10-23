@@ -80,7 +80,7 @@ export default async function EditProductPage({
         </Button>
       </div>
       <FormError message={erro} />
-      <ProductEditTabs hasSkus={product.variants.length > 0}>
+      <ProductEditTabs>
         <ProductForm
           action={updateProductAction}
           categories={categories}
@@ -88,20 +88,18 @@ export default async function EditProductPage({
           submitLabel="Atualizar"
           tabbed
         />
-        {product.variants.length > 0 ? (
-          <div
-            aria-labelledby="product-edit-tab-skus"
-            className="hidden group-data-[active-tab=skus]:block"
-            id="product-edit-panel-skus"
-            role="tabpanel"
-          >
-            <ProductVariantsPanel
-              product={product}
-              categoryCharacteristics={product.category.characteristics}
-              variants={product.variants}
-            />
-          </div>
-        ) : null}
+        <div
+          aria-labelledby="product-edit-tab-skus"
+          className="hidden group-data-[active-tab=skus]:block"
+          id="product-edit-panel-skus"
+          role="tabpanel"
+        >
+          <ProductVariantsPanel
+            product={product}
+            categoryCharacteristics={product.category.characteristics}
+            variants={product.variants}
+          />
+        </div>
       </ProductEditTabs>
     </section>
   );

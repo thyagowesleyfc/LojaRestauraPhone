@@ -6,7 +6,6 @@ type ProductEditTab = "info" | "images" | "skus";
 
 type ProductEditTabsProps = {
   children: ReactNode;
-  hasSkus: boolean;
 };
 
 const baseTabs: Array<{ id: ProductEditTab; label: string }> = [
@@ -14,13 +13,8 @@ const baseTabs: Array<{ id: ProductEditTab; label: string }> = [
   { id: "images", label: "Imagens" }
 ];
 
-export function ProductEditTabs({
-  children,
-  hasSkus
-}: ProductEditTabsProps) {
-  const tabs = hasSkus
-    ? [...baseTabs, { id: "skus" as const, label: "SKU" }]
-    : baseTabs;
+export function ProductEditTabs({ children }: ProductEditTabsProps) {
+  const tabs = [...baseTabs, { id: "skus" as const, label: "SKU" }];
   const [activeTab, setActiveTab] = useState<ProductEditTab>("info");
 
   return (
